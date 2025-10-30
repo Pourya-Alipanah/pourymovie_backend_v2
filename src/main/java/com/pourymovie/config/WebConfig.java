@@ -18,17 +18,12 @@ public class WebConfig implements WebMvcConfigurer {
   @Autowired
   AppDefaults appDefaults;
 
-  @Bean
-  public WebMvcConfigurer corsConfigurer() {
-    return new WebMvcConfigurer() {
-      @Override
-      public void addCorsMappings(@NonNull CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOriginPatterns("*")
-                .allowedMethods("*")
-                .allowCredentials(true);
-      }
-    };
+  @Override
+  public void addCorsMappings(@NonNull CorsRegistry registry) {
+    registry.addMapping("/**")
+            .allowedOriginPatterns("*")
+            .allowedMethods("*")
+            .allowCredentials(true);
   }
 
   @Override
