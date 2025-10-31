@@ -56,6 +56,8 @@ public class AuthService {
         response.addCookie(cookie);
       }
 
+      response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+
 
     } catch (AuthenticationException ex) {
       throw new RuntimeException("Invalid credentials");
@@ -72,9 +74,9 @@ public class AuthService {
     accessTokenCookie.setPath("/");
 
     Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken.getToken());
-    accessTokenCookie.setHttpOnly(true);
-    accessTokenCookie.setMaxAge(refreshTokenExpiry);
-    accessTokenCookie.setPath("/");
+    refreshTokenCookie.setHttpOnly(true);
+    refreshTokenCookie.setMaxAge(refreshTokenExpiry);
+    refreshTokenCookie.setPath("/");
 
     return List.of(accessTokenCookie, refreshTokenCookie);
   }
