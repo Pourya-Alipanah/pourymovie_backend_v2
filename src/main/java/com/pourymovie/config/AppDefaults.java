@@ -10,4 +10,7 @@ import org.springframework.stereotype.Component;
 public class AppDefaults {
   private int defaultPageSize;
   private int defaultPageNumber;
+  private int defaultAccessTokenTTlInMinutes;
+  private int defaultRefreshTokenTTlInMinutes;
+  private String jwtSecretKey;
 }
