@@ -13,4 +13,5 @@ public class AppDefaults {
   private int defaultAccessTokenTTlInMinutes;
   private int defaultRefreshTokenTTlInMinutes;
   private String jwtSecretKey;
+  private String[] publicPaths;
 }

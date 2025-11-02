@@ -47,7 +47,8 @@ public class UserEntity {
   private ZonedDateTime createdAt;
 
   @UpdateTimestamp
-  private ZonedDateTime updatedAt;
+  @Column
+  private ZonedDateTime updateAt;
 
   @Column
   private ZonedDateTime deletedAt;

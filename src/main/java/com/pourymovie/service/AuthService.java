@@ -2,12 +2,15 @@ package com.pourymovie.service;
 
 import com.pourymovie.config.AppDefaults;
 import com.pourymovie.dto.SignInDto;
+import com.pourymovie.dto.SignUpDto;
 import com.pourymovie.entity.RefreshTokenEntity;
 import com.pourymovie.entity.UserEntity;
+import com.pourymovie.enums.UserRole;
 import com.pourymovie.security.JwtService;
 import com.pourymovie.security.RefreshTokenService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,21 +22,17 @@ import java.util.List;
 
 @Service
 public class AuthService {
-
   @Autowired
   private UserService userService;
-
   @Autowired
   private RefreshTokenService refreshTokenService;
-
   @Autowired
   private JwtService jwtService;
-
   @Autowired
   private AuthenticationManager authenticationManager;
-
   @Autowired
-  AppDefaults appDefaults;
+  private AppDefaults appDefaults;
+
 
   public void signIn(SignInDto signInDto, HttpServletResponse response) {
     try {
@@ -61,6 +60,29 @@ public class AuthService {
 
     } catch (AuthenticationException ex) {
       throw new RuntimeException("Invalid credentials");
+    }
+  }
+  public void signUp(SignUpDto signUpDto, HttpServletResponse response) {
+    try {
+
+      UserEntity user = userService.createUser(signUpDto , UserRole.USER);
+
+      String accessToken = jwtService.generateAccessToken(user);
+
+      RefreshTokenEntity refreshToken = refreshTokenService.generateRefreshToken(user);
+
+      List<Cookie> tokens = generateTokenCookies(accessToken, refreshToken);
+
+
+      for(Cookie cookie : tokens){
+        response.addCookie(cookie);
+      }
+
+      response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+
+
+    } catch (AuthenticationException ex) {
+      throw new RuntimeException(ex);
     }
   }
 

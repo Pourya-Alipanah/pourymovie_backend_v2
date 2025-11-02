@@ -1,5 +1,6 @@
 package com.pourymovie.security;
 
+import com.pourymovie.config.AppDefaults;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,9 +11,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -23,6 +27,17 @@ public class JwtFilter extends OncePerRequestFilter {
   @Autowired
   private CustomUserDetailsService userDetailsService;
 
+  @Autowired
+  private AppDefaults appDefaults;
+
+
+  @Override
+  protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    String path = request.getServletPath();
+    AntPathMatcher pathMatcher = new AntPathMatcher();
+    return Arrays.stream(appDefaults.getPublicPaths())
+            .anyMatch(pattern -> pathMatcher.match(pattern, path));
+  }
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {

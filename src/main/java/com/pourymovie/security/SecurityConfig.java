@@ -1,5 +1,6 @@
 package com.pourymovie.security;
 
+import com.pourymovie.config.AppDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,9 @@ public class SecurityConfig {
   @Autowired
   private JwtFilter jwtFilter;
 
+  @Autowired
+  private AppDefaults appDefaults;
+
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
@@ -42,11 +46,7 @@ public class SecurityConfig {
     http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((requests) -> requests
                     .requestMatchers(
-                            "/auth/**",
-                            "/public/**",
-                            "/apiDocs/**",
-                            "/apiDocs-json/**",
-                            "/swagger-ui**/**"
+                            appDefaults.getPublicPaths()
                     )
                     .permitAll()
                     .anyRequest()

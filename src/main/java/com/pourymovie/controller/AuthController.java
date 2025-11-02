@@ -1,6 +1,7 @@
 package com.pourymovie.controller;
 
 import com.pourymovie.dto.SignInDto;
+import com.pourymovie.dto.SignUpDto;
 import com.pourymovie.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,11 @@ public class AuthController {
   @PostMapping("/sign-in")
   public void signIn(@RequestBody SignInDto signInDto , HttpServletResponse response) throws Exception {
     authService.signIn(signInDto , response);
+  }
+
+  @PostMapping("/sign-up")
+  public void signUp(@RequestBody SignUpDto signInDto , HttpServletResponse response) throws Exception {
+    authService.signUp(signInDto, response);
   }
 
 }
