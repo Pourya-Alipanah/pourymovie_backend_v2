@@ -10,7 +10,7 @@ public class ConfirmUploadDto {
 
   @ValidBucketName(enumClass = AllBucketNames.class)
   @NotEmpty
-  private String bucketName;
+  private AllBucketNames bucketName;
 
   @NotEmpty
   private String key;

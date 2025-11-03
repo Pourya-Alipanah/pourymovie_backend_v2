@@ -1,12 +1,10 @@
 package com.pourymovie.security;
 
 import com.pourymovie.config.AppDefaults;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -44,12 +42,22 @@ public class SecurityConfig {
 
     http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((requests) -> requests
-                    .requestMatchers(
-                            appDefaults.getPublicPaths()
-                    )
+                    .requestMatchers(appDefaults.getPublicPaths())
                     .permitAll()
                     .anyRequest()
                     .authenticated()
+            )
+            .exceptionHandling(exceptions -> exceptions
+                    .authenticationEntryPoint((request, response, authException) -> {
+                      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                      response.setContentType("application/json");
+                      response.getWriter().write("{\"message\":\"Unauthorized\",\"status\":401}");
+                    })
+                    .accessDeniedHandler((request, response, accessDeniedException) -> {
+                      response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                      response.setContentType("application/json");
+                      response.getWriter().write("{\"message\":\"Access denied\",\"status\":403}");
+                    })
             )
             .formLogin(AbstractHttpConfigurer::disable)
             .logout(AbstractHttpConfigurer::disable)

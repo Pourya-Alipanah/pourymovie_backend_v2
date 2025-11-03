@@ -57,11 +57,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
       Long userId = jwtService.extractUserId(token.get());
       String userEmail = jwtService.extractEmail(token.get());
-      if (userEmail == null || userEmail.isBlank()) {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write("Invalid token payload");
-        return;
-      }
+
       var userDetails = userDetailsService.loadUserByUsername(userEmail);
 
       if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -77,9 +73,7 @@ public class JwtFilter extends OncePerRequestFilter {
       }
 
     } catch (Exception e) {
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.getWriter().write(e.toString());
-      return;
+      logger.error("JWT validation failed: " + e.getMessage());
     }
 
     filterChain.doFilter(request, response);

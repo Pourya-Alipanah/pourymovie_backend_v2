@@ -3,13 +3,12 @@ package com.pourymovie.controller;
 import com.pourymovie.dto.SignInDto;
 import com.pourymovie.dto.SignUpDto;
 import com.pourymovie.service.AuthService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
@@ -22,13 +21,13 @@ public class AuthController {
 
   @ApiResponse(responseCode = "204" , description = "Successful Operation And Set Cookies")
   @PostMapping("/sign-in")
-  public void signIn(@RequestBody SignInDto signInDto , HttpServletResponse response) throws Exception {
+  public void signIn(@Valid @RequestBody SignInDto signInDto , HttpServletResponse response) throws Exception {
     authService.signIn(signInDto , response);
   }
 
   @ApiResponse(responseCode = "204" , description = "Successful Operation And Set Cookies")
   @PostMapping("/sign-up")
-  public void signUp(@RequestBody SignUpDto signInDto , HttpServletResponse response) throws Exception {
+  public void signUp(@Valid @RequestBody SignUpDto signInDto , HttpServletResponse response) throws Exception {
     authService.signUp(signInDto, response);
   }
 

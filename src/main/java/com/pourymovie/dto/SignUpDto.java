@@ -30,6 +30,5 @@ public class SignUpDto {
   private String confirmPassword;
 
   @Valid
-
   private ConfirmUploadDto avatarUrl;
 }
