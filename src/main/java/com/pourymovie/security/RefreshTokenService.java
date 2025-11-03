@@ -20,7 +20,6 @@ public class RefreshTokenService {
   @Autowired
   private RefreshTokenRepository refreshTokenRepository;
 
-  @Transactional
   public RefreshTokenEntity generateRefreshToken(UserEntity user) {
     RefreshTokenEntity token = RefreshTokenEntity.builder()
             .user(user)
@@ -34,9 +33,15 @@ public class RefreshTokenService {
     return token.getExpiresAt().isAfter(Instant.now());
   }
 
-  @Transactional
   public void deleteByUser(UserEntity user) {
     refreshTokenRepository.deleteByUser(user);
+  }
+  public void deleteByToken(String token) {
+    try {
+      refreshTokenRepository.deleteByToken(token);
+    }catch (Exception e){
+      throw new RuntimeException(e);
+    }
   }
 
   public RefreshTokenEntity findByToken(String token) {

@@ -19,10 +19,6 @@ public class SwaggerConfig {
                     .version("2.0"))
             .addServersItem(new Server().url("http://localhost:1406/api/v2"))
             .addServersItem(new Server().url("https://api.pourymovie.ir/api/v2"))
-            .schemaRequirement("access-token", new SecurityScheme()
-                    .type(SecurityScheme.Type.HTTP)
-                    .scheme("bearer")
-                    .bearerFormat("JWT"))
             .addSecurityItem(new SecurityRequirement().addList("access-token"));
   }
 }

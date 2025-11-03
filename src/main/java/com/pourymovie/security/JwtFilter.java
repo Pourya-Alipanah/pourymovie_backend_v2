@@ -1,6 +1,8 @@
 package com.pourymovie.security;
 
 import com.pourymovie.config.AppDefaults;
+import com.pourymovie.enums.TokenNames;
+import com.pourymovie.util.CookieUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Optional;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -40,28 +43,20 @@ public class JwtFilter extends OncePerRequestFilter {
   }
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+  protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-    String token = null;
-    if (request.getCookies() != null) {
-      for (var cookie : request.getCookies()) {
-        if ("accessToken".equals(cookie.getName())) {
-          token = cookie.getValue();
-          break;
-        }
-      }
-    }
+    Optional<String> token = CookieUtils.getToken(TokenNames.ACCESS_TOKEN, request);
 
 
-    if (token == null || token.isBlank()) {
+    if (token.isEmpty()) {
       filterChain.doFilter(request, response);
       return;
     }
 
     try {
 
-      Long userId = jwtService.extractUserId(token);
-      String userEmail = jwtService.extractEmail(token);
+      Long userId = jwtService.extractUserId(token.get());
+      String userEmail = jwtService.extractEmail(token.get());
       if (userEmail == null || userEmail.isBlank()) {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write("Invalid token payload");
@@ -70,7 +65,7 @@ public class JwtFilter extends OncePerRequestFilter {
       var userDetails = userDetailsService.loadUserByUsername(userEmail);
 
       if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-        if (jwtService.validateToken(token, userDetails)) {
+        if (jwtService.validateToken(token.get(), userDetails)) {
           var authToken = new UsernamePasswordAuthenticationToken(
                   userDetails, null, userDetails.getAuthorities()
           );
@@ -83,7 +78,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     } catch (Exception e) {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.getWriter().write("Invalid or expired token");
+      response.getWriter().write(e.toString());
       return;
     }
 
