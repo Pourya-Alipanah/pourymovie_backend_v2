@@ -39,7 +39,7 @@ public class AuthService {
 
 
   public void signIn(SignInDto signInDto, HttpServletResponse response) {
-    try {
+
       var authToken = new UsernamePasswordAuthenticationToken(
               signInDto.getEmail(),
               signInDto.getPassword()
@@ -50,25 +50,18 @@ public class AuthService {
 
       signAndSendTokens(response, user);
 
-    } catch (AuthenticationException ex) {
-      throw new RuntimeException("Invalid credentials");
-    }
   }
 
   public void signUp(SignUpDto signUpDto, HttpServletResponse response) {
-    try {
+
 
       UserEntity user = userService.createUser(signUpDto , UserRole.USER);
 
       signAndSendTokens(response, user);
 
-    } catch (AuthenticationException ex) {
-      throw new RuntimeException(ex);
-    }
   }
 
   public void refreshToken(HttpServletRequest request , HttpServletResponse response) {
-    try{
       String extractedRefreshToken = CookieUtils.getToken(TokenNames.REFRESH_TOKEN, request)
               .orElseThrow(() -> new RuntimeException("Refresh token is missing"));
 
@@ -86,13 +79,10 @@ public class AuthService {
 
       signAndSendTokens(response, user);
 
-    } catch (Exception ex) {
-      throw new RuntimeException(ex);
-    }
   }
 
   public void signOut(HttpServletRequest request , HttpServletResponse response) {
-    try{
+
       String extractedRefreshToken = CookieUtils.getToken(TokenNames.REFRESH_TOKEN, request)
               .orElseThrow(() -> new RuntimeException("Refresh token is missing"));
 
@@ -106,9 +96,7 @@ public class AuthService {
 
       response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 
-    } catch (Exception ex) {
-      throw new RuntimeException(ex);
-    }
+
   }
 
   private void signAndSendTokens(HttpServletResponse response, UserEntity user) {

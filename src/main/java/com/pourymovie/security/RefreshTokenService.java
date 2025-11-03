@@ -37,11 +37,8 @@ public class RefreshTokenService {
     refreshTokenRepository.deleteByUser(user);
   }
   public void deleteByToken(String token) {
-    try {
       refreshTokenRepository.deleteByToken(token);
-    }catch (Exception e){
-      throw new RuntimeException(e);
-    }
+
   }
 
   public RefreshTokenEntity findByToken(String token) {

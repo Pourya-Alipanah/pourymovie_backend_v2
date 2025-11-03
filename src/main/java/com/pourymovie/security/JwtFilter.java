@@ -3,6 +3,7 @@ package com.pourymovie.security;
 import com.pourymovie.config.AppDefaults;
 import com.pourymovie.enums.TokenNames;
 import com.pourymovie.util.CookieUtils;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,10 +51,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
     if (token.isEmpty()) {
       filterChain.doFilter(request, response);
-      return;
     }
 
-    try {
 
       Long userId = jwtService.extractUserId(token.get());
       String userEmail = jwtService.extractEmail(token.get());
@@ -72,9 +71,6 @@ public class JwtFilter extends OncePerRequestFilter {
         }
       }
 
-    } catch (Exception e) {
-      logger.error("JWT validation failed: " + e.getMessage());
-    }
 
     filterChain.doFilter(request, response);
   }
