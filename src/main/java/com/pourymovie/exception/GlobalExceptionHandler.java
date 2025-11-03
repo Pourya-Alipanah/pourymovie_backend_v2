@@ -11,23 +11,17 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(CustomException.class)
-  public ProblemDetail handleCustomException(CustomException ex) {
-    ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-            ex.getStatus(),
-            ex.getMessage()
-    );
-    problemDetail.setTitle(ex.getStatus().getReasonPhrase());
-    problemDetail.setProperty("timestamp", Instant.now());
-    return problemDetail;
+  @ExceptionHandler(ResponseStatusException.class)
+  public ProblemDetail handleResponseStatusException(ResponseStatusException ex) {
+    return ex.getBody();
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -51,11 +45,9 @@ public class GlobalExceptionHandler {
             "Validation failed"
     );
     problemDetail.setTitle("Bad Request");
-    problemDetail.setProperty("timestamp", Instant.now());
     problemDetail.setProperty("errors", errors);
     return problemDetail;
   }
-
 
   @ExceptionHandler(AccessDeniedException.class)
   public ProblemDetail handleAccessDeniedException(AccessDeniedException ex) {
@@ -64,7 +56,6 @@ public class GlobalExceptionHandler {
             "Access denied"
     );
     problemDetail.setTitle("Forbidden");
-    problemDetail.setProperty("timestamp", Instant.now());
     return problemDetail;
   }
 
@@ -75,7 +66,6 @@ public class GlobalExceptionHandler {
             "Authentication failed"
     );
     problemDetail.setTitle("Unauthorized");
-    problemDetail.setProperty("timestamp", Instant.now());
     return problemDetail;
   }
 
@@ -86,11 +76,15 @@ public class GlobalExceptionHandler {
             "Database constraint violation"
     );
     problemDetail.setTitle("Conflict");
-    problemDetail.setProperty("timestamp", Instant.now());
     String message = ex.getMostSpecificCause().getMessage();
+
     if (message.contains("unique constraint") || message.contains("Duplicate entry")) {
       problemDetail.setDetail("A record with this value already exists");
+      problemDetail.setProperty("description", message);
+      return problemDetail;
     }
+
+    problemDetail.setDetail(message);
 
     return problemDetail;
   }
@@ -101,8 +95,9 @@ public class GlobalExceptionHandler {
             HttpStatus.INTERNAL_SERVER_ERROR,
             "Database operation failed"
     );
+    String message = ex.getMostSpecificCause().getMessage();
     problemDetail.setTitle("Database Error");
-    problemDetail.setProperty("timestamp", Instant.now());
+    problemDetail.setDetail(message);
     return problemDetail;
   }
 
@@ -115,23 +110,27 @@ public class GlobalExceptionHandler {
 
     ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
             HttpStatus.BAD_REQUEST,
-            "Validation constraint violation"
+            "Database Validation constraint violation"
     );
     problemDetail.setTitle("Bad Request");
-    problemDetail.setProperty("timestamp", Instant.now());
     problemDetail.setProperty("errors", errors);
     return problemDetail;
   }
 
-  @ExceptionHandler({Exception.class , RuntimeException.class})
+  @ExceptionHandler({Exception.class, RuntimeException.class, Throwable.class})
   public ProblemDetail handleGlobalException(Exception ex) {
     ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
             HttpStatus.INTERNAL_SERVER_ERROR,
             "Internal server error"
     );
     problemDetail.setTitle("Internal Server Error");
-    problemDetail.setProperty("timestamp", Instant.now());
     problemDetail.setProperty("details", ex.getMessage());
+
+    StackTraceElement[] stack = ex.getStackTrace();
+    if (stack != null && stack.length > 0) {
+      problemDetail.setProperty("trace", stack[0].toString());
+    }
+
     return problemDetail;
   }
 }
