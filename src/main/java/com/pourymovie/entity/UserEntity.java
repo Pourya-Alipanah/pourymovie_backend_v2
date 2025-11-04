@@ -11,6 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -58,11 +59,14 @@ public class UserEntity {
   private String resetPasswordToken;
 
   @JsonIgnore
-  @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
+  @Column
   private Instant resetPasswordTokenExpires;
 
   @Column(nullable = false)
   private boolean hasSubscription = false;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<RefreshTokenEntity> refreshToken;
 
 //  @OneToMany(mappedBy = "user")
 //  private List<Comment> comments;

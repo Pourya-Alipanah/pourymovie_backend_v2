@@ -6,7 +6,11 @@ import com.pourymovie.enums.UserRole;
 import com.pourymovie.mapper.UserMapper;
 import com.pourymovie.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,5 +34,36 @@ public class UserService {
     mappedUser.setPassword(passwordEncoder.encode(user.getPassword()));
     mappedUser.setRole(role);
     return userRepository.save(mappedUser);
+  }
+
+  public Page<UserEntity> getUsers(Pageable pageable) {
+    return userRepository.findAll(pageable);
+  }
+
+  public UserEntity getCurrentUser() {
+    String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+    return getUserByEmail(userEmail);
+  }
+
+  public UserEntity getUserById(Long id) {
+    return userRepository.findById(id).orElseThrow();
+  }
+
+  /*public UserEntity updateUser(Long id, SignUpDto userDto) {
+    UserEntity existingUser = getUserById(id);
+    existingUser.setEmail(userDto.getEmail());
+    existingUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
+    existingUser.setName(userDto.getName());
+    return userRepository.save(existingUser);
+  }*/
+
+  public void deleteUser(Long id) {
+    userRepository.deleteById(id);
+  }
+
+  public void deleteCurrentUser(){
+    String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+    UserEntity user = getUserByEmail(userEmail);
+    userRepository.delete(user);
   }
 }
