@@ -65,7 +65,8 @@ public class UserEntity {
   @Column(nullable = false)
   private boolean hasSubscription = false;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonIgnore
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true , fetch =  FetchType.LAZY)
   private List<RefreshTokenEntity> refreshToken;
 
 //  @OneToMany(mappedBy = "user")

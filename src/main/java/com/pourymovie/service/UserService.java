@@ -1,10 +1,12 @@
 package com.pourymovie.service;
 
 import com.pourymovie.dto.SignUpDto;
+import com.pourymovie.dto.UpdateUserDto;
 import com.pourymovie.entity.UserEntity;
 import com.pourymovie.enums.UserRole;
 import com.pourymovie.mapper.UserMapper;
 import com.pourymovie.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,15 +51,13 @@ public class UserService {
     return userRepository.findById(id).orElseThrow();
   }
 
-  /*public UserEntity updateUser(Long id, SignUpDto userDto) {
-    UserEntity existingUser = getUserById(id);
-    existingUser.setEmail(userDto.getEmail());
-    existingUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
-    existingUser.setName(userDto.getName());
+  public UserEntity updateUserByEmail(String email, UpdateUserDto updateUserDto) {
+    UserEntity existingUser = getUserByEmail(email);
+    userMapper.updateEntityFromDto(updateUserDto, existingUser);
     return userRepository.save(existingUser);
-  }*/
+  }
 
-  public void deleteUser(Long id) {
+  public void deleteUserById(Long id) {
     userRepository.deleteById(id);
   }
 
@@ -65,5 +65,16 @@ public class UserService {
     String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
     UserEntity user = getUserByEmail(userEmail);
     userRepository.delete(user);
+  }
+
+  public UserEntity updateCurrentUser(UpdateUserDto userDto) {
+    String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+    return updateUserByEmail(userEmail, userDto);
+  }
+
+  public UserEntity updateUserById(Long id, @Valid UpdateUserDto updateUserDto) {
+    UserEntity existingUser = getUserById(id);
+    userMapper.updateEntityFromDto(updateUserDto, existingUser);
+    return userRepository.save(existingUser);
   }
 }

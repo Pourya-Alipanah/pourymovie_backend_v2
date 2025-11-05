@@ -26,36 +26,56 @@ public class UserController {
   private UserService userService;
 
   @PreAuthorize("hasRole('SUPER_ADMIN')")
+  @Operation(summary = "Required Role = Super Admin")
   @PostMapping("/admin")
-  @Operation(summary = "just for super admin user to create admin users")
-  public ResponseEntity<UserEntity> addUser(@RequestBody SignUpDto signUpDto) {
+  public ResponseEntity<UserEntity> addUser(@Valid @RequestBody SignUpDto signUpDto) {
     return new ResponseEntity<>(userService.createUser(signUpDto, UserRole.ADMIN) , HttpStatus.CREATED);
   }
 
   @PreAuthorize("hasRole('ADMIN')")
   @GetMapping
+  @Operation(summary = "Required Role = Admin")
   public Page<UserEntity> getUsers(Pageable pageable) {
     return userService.getUsers(pageable);
   }
 
   @GetMapping("/current")
-  public ResponseEntity<UserEntity> getCurrentUser() {
-    return new ResponseEntity<>(userService.getCurrentUser(), HttpStatus.OK);
+  public UserEntity getCurrentUser() {
+    return userService.getCurrentUser();
   }
 
+  @PreAuthorize("hasRole('ADMIN')")
   @GetMapping("/{id}")
-  public ResponseEntity<UserEntity> getUserById(@PathVariable String id) {
-    return new ResponseEntity<>(userService.getUserById(Long.parseLong(id)), HttpStatus.OK);
+  @Operation(summary = "Required Role = Admin")
+  public UserEntity getUserById(@PathVariable Long id) {
+    return userService.getUserById(id);
   }
 
-  /*public ResponseEntity<UserEntity> updateCurrentUser(@Valid @RequestBody UpdateUserDto userDto) {
-    return new ResponseEntity<>(userService.updateCurrentUser(userDto), HttpStatus.OK);
-  }*/
+  @PatchMapping("/current")
+  public UserEntity updateCurrentUser(@Valid @RequestBody UpdateUserDto userDto) {
+    return userService.updateCurrentUser(userDto);
+  }
+
+  @PreAuthorize("hasRole('ADMIN')")
+  @PatchMapping("/{id}")
+  @Operation(summary = "Required Role = Admin")
+  public UserEntity updateUser(@Valid @RequestBody UpdateUserDto userDto , @PathVariable Long id) {
+    return userService.updateUserById(id , userDto);
+  }
 
   @DeleteMapping
   @ApiResponse(responseCode = "204")
   public ResponseEntity<String> deleteCurrentUser() {
     userService.deleteCurrentUser();
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  @PreAuthorize("hasRole('ADMIN')")
+  @DeleteMapping("/{id}")
+  @Operation(summary = "Required Role = Admin")
+  @ApiResponse(responseCode = "204")
+  public ResponseEntity<String> deleteCurrentUser(@PathVariable Long id) {
+    userService.deleteUserById(id);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }

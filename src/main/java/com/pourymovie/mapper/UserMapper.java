@@ -3,10 +3,7 @@ package com.pourymovie.mapper;
 import com.pourymovie.dto.SignUpDto;
 import com.pourymovie.dto.UpdateUserDto;
 import com.pourymovie.entity.UserEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
 @Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserMapper {
@@ -24,7 +21,7 @@ public interface UserMapper {
           @Mapping(target = "updateAt", ignore = true),
           @Mapping(target = "refreshToken", ignore = true)
   })
-  public UserEntity toEntity(SignUpDto user);
+  UserEntity toEntity(SignUpDto user);
 
   @Mappings({
           @Mapping(target = "password", ignore = true),
@@ -39,5 +36,5 @@ public interface UserMapper {
           @Mapping(target = "updateAt", ignore = true),
           @Mapping(target = "refreshToken", ignore = true)
   })
-  public UserEntity toEntity(UpdateUserDto user);
+  void updateEntityFromDto(UpdateUserDto dto, @MappingTarget UserEntity entity);
 }
