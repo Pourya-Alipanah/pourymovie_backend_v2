@@ -1,6 +1,9 @@
 package com.pourymovie.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pourymovie.config.AppDefaults;
+import com.pourymovie.exception.AccessDeniedHandlerImpl;
+import com.pourymovie.exception.AuthenticationEntrypoint;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +15,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -31,6 +36,16 @@ public class SecurityConfig {
   }
 
   @Bean
+  public AuthenticationEntryPoint authenticationEntrypoint(ObjectMapper objectMapper) {
+    return new AuthenticationEntrypoint(objectMapper);
+  }
+
+  @Bean
+  public AccessDeniedHandler accessDeniedHandler(ObjectMapper objectMapper) {
+    return new AccessDeniedHandlerImpl(objectMapper);
+  }
+
+  @Bean
   public DaoAuthenticationProvider authenticationManager(PasswordEncoder passwordEncoder, CustomUserDetailsService userDetailsService) {
     var authProvider = new DaoAuthenticationProvider(userDetailsService);
     authProvider.setPasswordEncoder(passwordEncoder);
@@ -38,7 +53,8 @@ public class SecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http, DaoAuthenticationProvider authenticationProvider) throws Exception {
+  public SecurityFilterChain securityFilterChain(HttpSecurity http, DaoAuthenticationProvider authenticationProvider,
+                                                 AuthenticationEntryPoint authenticationEntrypoint, AccessDeniedHandler accessDeniedHandler) throws Exception {
 
     http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((requests) -> requests
@@ -47,17 +63,9 @@ public class SecurityConfig {
                     .anyRequest()
                     .authenticated()
             )
-            .exceptionHandling(exceptions -> exceptions
-                    .authenticationEntryPoint((request, response, authException) -> {
-                      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                      response.setContentType("application/json");
-                      response.getWriter().write("{\"message\":\"Unauthorized\",\"status\":401}");
-                    })
-                    .accessDeniedHandler((request, response, accessDeniedException) -> {
-                      response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                      response.setContentType("application/json");
-                      response.getWriter().write("{\"message\":\"Access denied\",\"status\":403}");
-                    })
+            .exceptionHandling(ex -> ex
+                    .authenticationEntryPoint(authenticationEntrypoint)
+                    .accessDeniedHandler(accessDeniedHandler)
             )
             .formLogin(AbstractHttpConfigurer::disable)
             .logout(AbstractHttpConfigurer::disable)
