@@ -1,5 +1,8 @@
 package com.pourymovie.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum StreamBucketNames implements BucketName {
   TRAILER("pourymovie-trailer"),
   VIDEO("pourymovie-video");
@@ -11,7 +14,4 @@ public enum StreamBucketNames implements BucketName {
     this.bucketName = bucketName;
   }
 
-  public String getBucketName() {
-    return bucketName;
-  }
 }
