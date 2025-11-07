@@ -20,7 +20,7 @@ public class BucketNameValidator implements ConstraintValidator<ValidBucketName,
     return Arrays.stream(enumClass.getEnumConstants())
             .anyMatch(e -> {
               try {
-                return e.getClass().getMethod("getBucketName").invoke(e).equals(value);
+                return e.getClass().getMethod("getValue").invoke(e).equals(value);
               } catch (Exception ex) {
                 return false;
               }

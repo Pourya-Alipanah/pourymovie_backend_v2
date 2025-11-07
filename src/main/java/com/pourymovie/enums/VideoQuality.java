@@ -1,9 +1,11 @@
+
 package com.pourymovie.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 @Getter
-public enum VideoQuality {
+public enum VideoQuality implements BaseAsymmetricEnum {
   Q240p("240p"),
   Q360p("360p"),
   Q480p("480p"),
@@ -21,9 +23,11 @@ public enum VideoQuality {
   TS("TS"),
   HDTV("HDTV");
 
+  @JsonValue
   private final String value;
 
   VideoQuality(String value) {
     this.value = value;
   }
+
 }

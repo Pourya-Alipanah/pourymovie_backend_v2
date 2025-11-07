@@ -1,7 +1,7 @@
 package com.pourymovie.controller;
 
-import com.pourymovie.dto.SignUpDto;
-import com.pourymovie.dto.UpdateUserDto;
+import com.pourymovie.dto.request.SignUpDto;
+import com.pourymovie.dto.request.UpdateUserDto;
 import com.pourymovie.entity.UserEntity;
 import com.pourymovie.enums.UserRole;
 import com.pourymovie.service.UserService;
@@ -64,18 +64,16 @@ public class UserController {
   }
 
   @DeleteMapping
-  @ApiResponse(responseCode = "204")
-  public ResponseEntity<String> deleteCurrentUser() {
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteCurrentUser() {
     userService.deleteCurrentUser();
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   @PreAuthorize("hasRole('ADMIN')")
   @DeleteMapping("/{id}")
   @Operation(summary = "Required Role = Admin")
-  @ApiResponse(responseCode = "204")
-  public ResponseEntity<String> deleteCurrentUser(@PathVariable Long id) {
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteCurrentUser(@PathVariable Long id) {
     userService.deleteUserById(id);
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }

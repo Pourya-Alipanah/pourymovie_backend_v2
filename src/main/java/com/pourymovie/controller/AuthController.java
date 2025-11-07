@@ -1,7 +1,7 @@
 package com.pourymovie.controller;
 
-import com.pourymovie.dto.SignInDto;
-import com.pourymovie.dto.SignUpDto;
+import com.pourymovie.dto.request.SignInDto;
+import com.pourymovie.dto.request.SignUpDto;
 import com.pourymovie.service.AuthService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

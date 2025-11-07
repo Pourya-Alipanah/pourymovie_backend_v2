@@ -1,6 +1,8 @@
 package com.pourymovie.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pourymovie.enums.VideoQuality;
+import com.pourymovie.persistence.VideoQualityConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,14 +28,16 @@ public class VideoLinkEntity {
   private String url;
 
   @Column
-  @Enumerated(EnumType.STRING)
+  @Convert(converter = VideoQualityConverter.class)
   private VideoQuality quality;
 
   @ManyToOne
   @JoinColumn(name = "episodeId")
+  @JsonIgnore
   private EpisodeEntity episode;
 
   @ManyToOne
   @JoinColumn(name = "titleId")
+  @JsonIgnore
   private TitleEntity title;
 }

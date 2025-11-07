@@ -5,10 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "refresh_tokens")
@@ -30,8 +29,8 @@ public class RefreshTokenEntity {
 
   @Column(nullable = false, updatable = false)
   @CreationTimestamp
-  private Instant createdAt;
+  private LocalDateTime createdAt;
 
   @Column(nullable = false)
-  private Instant expiresAt;
+  private LocalDateTime expiresAt;
 }

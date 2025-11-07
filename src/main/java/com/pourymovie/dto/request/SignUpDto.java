@@ -1,4 +1,4 @@
-package com.pourymovie.dto;
+package com.pourymovie.dto.request;
 
 import com.pourymovie.validation.ConfirmPasswordMatches;
 import jakarta.validation.Valid;

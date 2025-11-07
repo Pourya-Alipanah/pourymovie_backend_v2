@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -30,10 +32,10 @@ public class PeopleEntity {
   private String slug;
 
   @Column
-  private Date birthDate;
+  private LocalDate birthDate;
 
   @Column
-  private Date deathDate;
+  private LocalDate deathDate;
 
   @Column(length = 50)
   private String birthPlace;
@@ -41,6 +43,6 @@ public class PeopleEntity {
   @Column(length = 500)
   private String imageUrl;
 
-  @OneToMany(mappedBy = "person")
+  @OneToMany(mappedBy = "person" , fetch = FetchType.LAZY)
   private List<TitlePeopleEntity> titlePersons;
 }

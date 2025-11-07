@@ -1,6 +1,7 @@
 package com.pourymovie.entity;
 
 import com.pourymovie.enums.PersonRole;
+import com.pourymovie.persistence.PersonRoleConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,7 +21,7 @@ public class TitlePeopleEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Enumerated(EnumType.STRING)
+  @Convert(converter = PersonRoleConverter.class)
   @Column(nullable = false)
   private PersonRole role;
 

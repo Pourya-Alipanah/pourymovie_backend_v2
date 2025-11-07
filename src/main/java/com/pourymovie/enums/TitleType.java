@@ -1,15 +1,17 @@
 package com.pourymovie.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 @Getter
-public enum TitleType {
+public enum TitleType implements BaseAsymmetricEnum{
   Movie("movie"),
   Series("series");
 
-  private final String typeName;
+  @JsonValue
+  private final String value;
 
-  TitleType(String typeName) {
-    this.typeName = typeName;
+  TitleType(String value) {
+    this.value = value;
   }
 }

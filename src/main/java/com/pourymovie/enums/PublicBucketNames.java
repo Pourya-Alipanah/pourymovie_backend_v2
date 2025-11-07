@@ -1,18 +1,20 @@
 package com.pourymovie.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 @Getter
-public enum PublicBucketNames implements BucketName {
+public enum PublicBucketNames implements BaseAsymmetricEnum {
   TRAILER("pourymovie-trailer"),
   PROFILE("pourymovie-profile"),
   COVER("pourymovie-cover"),
   THUMBNAIL("pourymovie-thumbnail");
 
-  private final String bucketName;
+  @JsonValue
+  private final String value;
 
-  PublicBucketNames(String bucketName) {
-    this.bucketName = bucketName;
+  PublicBucketNames(String value) {
+    this.value = value;
   }
 
 }

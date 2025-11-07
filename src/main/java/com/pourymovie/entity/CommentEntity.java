@@ -49,7 +49,7 @@ public class CommentEntity {
   @Enumerated(EnumType.STRING)
   private DeletedBy deletedBy;
 
-  @Formula("comment.createdAt <> comment.updateAt")
+  @Formula("\"createdAt\" <> \"updateAt\"")
   private boolean isUpdated;
 
   @ManyToOne

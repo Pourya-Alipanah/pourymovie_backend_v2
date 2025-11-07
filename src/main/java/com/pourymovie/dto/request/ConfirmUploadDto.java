@@ -1,4 +1,4 @@
-package com.pourymovie.dto;
+package com.pourymovie.dto.request;
 
 import com.pourymovie.enums.AllBucketNames;
 import com.pourymovie.validation.ValidBucketName;

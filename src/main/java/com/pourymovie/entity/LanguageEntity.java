@@ -1,9 +1,10 @@
 package com.pourymovie.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class LanguageEntity {
   @Column(length = 20)
   private String slug;
 
-  @OneToMany(mappedBy = "language")
+  @OneToMany(mappedBy = "language" , fetch =  FetchType.LAZY)
+  @JsonIgnore
   private List<TitleEntity> titles;
 }

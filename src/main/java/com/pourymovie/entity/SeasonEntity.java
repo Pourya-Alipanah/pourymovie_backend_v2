@@ -1,5 +1,6 @@
 package com.pourymovie.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,11 +22,12 @@ public class SeasonEntity {
   @Column
   private Integer seasonNumber;
 
-  @OneToMany(mappedBy = "season")
+  @OneToMany(mappedBy = "season", fetch = FetchType.LAZY)
   private List<EpisodeEntity> episodes;
 
   @ManyToOne
   @JoinColumn(name = "titleId")
+  @JsonIgnore
   private TitleEntity title;
 
   @Column

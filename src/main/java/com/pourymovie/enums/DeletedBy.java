@@ -1,15 +1,17 @@
 package com.pourymovie.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 @Getter
-public enum DeletedBy {
+public enum DeletedBy implements BaseAsymmetricEnum{
   USER("user"),
   ADMIN("admin");
 
-  private final String displayName;
+  @JsonValue
+  private final String value;
 
-  DeletedBy(String displayName) {
-    this.displayName = displayName;
+  DeletedBy(String value) {
+    this.value = value;
   }
 }

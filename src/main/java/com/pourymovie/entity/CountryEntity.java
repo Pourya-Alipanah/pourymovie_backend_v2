@@ -1,5 +1,6 @@
 package com.pourymovie.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,9 +21,13 @@ public class CountryEntity {
   @Column(length = 50)
   private String nameEn;
 
+  @Column(length = 50)
+  private String nameFa;
+
   @Column(unique = true)
   private String slug;
 
-  @OneToMany(mappedBy = "country")
+  @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
+  @JsonIgnore
   private List<TitleEntity> titles;
 }

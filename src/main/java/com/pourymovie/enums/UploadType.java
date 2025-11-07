@@ -1,9 +1,10 @@
 package com.pourymovie.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 @Getter
-public enum UploadType {
+public enum UploadType implements BaseAsymmetricEnum{
   AVATAR("avatar"),
   PROFILE("profile"),
   COVER("cover"),
@@ -11,7 +12,8 @@ public enum UploadType {
   TRAILER("trailer"),
   VIDEO("video");
 
-  private String value;
+  @JsonValue
+  private final String value;
 
   UploadType(String value) {
     this.value = value;

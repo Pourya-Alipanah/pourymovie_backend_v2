@@ -1,16 +1,13 @@
 package com.pourymovie.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.pourymovie.enums.TitleType;
-import com.pourymovie.util.DBUtils;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import lombok.*;
+import org.hibernate.annotations.*;
 
 
 import java.util.List;
@@ -94,30 +91,22 @@ public class TitleEntity {
   )
   private List<GenreEntity> genres;
 
-  @JsonIgnore
-  @Formula("(SELECT json_agg(p.*) FROM person p " +
-          "JOIN title_person tp ON tp.person_id = p.id " +
-          "WHERE tp.title_id = id AND tp.role = 'ACTOR')")
-  private String actorsJson;
+  @OneToMany(mappedBy = "title", fetch = FetchType.EAGER)
+  @SQLRestriction("role = 'actor'")
+  private List<TitlePeopleEntity> actorLinks;
+
+  @OneToMany(mappedBy = "title", fetch = FetchType.EAGER)
+  @SQLRestriction("role = 'writer'")
+  private List<TitlePeopleEntity> writerLinks;
+
+  @OneToMany(mappedBy = "title", fetch = FetchType.EAGER)
+  @SQLRestriction("role = 'director'")
+  private List<TitlePeopleEntity> directorLinks;
 
   @Transient
   private List<PeopleEntity> actors;
-
-  @JsonIgnore
-  @Formula("(SELECT json_agg(p.*) FROM person p " +
-          "JOIN title_person tp ON tp.person_id = p.id " +
-          "WHERE tp.title_id = id AND tp.role = 'DIRECTOR')")
-  private String directorsJson;
-
   @Transient
   private List<PeopleEntity> directors;
-
-  @JsonIgnore
-  @Formula("(SELECT json_agg(p.*) FROM person p " +
-          "JOIN title_person tp ON tp.person_id = p.id " +
-          "WHERE tp.title_id = id AND tp.role = 'WRITER')")
-  private String writersJson;
-
   @Transient
   private List<PeopleEntity> writers;
 
@@ -139,18 +128,18 @@ public class TitleEntity {
   @OneToMany(mappedBy = "title", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<CommentEntity> comments;
 
+  @Transient
   public List<PeopleEntity> getActors() {
-    actors = DBUtils.safeJsonToList(actorsJson, new TypeReference<>() {});
-    return actors;
+    return actorLinks.stream().map(TitlePeopleEntity::getPerson).toList();
   }
 
+  @Transient
   public List<PeopleEntity> getDirectors() {
-    directors = DBUtils.safeJsonToList(directorsJson, new TypeReference<>() {});
-    return directors;
+    return directorLinks.stream().map(TitlePeopleEntity::getPerson).toList();
   }
 
+  @Transient
   public List<PeopleEntity> getWriters() {
-    writers = DBUtils.safeJsonToList(writersJson, new TypeReference<>() {});
-    return writers;
+    return writerLinks.stream().map(TitlePeopleEntity::getPerson).toList();
   }
 }

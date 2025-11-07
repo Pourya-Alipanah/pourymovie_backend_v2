@@ -1,5 +1,6 @@
 package com.pourymovie.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class GenreEntity {
   @Column(length = 120, unique = true)
   private String slug;
 
-  @ManyToMany(mappedBy = "genres")
+  @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY)
+  @JsonIgnore
   private List<TitleEntity> titles;
 }

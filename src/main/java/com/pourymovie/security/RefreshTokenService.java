@@ -8,7 +8,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -24,13 +24,13 @@ public class RefreshTokenService {
     RefreshTokenEntity token = RefreshTokenEntity.builder()
             .user(user)
             .token(UUID.randomUUID().toString())
-            .expiresAt(Instant.now().plusMillis(1000L * 60 * appDefaults.getDefaultRefreshTokenTTlInMinutes()))
+            .expiresAt(LocalDateTime.now().plusMinutes(appDefaults.getDefaultRefreshTokenTTlInMinutes()))
             .build();
     return refreshTokenRepository.save(token);
   }
 
   public boolean isTokenValid(RefreshTokenEntity token) {
-    return token.getExpiresAt().isAfter(Instant.now());
+    return token.getExpiresAt().isAfter(LocalDateTime.now());
   }
 
   public void deleteByUser(UserEntity user) {
