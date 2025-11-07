@@ -11,20 +11,19 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "episode")
-public class EpisodeEntity {
+@Table(name = "language")
+public class LanguageEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column
-  private Integer episodeNumber;
+  @Column(length = 10)
+  private String nameFa;
 
-  @OneToMany(mappedBy = "episode")
-  private List<VideoLinkEntity> videoLinks;
+  @Column(length = 20)
+  private String slug;
 
-  @ManyToOne
-  @JoinColumn(name = "seasonId")
-  private SeasonEntity season;
+  @OneToMany(mappedBy = "language")
+  private List<TitleEntity> titles;
 }

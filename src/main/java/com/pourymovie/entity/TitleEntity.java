@@ -1,12 +1,17 @@
 package com.pourymovie.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.pourymovie.enums.TitleType;
+import com.pourymovie.util.DBUtils;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 
 import java.util.List;
 
@@ -77,46 +82,75 @@ public class TitleEntity {
   @Column
   private String thumbnailUrl;
 
-//  @ManyToOne(targetEntity = )
-//  private Language language;
+  @ManyToOne
+  @JoinColumn(name = "languageId")
+  private LanguageEntity language;
 
-//  @ManyToMany(mappedBy = )
-//  @JoinTable
-//  private List<Genre> genres;
+  @ManyToMany
+  @JoinTable(
+          name = "title_genres_genre",
+          joinColumns = @JoinColumn(name = "titleId"),
+          inverseJoinColumns = @JoinColumn(name = "genreId")
+  )
+  private List<GenreEntity> genres;
 
-//  @Formula("(SELECT json_agg(p.*) FROM person p " +
-//          "JOIN title_person tp ON tp.person_id = p.id " +
-//          "WHERE tp.title_id = id AND tp.role = 'ACTOR')")
-//  private String actorsJson;
-//
-//  @Transient
-//  private List<Person> actors;
-//
-//  public List<Person> getActors() {
-//    if (actors == null && actorsJson != null) {
-//      try {
-//        ObjectMapper mapper = new ObjectMapper();
-//        actors = mapper.readValue(actorsJson, new TypeReference<List<Person>>() {});
-//      } catch (Exception e) {
-//        actors = List.of();
-//      }
-//    }
-//    return actors;
-//  }
+  @JsonIgnore
+  @Formula("(SELECT json_agg(p.*) FROM person p " +
+          "JOIN title_person tp ON tp.person_id = p.id " +
+          "WHERE tp.title_id = id AND tp.role = 'ACTOR')")
+  private String actorsJson;
 
-//  @ManyToOne(targetEntity = .class)
-//  private Country country;
+  @Transient
+  private List<PeopleEntity> actors;
 
-  @OneToMany(targetEntity = SeasonEntity.class)
+  @JsonIgnore
+  @Formula("(SELECT json_agg(p.*) FROM person p " +
+          "JOIN title_person tp ON tp.person_id = p.id " +
+          "WHERE tp.title_id = id AND tp.role = 'DIRECTOR')")
+  private String directorsJson;
+
+  @Transient
+  private List<PeopleEntity> directors;
+
+  @JsonIgnore
+  @Formula("(SELECT json_agg(p.*) FROM person p " +
+          "JOIN title_person tp ON tp.person_id = p.id " +
+          "WHERE tp.title_id = id AND tp.role = 'WRITER')")
+  private String writersJson;
+
+  @Transient
+  private List<PeopleEntity> writers;
+
+  @ManyToOne
+  @JoinColumn(name = "countryId")
+  @OnDelete(action = OnDeleteAction.SET_NULL)
+  private CountryEntity country;
+
+  @OneToMany(mappedBy = "title", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<SeasonEntity> seasons;
 
-//  @OneToMany(targetEntity = .class)
-//  private VideoLinks videoLinks;
+  @OneToMany(mappedBy = "title", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<VideoLinkEntity> videoLinks;
 
-//  @OneToMany
-//  @JsonIgnore
-//  private List<TitlePerson> people;
+  @JsonIgnore
+  @OneToMany(mappedBy = "title")
+  private List<TitlePeopleEntity> people;
 
-//  @OneToMany(targetEntity = .class)
-//  private List<Comment> comments;
+  @OneToMany(mappedBy = "title", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<CommentEntity> comments;
+
+  public List<PeopleEntity> getActors() {
+    actors = DBUtils.safeJsonToList(actorsJson, new TypeReference<>() {});
+    return actors;
+  }
+
+  public List<PeopleEntity> getDirectors() {
+    directors = DBUtils.safeJsonToList(directorsJson, new TypeReference<>() {});
+    return directors;
+  }
+
+  public List<PeopleEntity> getWriters() {
+    writers = DBUtils.safeJsonToList(writersJson, new TypeReference<>() {});
+    return writers;
+  }
 }

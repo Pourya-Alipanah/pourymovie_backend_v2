@@ -21,11 +21,12 @@ public class SeasonEntity {
   @Column
   private Integer seasonNumber;
 
-//  @OneToMany(mappedBy = )
-//  private List<Episode> episodes;
+  @OneToMany(mappedBy = "season")
+  private List<EpisodeEntity> episodes;
 
-//  @ManyToOne(targetEntity = )
-//  private Title title;
+  @ManyToOne
+  @JoinColumn(name = "titleId")
+  private TitleEntity title;
 
   @Column
   private boolean specialSeason = false;
