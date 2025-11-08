@@ -1,6 +1,6 @@
 package com.pourymovie.validation;
 
-import com.pourymovie.dto.SignUpDto;
+import com.pourymovie.dto.request.SignUpDto;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

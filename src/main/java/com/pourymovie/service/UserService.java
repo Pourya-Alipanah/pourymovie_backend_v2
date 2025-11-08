@@ -1,19 +1,16 @@
 package com.pourymovie.service;
 
-import com.pourymovie.dto.SignUpDto;
-import com.pourymovie.dto.UpdateUserDto;
+import com.pourymovie.dto.request.SignUpDto;
+import com.pourymovie.dto.request.UpdateUserDto;
 import com.pourymovie.entity.UserEntity;
 import com.pourymovie.enums.UserRole;
 import com.pourymovie.mapper.UserMapper;
 import com.pourymovie.repository.UserRepository;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
 package com.pourymovie.mapper;
 
-import com.pourymovie.dto.SignUpDto;
-import com.pourymovie.dto.UpdateUserDto;
+import com.pourymovie.dto.request.SignUpDto;
+import com.pourymovie.dto.request.UpdateUserDto;
 import com.pourymovie.entity.UserEntity;
 import org.mapstruct.*;
 

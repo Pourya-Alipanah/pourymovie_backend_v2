@@ -1,19 +1,19 @@
 package com.pourymovie.enums;
 
-public enum BufferBucketNames implements BucketName {
+import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+
+@Getter
+public enum BufferBucketNames implements BaseAsymmetricEnum {
   AVATAR("pourymovie-avatar"),
   PROFILE("pourymovie-profile"),
   COVER("pourymovie-cover"),
   THUMBNAIL("pourymovie-thumbnail");
 
+  @JsonValue
+  private final String value;
 
-  private final String bucketName;
-
-  BufferBucketNames(String bucketName) {
-    this.bucketName = bucketName;
-  }
-  @Override
-  public String getBucketName() {
-    return bucketName;
+  BufferBucketNames(String value) {
+    this.value = value;
   }
 }

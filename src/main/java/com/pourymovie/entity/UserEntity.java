@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.Instant;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -45,14 +44,14 @@ public class UserEntity {
 
   @CreationTimestamp
   @Column(updatable = false)
-  private ZonedDateTime createdAt;
+  private LocalDateTime createdAt;
 
   @UpdateTimestamp
   @Column
-  private ZonedDateTime updateAt;
+  private LocalDateTime updateAt;
 
   @Column
-  private ZonedDateTime deletedAt;
+  private LocalDateTime deletedAt;
 
   @JsonIgnore
   @Column
@@ -60,7 +59,7 @@ public class UserEntity {
 
   @JsonIgnore
   @Column
-  private Instant resetPasswordTokenExpires;
+  private LocalDateTime resetPasswordTokenExpires;
 
   @Column(nullable = false)
   private boolean hasSubscription = false;

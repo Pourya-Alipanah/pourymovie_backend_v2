@@ -4,15 +4,16 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 @Getter
-public enum StreamBucketNames implements BaseAsymmetricEnum {
-  TRAILER("pourymovie-trailer"),
-  VIDEO("pourymovie-video");
+public enum UploadFromEntity implements BaseAsymmetricEnum{
+  TITLE("title"),
+  PERSON("person"),
+  USER("user"),
+  VIDEO("video");
 
   @JsonValue
   private final String value;
 
-  StreamBucketNames(String value) {
+  UploadFromEntity(String value) {
     this.value = value;
   }
-
 }

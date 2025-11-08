@@ -1,4 +1,4 @@
-package com.pourymovie.dto;
+package com.pourymovie.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;

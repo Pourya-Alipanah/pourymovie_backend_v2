@@ -1,6 +1,10 @@
 package com.pourymovie.enums;
 
-public enum AllBucketNames implements BucketName {
+import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+
+@Getter
+public enum AllBucketNames implements BaseAsymmetricEnum {
   AVATAR("pourymovie-avatar"),
   PROFILE("pourymovie-profile"),
   COVER("pourymovie-cover"),
@@ -8,14 +12,11 @@ public enum AllBucketNames implements BucketName {
   TRAILER("pourymovie-trailer"),
   VIDEO("pourymovie-video");
 
-  private final String bucketName;
+  @JsonValue
+  private final String value;
 
-  AllBucketNames(String bucketName) {
-    this.bucketName = bucketName;
+  AllBucketNames(String value) {
+    this.value = value;
   }
 
-  @Override
-  public String getBucketName() {
-    return bucketName;
-  }
 }

@@ -1,8 +1,8 @@
 package com.pourymovie.service;
 
 import com.pourymovie.config.AppDefaults;
-import com.pourymovie.dto.SignInDto;
-import com.pourymovie.dto.SignUpDto;
+import com.pourymovie.dto.request.SignInDto;
+import com.pourymovie.dto.request.SignUpDto;
 import com.pourymovie.entity.RefreshTokenEntity;
 import com.pourymovie.entity.UserEntity;
 import com.pourymovie.enums.TokenNames;
@@ -13,13 +13,9 @@ import com.pourymovie.util.CookieUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
