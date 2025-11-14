@@ -31,7 +31,7 @@ public class SeasonController {
   }
 
   @PatchMapping("/{id}")
-//  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
   public SeasonDto updateSeason(@PathVariable Long id , @RequestBody UpdateSeasonDto updateSeasonDto) {
     return seasonService.updateSeason(id,updateSeasonDto);
