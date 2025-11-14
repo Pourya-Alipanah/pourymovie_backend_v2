@@ -4,6 +4,8 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springdoc.core.customizers.OperationCustomizer;
+import org.springframework.data.domain.Pageable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,5 +21,21 @@ public class SwaggerConfig {
             .addServersItem(new Server().url("http://localhost:1406/api/v2"))
             .addServersItem(new Server().url("https://api.pourymovie.ir/api/v2"))
             .addSecurityItem(new SecurityRequirement().addList("access-token"));
+  }
+
+  @Bean
+  public OperationCustomizer pageableOperationCustomizer() {
+    return (operation, handlerMethod) -> {
+      for (var param : handlerMethod.getMethodParameters()) {
+        if (param.getParameterType().equals(Pageable.class)) {
+          operation.getParameters().forEach(parameter -> {
+            if ("size".equals(parameter.getName())) {
+              parameter.getSchema().setDefault(10);
+            }
+          });
+        }
+      }
+      return operation;
+    };
   }
 }
