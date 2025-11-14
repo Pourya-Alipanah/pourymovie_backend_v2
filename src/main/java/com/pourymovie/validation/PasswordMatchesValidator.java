@@ -8,9 +8,9 @@ public class PasswordMatchesValidator implements ConstraintValidator<ConfirmPass
 
   @Override
   public boolean isValid(SignUpDto dto, ConstraintValidatorContext context) {
-    if (dto.getPassword() == null || dto.getConfirmPassword() == null) {
+    if (dto.password() == null || dto.confirmPassword() == null) {
       return false;
     }
-    return dto.getPassword().equals(dto.getConfirmPassword());
+    return dto.password().equals(dto.confirmPassword());
   }
 }

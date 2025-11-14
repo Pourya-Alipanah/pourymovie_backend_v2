@@ -3,15 +3,13 @@ package com.pourymovie.dto.request;
 import com.pourymovie.enums.AllBucketNames;
 import com.pourymovie.validation.ValidBucketName;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.Data;
 
-@Data
-public class ConfirmUploadDto {
+public record ConfirmUploadDto(
+        @ValidBucketName(enumClass = AllBucketNames.class)
+        @NotEmpty
+        AllBucketNames bucketName,
 
-  @ValidBucketName(enumClass = AllBucketNames.class)
-  @NotEmpty
-  private AllBucketNames bucketName;
-
-  @NotEmpty
-  private String key;
+        @NotEmpty
+        String key
+) {
 }

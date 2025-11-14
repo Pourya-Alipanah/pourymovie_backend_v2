@@ -2,14 +2,13 @@ package com.pourymovie.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.Data;
 
-@Data
-public class SignInDto {
-  @Email
-  @NotEmpty
-  private String email;
+public record SignInDto(
+        @Email
+        @NotEmpty
+        String email,
 
-  @NotEmpty
-  private String password;
+        @NotEmpty
+        String password
+) {
 }

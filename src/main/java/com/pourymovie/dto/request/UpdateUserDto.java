@@ -3,19 +3,18 @@ package com.pourymovie.dto.request;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
 
-@Data
-public class UpdateUserDto {
-  @Size(min = 3, max = 96)
-  private String firstName;
+public record UpdateUserDto(
+        @Size(min = 3, max = 96)
+        String firstName,
 
-  @Size(min = 3, max = 96)
-  private String lastName;
+        @Size(min = 3, max = 96)
+        String lastName,
 
-  @Email
-  private String email;
+        @Email
+        String email,
 
-  @Valid
-  private ConfirmUploadDto avatarUrl;
+        @Valid
+        ConfirmUploadDto avatarUrl
+) {
 }

@@ -6,6 +6,7 @@ import com.pourymovie.dto.response.SeasonDto;
 import com.pourymovie.service.SeasonService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,7 +24,7 @@ public class SeasonController {
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public SeasonDto createSeason(@RequestBody CreateSeasonDto seasonDto) {
+  public SeasonDto createSeason(@Valid @RequestBody CreateSeasonDto seasonDto) {
     return seasonService.createSeason(seasonDto);
   }
 
@@ -35,7 +36,7 @@ public class SeasonController {
   @PatchMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public SeasonDto updateSeason(@PathVariable Long id , @RequestBody UpdateSeasonDto updateSeasonDto) {
+  public SeasonDto updateSeason(@PathVariable Long id ,@Valid @RequestBody UpdateSeasonDto updateSeasonDto) {
     return seasonService.updateSeason(id,updateSeasonDto);
   }
 
