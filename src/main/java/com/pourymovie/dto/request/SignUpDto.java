@@ -5,30 +5,32 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
-@Data
 @ConfirmPasswordMatches
-public class SignUpDto {
-  @Size(min = 3, max = 96)
-  private String firstName;
+public record SignUpDto(
+        @Size(min = 3, max = 96)
+        String firstName,
 
-  @Size(min = 3, max = 96)
-  private String lastName;
+        @Size(min = 3, max = 96)
 
-  @Email
-  @NotEmpty
-  private String email;
+        String lastName,
 
-  @NotEmpty
-  @Size(min = 8, max = 96)
-  @Pattern(
-          regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$",
-          message = "Password must contain at least one letter, one number, and one special character (@$!%*#?&)"
-  )
-  private String password;
+        @Email
+        @NotEmpty
+        String email,
 
-  @NotEmpty
-  private String confirmPassword;
+        @NotEmpty
+        @Size(min = 8, max = 96)
+        @Pattern(
+                regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$",
+                message = "Password must contain at least one letter, one number, and one special character (@$!%*#?&)"
+        )
+        String password,
 
-  @Valid
-  private ConfirmUploadDto avatarUrl;
+        @NotEmpty
+        String confirmPassword,
+
+        @Valid
+        ConfirmUploadDto avatarUrl
+) {
+
 }

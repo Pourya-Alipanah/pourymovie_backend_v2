@@ -37,12 +37,12 @@ public class AuthService {
   public void signIn(SignInDto signInDto, HttpServletResponse response) {
 
       var authToken = new UsernamePasswordAuthenticationToken(
-              signInDto.getEmail(),
-              signInDto.getPassword()
+              signInDto.email(),
+              signInDto.password()
       );
       authenticationManager.authenticate(authToken);
 
-      UserEntity user = userService.getUserByEmail(signInDto.getEmail());
+      UserEntity user = userService.getUserByEmail(signInDto.email());
 
       signAndSendTokens(response, user);
 
