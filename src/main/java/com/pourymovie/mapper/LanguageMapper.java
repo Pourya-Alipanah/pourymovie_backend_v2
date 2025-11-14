@@ -11,7 +11,7 @@ import org.springframework.data.domain.Page;
 public interface LanguageMapper {
   LanguageDto toDto(LanguageEntity entity);
 
-  default Page<LanguageDto> toDto(Page<LanguageEntity> entities) {;
+  default Page<LanguageDto> toDto(Page<LanguageEntity> entities) {
     return entities.map(this::toDto);
   }
 
@@ -20,6 +20,9 @@ public interface LanguageMapper {
           @Mapping(target = "titles", ignore = true)
   })
   LanguageEntity toEntity(CreateLanguageDto dto);
+
+  @Mapping(target = "titles", ignore = true)
+  LanguageEntity toEntity(LanguageDto dto);
 
   @Mappings({
           @Mapping(target = "slug", ignore = true),

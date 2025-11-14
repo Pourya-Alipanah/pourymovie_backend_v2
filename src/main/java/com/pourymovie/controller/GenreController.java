@@ -1,10 +1,11 @@
 package com.pourymovie.controller;
 
-import com.pourymovie.dto.request.CreateLanguageDto;
-import com.pourymovie.dto.request.UpdateLanguageDto;
-import com.pourymovie.dto.response.LanguageDto;
-import com.pourymovie.service.LanguageService;
+import com.pourymovie.dto.request.CreateGenreDto;
+import com.pourymovie.dto.request.UpdateGenreDto;
+import com.pourymovie.dto.response.GenreDto;
+import com.pourymovie.service.GenreService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
@@ -16,42 +17,43 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/language")
-@Tag(name = "Languages", description = "Endpoints for managing languages")
-public class LanguageController {
+@RequestMapping("/genre")
+@Tag(name = "Genres", description = "Endpoints for managing genres")
+public class GenreController {
+
   @Autowired
-  private LanguageService languageService;
+  private GenreService genreService;
 
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public LanguageDto createLanguage(@Valid @RequestBody CreateLanguageDto createLanguageDto) {
-    return languageService.create(createLanguageDto);
+  public GenreDto createGenre(@Valid @RequestBody CreateGenreDto createGenreDto) {
+    return genreService.create(createGenreDto);
   }
 
   @GetMapping
   @PageableAsQueryParam
-  public Page<LanguageDto> getAll(Pageable pageable) {
-    return languageService.getAll(pageable);
+  public Page<GenreDto> findAll(@Parameter(hidden = true) Pageable pageable) {
+    return genreService.findAll(pageable);
   }
 
   @GetMapping("/{slug}")
-  public LanguageDto getBySlug(@PathVariable String slug) {
-    return languageService.getBySlug(slug);
+  public GenreDto findBySlug(@PathVariable String slug) {
+    return genreService.findBySlug(slug);
   }
 
   @PatchMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public LanguageDto updateLanguage(@PathVariable Long id ,@Valid @RequestBody UpdateLanguageDto updateLanguageDto) {
-    return languageService.update(id, updateLanguageDto);
+  public GenreDto updateGenre(@PathVariable Long id, @Valid @RequestBody UpdateGenreDto updateGenreDto) {
+    return genreService.update(id, updateGenreDto);
   }
 
   @DeleteMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteLanguage(@PathVariable Long id) {
-    languageService.deleteById(id);
+  public void deleteGenre(@PathVariable Long id) {
+    genreService.delete(id);
   }
 }
