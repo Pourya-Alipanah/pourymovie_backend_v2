@@ -5,6 +5,7 @@ import com.pourymovie.dto.request.UpdateSeasonDto;
 import com.pourymovie.dto.response.SeasonDto;
 import com.pourymovie.service.SeasonService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/season")
+@Tag(name = "Seasons", description = "Endpoints for managing seasons of series titles")
 public class SeasonController {
   @Autowired
   SeasonService seasonService;
