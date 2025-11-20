@@ -1,8 +1,7 @@
-package com.pourymovie.security;
+package com.pourymovie.security.jwt;
 
 import com.pourymovie.config.AppDefaults;
 import com.pourymovie.entity.UserEntity;
-import com.pourymovie.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

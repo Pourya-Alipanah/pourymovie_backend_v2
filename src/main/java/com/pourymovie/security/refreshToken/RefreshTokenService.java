@@ -1,10 +1,9 @@
-package com.pourymovie.security;
+package com.pourymovie.security.refreshToken;
 
 import com.pourymovie.config.AppDefaults;
 import com.pourymovie.entity.RefreshTokenEntity;
 import com.pourymovie.entity.UserEntity;
 import com.pourymovie.repository.RefreshTokenRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
