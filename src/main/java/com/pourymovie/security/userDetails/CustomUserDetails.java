@@ -1,4 +1,4 @@
-package com.pourymovie.security;
+package com.pourymovie.security.userDetails;
 
 import com.pourymovie.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,12 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-public class CustomUserDetails implements UserDetails {
-  private final UserEntity user;
-
-  public CustomUserDetails(UserEntity user) {
-    this.user = user;
-  }
+public record CustomUserDetails(UserEntity user) implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -29,5 +24,4 @@ public class CustomUserDetails implements UserDetails {
   public String getUsername() {
     return user.getEmail();
   }
-
 }

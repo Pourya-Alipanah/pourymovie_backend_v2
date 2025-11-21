@@ -1,0 +1,972 @@
+[
+  {
+    "nameEn": "Afghanistan",
+    "nameFa": "افغانستان",
+    "slug": "afghanistan"
+  },
+  {
+    "nameEn": "Albania",
+    "nameFa": "آلبانی",
+    "slug": "albania"
+  },
+  {
+    "nameEn": "Algeria",
+    "nameFa": "الجزایر",
+    "slug": "algeria"
+  },
+  {
+    "nameEn": "Andorra",
+    "nameFa": "آندورا",
+    "slug": "andorra"
+  },
+  {
+    "nameEn": "Angola",
+    "nameFa": "آنگولا",
+    "slug": "angola"
+  },
+  {
+    "nameEn": "Antigua and Barbuda",
+    "nameFa": "آنتیگوا و باربودا",
+    "slug": "antigua-and-barbuda"
+  },
+  {
+    "nameEn": "Argentina",
+    "nameFa": "آرژانتین",
+    "slug": "argentina"
+  },
+  {
+    "nameEn": "Armenia",
+    "nameFa": "ارمنستان",
+    "slug": "armenia"
+  },
+  {
+    "nameEn": "Australia",
+    "nameFa": "استرالیا",
+    "slug": "australia"
+  },
+  {
+    "nameEn": "Austria",
+    "nameFa": "اتریش",
+    "slug": "austria"
+  },
+  {
+    "nameEn": "Azerbaijan",
+    "nameFa": "آذربایجان",
+    "slug": "azerbaijan"
+  },
+  {
+    "nameEn": "Bahamas",
+    "nameFa": "باهاما",
+    "slug": "bahamas"
+  },
+  {
+    "nameEn": "Bahrain",
+    "nameFa": "بحرین",
+    "slug": "bahrain"
+  },
+  {
+    "nameEn": "Bangladesh",
+    "nameFa": "بنگلادش",
+    "slug": "bangladesh"
+  },
+  {
+    "nameEn": "Barbados",
+    "nameFa": "باربادوس",
+    "slug": "barbados"
+  },
+  {
+    "nameEn": "Belarus",
+    "nameFa": "بلاروس",
+    "slug": "belarus"
+  },
+  {
+    "nameEn": "Belgium",
+    "nameFa": "بلژیک",
+    "slug": "belgium"
+  },
+  {
+    "nameEn": "Belize",
+    "nameFa": "بلیز",
+    "slug": "belize"
+  },
+  {
+    "nameEn": "Benin",
+    "nameFa": "بنین",
+    "slug": "benin"
+  },
+  {
+    "nameEn": "Bhutan",
+    "nameFa": "بوتان",
+    "slug": "bhutan"
+  },
+  {
+    "nameEn": "Bolivia",
+    "nameFa": "بولیوی",
+    "slug": "bolivia"
+  },
+  {
+    "nameEn": "Bosnia and Herzegovina",
+    "nameFa": "بوسنی و هرزگوین",
+    "slug": "bosnia-and-herzegovina"
+  },
+  {
+    "nameEn": "Botswana",
+    "nameFa": "بوتسوانا",
+    "slug": "botswana"
+  },
+  {
+    "nameEn": "Brazil",
+    "nameFa": "برزیل",
+    "slug": "brazil"
+  },
+  {
+    "nameEn": "Brunei",
+    "nameFa": "برونی",
+    "slug": "brunei"
+  },
+  {
+    "nameEn": "Bulgaria",
+    "nameFa": "بلغارستان",
+    "slug": "bulgaria"
+  },
+  {
+    "nameEn": "Burkina Faso",
+    "nameFa": "بورکینافاسو",
+    "slug": "burkina-faso"
+  },
+  {
+    "nameEn": "Burundi",
+    "nameFa": "بروندی",
+    "slug": "burundi"
+  },
+  {
+    "nameEn": "Côte d'Ivoire",
+    "nameFa": "ساحل عاج",
+    "slug": "cote-divoire"
+  },
+  {
+    "nameEn": "Cabo Verde",
+    "nameFa": "کابو ورد",
+    "slug": "cabo-verde"
+  },
+  {
+    "nameEn": "Cambodia",
+    "nameFa": "کامبوج",
+    "slug": "cambodia"
+  },
+  {
+    "nameEn": "Cameroon",
+    "nameFa": "کامرون",
+    "slug": "cameroon"
+  },
+  {
+    "nameEn": "Canada",
+    "nameFa": "کانادا",
+    "slug": "canada"
+  },
+  {
+    "nameEn": "Central African Republic",
+    "nameFa": "جمهوری آفریقای مرکزی",
+    "slug": "central-african-republic"
+  },
+  {
+    "nameEn": "Chad",
+    "nameFa": "چاد",
+    "slug": "chad"
+  },
+  {
+    "nameEn": "Chile",
+    "nameFa": "شیلی",
+    "slug": "chile"
+  },
+  {
+    "nameEn": "China",
+    "nameFa": "چین",
+    "slug": "china"
+  },
+  {
+    "nameEn": "Colombia",
+    "nameFa": "کلمبیا",
+    "slug": "colombia"
+  },
+  {
+    "nameEn": "Comoros",
+    "nameFa": "کومور",
+    "slug": "comoros"
+  },
+  {
+    "nameEn": "Congo (Congo‑Brazzaville)",
+    "nameFa": "جمهوری کنگو",
+    "slug": "congo-brazzaville"
+  },
+  {
+    "nameEn": "Costa Rica",
+    "nameFa": "کاستاریکا",
+    "slug": "costa-rica"
+  },
+  {
+    "nameEn": "Croatia",
+    "nameFa": "کرواسی",
+    "slug": "croatia"
+  },
+  {
+    "nameEn": "Cuba",
+    "nameFa": "کوبا",
+    "slug": "cuba"
+  },
+  {
+    "nameEn": "Cyprus",
+    "nameFa": "قبرس",
+    "slug": "cyprus"
+  },
+  {
+    "nameEn": "Czechia",
+    "nameFa": "چک",
+    "slug": "czechia"
+  },
+  {
+    "nameEn": "Democratic Republic of the Congo",
+    "nameFa": "جمهوری دموکراتیک کنگو",
+    "slug": "democratic-republic-of-the-congo"
+  },
+  {
+    "nameEn": "Denmark",
+    "nameFa": "دانمارک",
+    "slug": "denmark"
+  },
+  {
+    "nameEn": "Djibouti",
+    "nameFa": "جیبوتی",
+    "slug": "djibouti"
+  },
+  {
+    "nameEn": "Dominica",
+    "nameFa": "دومینیکا",
+    "slug": "dominica"
+  },
+  {
+    "nameEn": "Dominican Republic",
+    "nameFa": "جمهوری دومینیکن",
+    "slug": "dominican-republic"
+  },
+  {
+    "nameEn": "Ecuador",
+    "nameFa": "اکوادور",
+    "slug": "ecuador"
+  },
+  {
+    "nameEn": "Egypt",
+    "nameFa": "مصر",
+    "slug": "egypt"
+  },
+  {
+    "nameEn": "El Salvador",
+    "nameFa": "السالوادور",
+    "slug": "el-salvador"
+  },
+  {
+    "nameEn": "Equatorial Guinea",
+    "nameFa": "گینه استوایی",
+    "slug": "equatorial-guinea"
+  },
+  {
+    "nameEn": "Eritrea",
+    "nameFa": "اریتره",
+    "slug": "eritrea"
+  },
+  {
+    "nameEn": "Estonia",
+    "nameFa": "استونی",
+    "slug": "estonia"
+  },
+  {
+    "nameEn": "Eswatini",
+    "nameFa": "سوازیلند",
+    "slug": "eswatini"
+  },
+  {
+    "nameEn": "Ethiopia",
+    "nameFa": "اتیوپی",
+    "slug": "ethiopia"
+  },
+  {
+    "nameEn": "Fiji",
+    "nameFa": "فیجی",
+    "slug": "fiji"
+  },
+  {
+    "nameEn": "Finland",
+    "nameFa": "فنلاند",
+    "slug": "finland"
+  },
+  {
+    "nameEn": "France",
+    "nameFa": "فرانسه",
+    "slug": "france"
+  },
+  {
+    "nameEn": "Gabon",
+    "nameFa": "گابن",
+    "slug": "gabon"
+  },
+  {
+    "nameEn": "Gambia",
+    "nameFa": "گامبیا",
+    "slug": "gambia"
+  },
+  {
+    "nameEn": "Georgia",
+    "nameFa": "گرجستان",
+    "slug": "georgia"
+  },
+  {
+    "nameEn": "Germany",
+    "nameFa": "آلمان",
+    "slug": "germany"
+  },
+  {
+    "nameEn": "Ghana",
+    "nameFa": "غنا",
+    "slug": "ghana"
+  },
+  {
+    "nameEn": "Greece",
+    "nameFa": "یونان",
+    "slug": "greece"
+  },
+  {
+    "nameEn": "Grenada",
+    "nameFa": "گرانادا",
+    "slug": "grenada"
+  },
+  {
+    "nameEn": "Guatemala",
+    "nameFa": "گواتمالا",
+    "slug": "guatemala"
+  },
+  {
+    "nameEn": "Guinea",
+    "nameFa": "گینه",
+    "slug": "guinea"
+  },
+  {
+    "nameEn": "Guinea-Bissau",
+    "nameFa": "گینه بیسائو",
+    "slug": "guinea-bissau"
+  },
+  {
+    "nameEn": "Guyana",
+    "nameFa": "گویان",
+    "slug": "guyana"
+  },
+  {
+    "nameEn": "Haiti",
+    "nameFa": "هائیتی",
+    "slug": "haiti"
+  },
+  {
+    "nameEn": "Holy See",
+    "nameFa": "واتیکان",
+    "slug": "holy-see"
+  },
+  {
+    "nameEn": "Honduras",
+    "nameFa": "هندوراس",
+    "slug": "honduras"
+  },
+  {
+    "nameEn": "Hungary",
+    "nameFa": "مجارستان",
+    "slug": "hungary"
+  },
+  {
+    "nameEn": "Iceland",
+    "nameFa": "ایسلند",
+    "slug": "iceland"
+  },
+  {
+    "nameEn": "India",
+    "nameFa": "هند",
+    "slug": "india"
+  },
+  {
+    "nameEn": "Indonesia",
+    "nameFa": "اندونزی",
+    "slug": "indonesia"
+  },
+  {
+    "nameEn": "Iran",
+    "nameFa": "ایران",
+    "slug": "iran"
+  },
+  {
+    "nameEn": "Iraq",
+    "nameFa": "عراق",
+    "slug": "iraq"
+  },
+  {
+    "nameEn": "Ireland",
+    "nameFa": "ایرلند",
+    "slug": "ireland"
+  },
+  {
+    "nameEn": "Israel",
+    "nameFa": "اسرائیل",
+    "slug": "israel"
+  },
+  {
+    "nameEn": "Italy",
+    "nameFa": "ایتالیا",
+    "slug": "italy"
+  },
+  {
+    "nameEn": "Jamaica",
+    "nameFa": "جامائیکا",
+    "slug": "jamaica"
+  },
+  {
+    "nameEn": "Japan",
+    "nameFa": "ژاپن",
+    "slug": "japan"
+  },
+  {
+    "nameEn": "Jordan",
+    "nameFa": "اردن",
+    "slug": "jordan"
+  },
+  {
+    "nameEn": "Kazakhstan",
+    "nameFa": "قزاقستان",
+    "slug": "kazakhstan"
+  },
+  {
+    "nameEn": "Kenya",
+    "nameFa": "کنیا",
+    "slug": "kenya"
+  },
+  {
+    "nameEn": "Kiribati",
+    "nameFa": "کیریباتی",
+    "slug": "kiribati"
+  },
+  {
+    "nameEn": "Kuwait",
+    "nameFa": "کویت",
+    "slug": "kuwait"
+  },
+  {
+    "nameEn": "Kyrgyzstan",
+    "nameFa": "قرقیزستان",
+    "slug": "kyrgyzstan"
+  },
+  {
+    "nameEn": "Laos",
+    "nameFa": "لائوس",
+    "slug": "laos"
+  },
+  {
+    "nameEn": "Latvia",
+    "nameFa": "لتونی",
+    "slug": "latvia"
+  },
+  {
+    "nameEn": "Lebanon",
+    "nameFa": "لبنان",
+    "slug": "lebanon"
+  },
+  {
+    "nameEn": "Lesotho",
+    "nameFa": "لسوتو",
+    "slug": "lesotho"
+  },
+  {
+    "nameEn": "Liberia",
+    "nameFa": "لیبریا",
+    "slug": "liberia"
+  },
+  {
+    "nameEn": "Libya",
+    "nameFa": "لیبی",
+    "slug": "libya"
+  },
+  {
+    "nameEn": "Liechtenstein",
+    "nameFa": "لیختن‌اشتاین",
+    "slug": "liechtenstein"
+  },
+  {
+    "nameEn": "Lithuania",
+    "nameFa": "لتوانی",
+    "slug": "lithuania"
+  },
+  {
+    "nameEn": "Luxembourg",
+    "nameFa": "لوکزامبورگ",
+    "slug": "luxembourg"
+  },
+  {
+    "nameEn": "Madagascar",
+    "nameFa": "ماداگاسکار",
+    "slug": "madagascar"
+  },
+  {
+    "nameEn": "Malawi",
+    "nameFa": "مالاوی",
+    "slug": "malawi"
+  },
+  {
+    "nameEn": "Malaysia",
+    "nameFa": "مالزی",
+    "slug": "malaysia"
+  },
+  {
+    "nameEn": "Maldives",
+    "nameFa": "مالدیو",
+    "slug": "maldives"
+  },
+  {
+    "nameEn": "Mali",
+    "nameFa": "مالی",
+    "slug": "mali"
+  },
+  {
+    "nameEn": "Malta",
+    "nameFa": "مالتا",
+    "slug": "malta"
+  },
+  {
+    "nameEn": "Marshall Islands",
+    "nameFa": "جزایر مارشال",
+    "slug": "marshall-islands"
+  },
+  {
+    "nameEn": "Mauritania",
+    "nameFa": "موریتانی",
+    "slug": "mauritania"
+  },
+  {
+    "nameEn": "Mauritius",
+    "nameFa": "موریس",
+    "slug": "mauritius"
+  },
+  {
+    "nameEn": "Mexico",
+    "nameFa": "مکزیک",
+    "slug": "mexico"
+  },
+  {
+    "nameEn": "Micronesia",
+    "nameFa": "میکرونزی",
+    "slug": "micronesia"
+  },
+  {
+    "nameEn": "Moldova",
+    "nameFa": "مولداوی",
+    "slug": "moldova"
+  },
+  {
+    "nameEn": "Monaco",
+    "nameFa": "موناکو",
+    "slug": "monaco"
+  },
+  {
+    "nameEn": "Mongolia",
+    "nameFa": "مغولستان",
+    "slug": "mongolia"
+  },
+  {
+    "nameEn": "Montenegro",
+    "nameFa": "مونته‌نگرو",
+    "slug": "montenegro"
+  },
+  {
+    "nameEn": "Morocco",
+    "nameFa": "مراکش",
+    "slug": "morocco"
+  },
+  {
+    "nameEn": "Mozambique",
+    "nameFa": "موزامبیک",
+    "slug": "mozambique"
+  },
+  {
+    "nameEn": "Myanmar",
+    "nameFa": "میانمار",
+    "slug": "myanmar"
+  },
+  {
+    "nameEn": "Namibia",
+    "nameFa": "نامیبیا",
+    "slug": "namibia"
+  },
+  {
+    "nameEn": "Nauru",
+    "nameFa": "نائورو",
+    "slug": "nauru"
+  },
+  {
+    "nameEn": "Nepal",
+    "nameFa": "نپال",
+    "slug": "nepal"
+  },
+  {
+    "nameEn": "Netherlands",
+    "nameFa": "هلند",
+    "slug": "netherlands"
+  },
+  {
+    "nameEn": "New Zealand",
+    "nameFa": "نیوزیلند",
+    "slug": "new-zealand"
+  },
+  {
+    "nameEn": "Nicaragua",
+    "nameFa": "نیکاراگوئه",
+    "slug": "nicaragua"
+  },
+  {
+    "nameEn": "Niger",
+    "nameFa": "نیجر",
+    "slug": "niger"
+  },
+  {
+    "nameEn": "Nigeria",
+    "nameFa": "نیجریه",
+    "slug": "nigeria"
+  },
+  {
+    "nameEn": "North Korea",
+    "nameFa": "کره شمالی",
+    "slug": "north-korea"
+  },
+  {
+    "nameEn": "North Macedonia",
+    "nameFa": "مقدونیه شمالی",
+    "slug": "north-macedonia"
+  },
+  {
+    "nameEn": "Norway",
+    "nameFa": "نروژ",
+    "slug": "norway"
+  },
+  {
+    "nameEn": "Oman",
+    "nameFa": "عمان",
+    "slug": "oman"
+  },
+  {
+    "nameEn": "Pakistan",
+    "nameFa": "پاکستان",
+    "slug": "pakistan"
+  },
+  {
+    "nameEn": "Palau",
+    "nameFa": "پالائو",
+    "slug": "palau"
+  },
+  {
+    "nameEn": "Panama",
+    "nameFa": "پاناما",
+    "slug": "panama"
+  },
+  {
+    "nameEn": "Papua New Guinea",
+    "nameFa": "پاپوا گینه نو",
+    "slug": "papua-new-guinea"
+  },
+  {
+    "nameEn": "Paraguay",
+    "nameFa": "پاراگوئه",
+    "slug": "paraguay"
+  },
+  {
+    "nameEn": "Peru",
+    "nameFa": "پرو",
+    "slug": "peru"
+  },
+  {
+    "nameEn": "Philippines",
+    "nameFa": "فیلیپین",
+    "slug": "philippines"
+  },
+  {
+    "nameEn": "Poland",
+    "nameFa": "لهستان",
+    "slug": "poland"
+  },
+  {
+    "nameEn": "Portugal",
+    "nameFa": "پرتغال",
+    "slug": "portugal"
+  },
+  {
+    "nameEn": "Qatar",
+    "nameFa": "قطر",
+    "slug": "qatar"
+  },
+  {
+    "nameEn": "Romania",
+    "nameFa": "رومانی",
+    "slug": "romania"
+  },
+  {
+    "nameEn": "Russia",
+    "nameFa": "روسیه",
+    "slug": "russia"
+  },
+  {
+    "nameEn": "Rwanda",
+    "nameFa": "رواندا",
+    "slug": "rwanda"
+  },
+  {
+    "nameEn": "Saint Kitts and Nevis",
+    "nameFa": "سنت کیتس و نویس",
+    "slug": "saint-kitts-and-nevis"
+  },
+  {
+    "nameEn": "Saint Lucia",
+    "nameFa": "سنت لوسیا",
+    "slug": "saint-lucia"
+  },
+  {
+    "nameEn": "Saint Vincent and the Grenadines",
+    "nameFa": "سنت وینسنت و گرنادین‌ها",
+    "slug": "saint-vincent-and-the-grenadines"
+  },
+  {
+    "nameEn": "Samoa",
+    "nameFa": "ساموآ",
+    "slug": "samoa"
+  },
+  {
+    "nameEn": "San Marino",
+    "nameFa": "سان مارینو",
+    "slug": "san-marino"
+  },
+  {
+    "nameEn": "Sao Tome and Principe",
+    "nameFa": "سائوتومه و پرینسیپ",
+    "slug": "sao-tome-and-principe"
+  },
+  {
+    "nameEn": "Saudi Arabia",
+    "nameFa": "عربستان سعودی",
+    "slug": "saudi-arabia"
+  },
+  {
+    "nameEn": "Senegal",
+    "nameFa": "سنگال",
+    "slug": "senegal"
+  },
+  {
+    "nameEn": "Serbia",
+    "nameFa": "صربستان",
+    "slug": "serbia"
+  },
+  {
+    "nameEn": "Seychelles",
+    "nameFa": "سیشل",
+    "slug": "seychelles"
+  },
+  {
+    "nameEn": "Sierra Leone",
+    "nameFa": "سیرالئون",
+    "slug": "sierra-leone"
+  },
+  {
+    "nameEn": "Singapore",
+    "nameFa": "سنگاپور",
+    "slug": "singapore"
+  },
+  {
+    "nameEn": "Slovakia",
+    "nameFa": "اسلواکی",
+    "slug": "slovakia"
+  },
+  {
+    "nameEn": "Slovenia",
+    "nameFa": "اسلوونی",
+    "slug": "slovenia"
+  },
+  {
+    "nameEn": "Solomon Islands",
+    "nameFa": "جزایر سلیمان",
+    "slug": "solomon-islands"
+  },
+  {
+    "nameEn": "Somalia",
+    "nameFa": "سومالی",
+    "slug": "somalia"
+  },
+  {
+    "nameEn": "South Africa",
+    "nameFa": "آفریقای جنوبی",
+    "slug": "south-africa"
+  },
+  {
+    "nameEn": "South Korea",
+    "nameFa": "کره جنوبی",
+    "slug": "south-korea"
+  },
+  {
+    "nameEn": "South Sudan",
+    "nameFa": "جنوب سودان",
+    "slug": "south-sudan"
+  },
+  {
+    "nameEn": "Spain",
+    "nameFa": "اسپانیا",
+    "slug": "spain"
+  },
+  {
+    "nameEn": "Sri Lanka",
+    "nameFa": "سری‌لانکا",
+    "slug": "sri-lanka"
+  },
+  {
+    "nameEn": "Sudan",
+    "nameFa": "سودان",
+    "slug": "sudan"
+  },
+  {
+    "nameEn": "Suriname",
+    "nameFa": "سورینام",
+    "slug": "suriname"
+  },
+  {
+    "nameEn": "Sweden",
+    "nameFa": "سوئد",
+    "slug": "sweden"
+  },
+  {
+    "nameEn": "Switzerland",
+    "nameFa": "سوئیس",
+    "slug": "switzerland"
+  },
+  {
+    "nameEn": "Syria",
+    "nameFa": "سوریه",
+    "slug": "syria"
+  },
+  {
+    "nameEn": "Tajikistan",
+    "nameFa": "تاجیکستان",
+    "slug": "tajikistan"
+  },
+  {
+    "nameEn": "Tanzania",
+    "nameFa": "تانزانیا",
+    "slug": "tanzania"
+  },
+  {
+    "nameEn": "Thailand",
+    "nameFa": "تایلند",
+    "slug": "thailand"
+  },
+  {
+    "nameEn": "Timor-Leste",
+    "nameFa": "تیمور-لست",
+    "slug": "timor-leste"
+  },
+  {
+    "nameEn": "Togo",
+    "nameFa": "توگو",
+    "slug": "togo"
+  },
+  {
+    "nameEn": "Tonga",
+    "nameFa": "تونگا",
+    "slug": "tonga"
+  },
+  {
+    "nameEn": "Trinidad and Tobago",
+    "nameFa": "ترینیداد و توباگو",
+    "slug": "trinidad-and-tobago"
+  },
+  {
+    "nameEn": "Tunisia",
+    "nameFa": "تونس",
+    "slug": "tunisia"
+  },
+  {
+    "nameEn": "Turkey",
+    "nameFa": "ترکیه",
+    "slug": "turkey"
+  },
+  {
+    "nameEn": "Turkmenistan",
+    "nameFa": "ترکمنستان",
+    "slug": "turkmenistan"
+  },
+  {
+    "nameEn": "Tuvalu",
+    "nameFa": "تووالو",
+    "slug": "tuvalu"
+  },
+  {
+    "nameEn": "Uganda",
+    "nameFa": "اوگاندا",
+    "slug": "uganda"
+  },
+  {
+    "nameEn": "Ukraine",
+    "nameFa": "اوکراین",
+    "slug": "ukraine"
+  },
+  {
+    "nameEn": "United Arab Emirates",
+    "nameFa": "امارات متحده عربی",
+    "slug": "united-arab-emirates"
+  },
+  {
+    "nameEn": "United Kingdom",
+    "nameFa": "بریتانیا",
+    "slug": "united-kingdom"
+  },
+  {
+    "nameEn": "United States",
+    "nameFa": "ایالات متحده",
+    "slug": "united-states"
+  },
+  {
+    "nameEn": "Uruguay",
+    "nameFa": "اروگوئه",
+    "slug": "uruguay"
+  },
+  {
+    "nameEn": "Uzbekistan",
+    "nameFa": "ازبکستان",
+    "slug": "uzbekistan"
+  },
+  {
+    "nameEn": "Vanuatu",
+    "nameFa": "وانواتو",
+    "slug": "vanuatu"
+  },
+  {
+    "nameEn": "Venezuela",
+    "nameFa": "ونزوئلا",
+    "slug": "venezuela"
+  },
+  {
+    "nameEn": "Vietnam",
+    "nameFa": "ویتنام",
+    "slug": "vietnam"
+  },
+  {
+    "nameEn": "Yemen",
+    "nameFa": "یمن",
+    "slug": "yemen"
+  },
+  {
+    "nameEn": "Zambia",
+    "nameFa": "زامبیا",
+    "slug": "zambia"
+  },
+  {
+    "nameEn": "Zimbabwe",
+    "nameFa": "زیمبابوه",
+    "slug": "zimbabwe"
+  }
+]

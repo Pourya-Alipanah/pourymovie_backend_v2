@@ -1,9 +1,9 @@
-package com.pourymovie.security;
+package com.pourymovie.security.jwt;
 
 import com.pourymovie.config.AppDefaults;
 import com.pourymovie.enums.TokenNames;
+import com.pourymovie.security.userDetails.CustomUserDetailsService;
 import com.pourymovie.util.CookieUtils;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,6 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Optional;
 

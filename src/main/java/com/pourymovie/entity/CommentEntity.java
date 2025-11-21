@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 
@@ -33,16 +34,16 @@ public class CommentEntity {
   private String content;
 
   @CreationTimestamp
-  private ZonedDateTime createdAt;
+  private LocalDateTime createdAt;
 
   @JsonIgnore
   @Column
-  private ZonedDateTime deletedAt;
+  private LocalDateTime deletedAt;
 
   @JsonIgnore
   @UpdateTimestamp
   @Column
-  private ZonedDateTime updateAt;
+  private LocalDateTime updateAt;
 
   @JsonIgnore
   @Column

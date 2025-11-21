@@ -30,7 +30,7 @@ public class UserService {
 
   public UserEntity createUser(SignUpDto user , UserRole role) {
     UserEntity mappedUser = userMapper.toEntity(user);
-    mappedUser.setPassword(passwordEncoder.encode(user.getPassword()));
+    mappedUser.setPassword(passwordEncoder.encode(user.password()));
     mappedUser.setRole(role);
     return userRepository.save(mappedUser);
   }

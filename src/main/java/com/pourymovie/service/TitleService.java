@@ -8,7 +8,9 @@ import com.pourymovie.repository.TitleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class TitleService {
@@ -21,6 +23,12 @@ public class TitleService {
 
   public TitleDetailsDto findBySlug(String slug) {
     return titleMapper.toDetailsDto(titleRepository.findBySlug(slug).orElseThrow());
+  }
+
+  public TitleEntity findById(Long id) {
+    return titleRepository.findById(id).orElseThrow(
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+    );
   }
 
   public Page<TitleDto> findAll(Pageable pageable) {

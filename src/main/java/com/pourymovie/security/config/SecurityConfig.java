@@ -1,10 +1,11 @@
-package com.pourymovie.security;
+package com.pourymovie.security.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pourymovie.config.AppDefaults;
 import com.pourymovie.exception.AccessDeniedHandlerImpl;
 import com.pourymovie.exception.AuthenticationEntrypoint;
-import jakarta.servlet.http.HttpServletResponse;
+import com.pourymovie.security.userDetails.CustomUserDetailsService;
+import com.pourymovie.security.jwt.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

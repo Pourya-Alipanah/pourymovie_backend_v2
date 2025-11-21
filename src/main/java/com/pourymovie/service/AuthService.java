@@ -7,8 +7,8 @@ import com.pourymovie.entity.RefreshTokenEntity;
 import com.pourymovie.entity.UserEntity;
 import com.pourymovie.enums.TokenNames;
 import com.pourymovie.enums.UserRole;
-import com.pourymovie.security.JwtService;
-import com.pourymovie.security.RefreshTokenService;
+import com.pourymovie.security.jwt.JwtService;
+import com.pourymovie.security.refreshToken.RefreshTokenService;
 import com.pourymovie.util.CookieUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,12 +37,12 @@ public class AuthService {
   public void signIn(SignInDto signInDto, HttpServletResponse response) {
 
       var authToken = new UsernamePasswordAuthenticationToken(
-              signInDto.getEmail(),
-              signInDto.getPassword()
+              signInDto.email(),
+              signInDto.password()
       );
       authenticationManager.authenticate(authToken);
 
-      UserEntity user = userService.getUserByEmail(signInDto.getEmail());
+      UserEntity user = userService.getUserByEmail(signInDto.email());
 
       signAndSendTokens(response, user);
 
