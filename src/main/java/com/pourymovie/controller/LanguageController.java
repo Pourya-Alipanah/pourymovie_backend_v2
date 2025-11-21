@@ -5,6 +5,7 @@ import com.pourymovie.dto.request.UpdateLanguageDto;
 import com.pourymovie.dto.response.LanguageDto;
 import com.pourymovie.service.LanguageService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
@@ -31,7 +32,7 @@ public class LanguageController {
 
   @GetMapping
   @PageableAsQueryParam
-  public Page<LanguageDto> getAll(Pageable pageable) {
+  public Page<LanguageDto> getAll(@Parameter(hidden = true) Pageable pageable) {
     return languageService.getAll(pageable);
   }
 

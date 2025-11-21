@@ -1,4 +1,4 @@
-package com.pourymovie.security;
+package com.pourymovie.security.userDetails;
 
 import com.pourymovie.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

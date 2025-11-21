@@ -4,6 +4,7 @@ import com.pourymovie.dto.response.TitleDetailsDto;
 import com.pourymovie.dto.response.TitleDto;
 import com.pourymovie.service.TitleService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class TitleController {
 
   @GetMapping
   @PageableAsQueryParam
-  public Page<TitleDto> findAll(Pageable pageable) {
+  public Page<TitleDto> findAll(@Parameter(hidden = true) Pageable pageable) {
     return titleService.findAll(pageable);
   }
 
