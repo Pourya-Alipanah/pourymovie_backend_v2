@@ -33,17 +33,16 @@ public class SeasonService {
     return seasonMapper.toDto(savedEntity);
   }
 
-  public SeasonDto getSeasonById(Long id) {
-    return seasonMapper.toDto(seasonRepository.findById(id).orElseThrow(
-            () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
-    ));
+  public SeasonEntity getSeasonById(Long id) {
+    return seasonRepository.findById(id).orElseThrow(
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
   }
 
   public List<SeasonDto> getAllSeasonsByTitleId(Long titleId) {
     return seasonMapper.toDto(seasonRepository.getSeasonByTitleId(titleId));
   }
 
-  public SeasonDto updateSeason(Long id , UpdateSeasonDto updateSeasonDto) {
+  public SeasonDto updateSeason(Long id, UpdateSeasonDto updateSeasonDto) {
     SeasonEntity seasonEntity = seasonRepository.findById(id).orElseThrow(
             () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
     );
