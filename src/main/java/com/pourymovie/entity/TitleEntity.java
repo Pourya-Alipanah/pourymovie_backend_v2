@@ -2,6 +2,8 @@ package com.pourymovie.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pourymovie.enums.TitleType;
+import com.pourymovie.persistence.PersonRoleConverter;
+import com.pourymovie.persistence.TitleTypeConverter;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Index;
@@ -10,6 +12,7 @@ import lombok.*;
 import org.hibernate.annotations.*;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,8 +31,8 @@ public class TitleEntity {
   private Long id;
 
   @Column
-  @Enumerated(EnumType.STRING)
-  private TitleType titleType;
+  @Convert(converter = TitleTypeConverter.class)
+  private TitleType type;
 
   @Column(length = 100)
   private String titleFa;
@@ -93,15 +96,15 @@ public class TitleEntity {
 
   @OneToMany(mappedBy = "title", fetch = FetchType.EAGER)
   @SQLRestriction("role = 'actor'")
-  private List<TitlePeopleEntity> actorLinks;
+  private List<TitlePeopleEntity> actorLinks = new ArrayList<>();
 
   @OneToMany(mappedBy = "title", fetch = FetchType.EAGER)
   @SQLRestriction("role = 'writer'")
-  private List<TitlePeopleEntity> writerLinks;
+  private List<TitlePeopleEntity> writerLinks = new ArrayList<>();
 
   @OneToMany(mappedBy = "title", fetch = FetchType.EAGER)
   @SQLRestriction("role = 'director'")
-  private List<TitlePeopleEntity> directorLinks;
+  private List<TitlePeopleEntity> directorLinks = new ArrayList<>();
 
   @Transient
   private List<PeopleEntity> actors;
@@ -122,7 +125,7 @@ public class TitleEntity {
   private List<VideoLinkEntity> videoLinks;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "title")
+  @OneToMany(mappedBy = "title", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<TitlePeopleEntity> people;
 
   @OneToMany(mappedBy = "title", cascade = CascadeType.ALL, orphanRemoval = true)

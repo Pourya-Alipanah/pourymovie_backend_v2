@@ -1,5 +1,6 @@
 package com.pourymovie.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pourymovie.enums.PersonRole;
 import com.pourymovie.persistence.PersonRoleConverter;
 import jakarta.persistence.*;
@@ -28,10 +29,11 @@ public class TitlePeopleEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "titleId", nullable = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
+  @JsonIgnore
   private TitleEntity title;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "personId", nullable = false)
-  @OnDelete(action = OnDeleteAction.CASCADE)
+  @JsonIgnore
   private PeopleEntity person;
 }

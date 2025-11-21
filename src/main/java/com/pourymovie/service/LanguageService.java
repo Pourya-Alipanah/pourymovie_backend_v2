@@ -39,11 +39,10 @@ public class LanguageService {
     return languageMapper.toDto(languageEntity);
   }
 
-  public LanguageDto getById(Long id) {
-    LanguageEntity languageEntity = languageRepository.findById(id).orElseThrow(
+  public LanguageEntity getById(Long id) {
+    return languageRepository.findById(id).orElseThrow(
             () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
     );
-    return languageMapper.toDto(languageEntity);
   }
 
   public LanguageDto update(Long id ,UpdateLanguageDto updateLanguageDto) {

@@ -3,6 +3,7 @@ package com.pourymovie.service;
 import com.pourymovie.dto.request.CreateGenreDto;
 import com.pourymovie.dto.request.UpdateGenreDto;
 import com.pourymovie.dto.response.GenreDto;
+import com.pourymovie.entity.GenreEntity;
 import com.pourymovie.mapper.GenreMapper;
 import com.pourymovie.repository.GenreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Service
 public class GenreService {
@@ -38,6 +41,10 @@ public class GenreService {
 
   public Page<GenreDto> findAll(Pageable pageable) {
     return genreMapper.toDtoPage(genreRepository.findAll(pageable));
+  }
+
+  public List<GenreEntity> findMultipleByIds(List<Long> ids){
+    return genreRepository.findAllById(ids);
   }
 
   public GenreDto update(Long id , UpdateGenreDto updateGenreDto) {
