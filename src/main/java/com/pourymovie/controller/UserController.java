@@ -6,6 +6,7 @@ import com.pourymovie.entity.UserEntity;
 import com.pourymovie.enums.UserRole;
 import com.pourymovie.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -37,7 +38,7 @@ public class UserController {
   @GetMapping
   @Operation(summary = "Required Role = Admin")
   @PageableAsQueryParam
-  public Page<UserEntity> getUsers(Pageable pageable) {
+  public Page<UserEntity> getUsers(@Parameter(hidden = true) Pageable pageable) {
     return userService.getUsers(pageable);
   }
 

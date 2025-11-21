@@ -6,6 +6,7 @@ import com.pourymovie.dto.response.CommentDto;
 import com.pourymovie.security.userDetails.CustomUserDetails;
 import com.pourymovie.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
@@ -37,7 +38,7 @@ public class CommentController {
   @PageableAsQueryParam
   public Page<CommentDto> getCurrentUserComments(
           @AuthenticationPrincipal CustomUserDetails userDetails,
-          Pageable pageable
+          @Parameter(hidden = true) Pageable pageable
   ) {
     return commentService.getAllUserComments(userDetails.user().getId(), pageable);
   }
@@ -46,7 +47,7 @@ public class CommentController {
   @PageableAsQueryParam
   public Page<CommentDto> getTitleComments(
           @PathVariable Long titleId,
-          Pageable pageable
+          @Parameter(hidden = true) Pageable pageable
   ) {
     return commentService.getAllTitleComments(titleId, pageable);
   }
