@@ -1,5 +1,6 @@
 package com.pourymovie.dto.response;
 
+import com.pourymovie.entity.TitlePeopleEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,4 +14,5 @@ import java.util.List;
 @NoArgsConstructor
 public class TitleDetailsDto extends TitleDto {
   private List<CommentDto> comments;
+  private List<TitlePeopleEntity> people;
 }
