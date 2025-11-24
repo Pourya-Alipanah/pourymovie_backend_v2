@@ -5,14 +5,17 @@ import lombok.Getter;
 
 @Getter
 public enum StreamBucketNames implements BaseAsymmetricEnum {
-  TRAILER("pourymovie-trailer"),
-  VIDEO("pourymovie-video");
+  TRAILER(AllBucketNames.TRAILER),
+  VIDEO(AllBucketNames.VIDEO);
 
   @JsonValue
-  private final String value;
+  private final AllBucketNames main;
 
-  StreamBucketNames(String value) {
-    this.value = value;
+  @Override
+  public String getValue() {
+    return main.getValue();
   }
+
+  StreamBucketNames(AllBucketNames main) { this.main = main; }
 
 }

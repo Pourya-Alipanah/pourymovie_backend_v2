@@ -5,15 +5,25 @@ import lombok.Getter;
 
 @Getter
 public enum BufferBucketNames implements BaseAsymmetricEnum {
-  AVATAR("pourymovie-avatar"),
-  PROFILE("pourymovie-profile"),
-  COVER("pourymovie-cover"),
-  THUMBNAIL("pourymovie-thumbnail");
+  AVATAR(AllBucketNames.AVATAR),
+  PROFILE(AllBucketNames.PROFILE),
+  COVER(AllBucketNames.COVER),
+  THUMBNAIL(AllBucketNames.THUMBNAIL);
+
+//  @JsonValue
+//  private final String value;
 
   @JsonValue
-  private final String value;
+  private final AllBucketNames main;
 
-  BufferBucketNames(String value) {
-    this.value = value;
+  @Override
+  public String getValue() {
+    return main.getValue();
   }
+
+  BufferBucketNames(AllBucketNames main) { this.main = main; }
+
+//  BufferBucketNames(String value) {
+//    this.value = value;
+//  }
 }

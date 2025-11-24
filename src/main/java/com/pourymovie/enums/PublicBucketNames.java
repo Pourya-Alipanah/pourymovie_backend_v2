@@ -3,18 +3,29 @@ package com.pourymovie.enums;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @Getter
 public enum PublicBucketNames implements BaseAsymmetricEnum {
-  TRAILER("pourymovie-trailer"),
-  PROFILE("pourymovie-profile"),
-  COVER("pourymovie-cover"),
-  THUMBNAIL("pourymovie-thumbnail");
+  TRAILER(AllBucketNames.TRAILER),
+  PROFILE(AllBucketNames.PROFILE),
+  COVER(AllBucketNames.COVER),
+  THUMBNAIL(AllBucketNames.THUMBNAIL);
 
   @JsonValue
-  private final String value;
+  private final AllBucketNames main;
 
-  PublicBucketNames(String value) {
-    this.value = value;
+  @Override
+  public String getValue() {
+    return main.getValue();
+  }
+
+  PublicBucketNames(AllBucketNames main) { this.main = main; }
+
+  public static String[] allValues() {
+    return Arrays.stream(values())
+            .map(PublicBucketNames::getValue)
+            .toArray(String[]::new);
   }
 
 }
