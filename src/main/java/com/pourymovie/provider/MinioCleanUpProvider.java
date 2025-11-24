@@ -1,7 +1,7 @@
 package com.pourymovie.provider;
 
-import com.pourymovie.entity.ChunkUploadEntity;
 import com.pourymovie.entity.UploadCenterEntity;
+import com.pourymovie.entity.UploadSessionEntity;
 import com.pourymovie.service.ChunkUploadService;
 import com.pourymovie.service.UploadCenterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,20 +28,20 @@ public class MinioCleanUpProvider {
     for (UploadCenterEntity fileObj : pending) {
       try {
         uploadCenterService.removeUpload(fileObj.getFileKey());
-        System.out.println("File " + fileObj.getFileKey() + " has been cleaned up.");
+        System.out.println("File " + fileObj.getFileKey() + " has been cleaned up By Cron.");
       } catch (Exception e) {
-        System.err.println("Error removing file " + fileObj.getId());
+        System.err.println("Cron Error removing file " + fileObj.getId() + ": " + e.getMessage());
       }
     }
 
     // Clean up expired chunk uploads
-    List<ChunkUploadEntity> expiredChunks = chunkUploadService.getExpiredUploads();
-    for (ChunkUploadEntity upload : expiredChunks) {
+    List<UploadSessionEntity> expiredChunks = chunkUploadService.getExpiredUploads();
+    for (UploadSessionEntity upload : expiredChunks) {
       try {
-        chunkUploadService.deleteUploadRecord(upload.getUploadId());
-        System.out.println("Chunk upload " + upload.getUploadId() + " has been cleaned up.");
+        chunkUploadService.abortUpload(upload.getSessionId());
+        System.out.println("Chunk upload " + upload.getUploadId() + " has been cleaned up By Cron.");
       } catch (Exception e) {
-        System.err.println("Error cleaning chunk upload " + upload.getId());
+        System.err.println("Cron Error cleaning chunk upload " + upload.getId() + ": " + e.getMessage());
       }
     }
   }

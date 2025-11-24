@@ -7,6 +7,7 @@ import com.pourymovie.entity.UploadCenterEntity;
 import com.pourymovie.enums.*;
 import com.pourymovie.provider.MinioProvider;
 import com.pourymovie.repository.UploadCenterRepository;
+import com.pourymovie.util.MinioUtils;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,9 +40,8 @@ public class UploadCenterService {
     }
   }
 
-
   public UploadResultDto withBuffer(MultipartFile file, BufferBucketNames bucket) throws Exception {
-    String objectName = buildObjectName(Objects.requireNonNull(file.getOriginalFilename()));
+    String objectName = MinioUtils.buildObjectName(Objects.requireNonNull(file.getOriginalFilename()));
 
     minioProvider.uploadBuffer(
             bucket.getValue(),
@@ -64,7 +64,7 @@ public class UploadCenterService {
   }
 
   public UploadResultDto withStream(MultipartFile file, StreamBucketNames bucket) throws Exception {
-    String objectName = buildObjectName(Objects.requireNonNull(file.getOriginalFilename()));
+    String objectName = MinioUtils.buildObjectName(Objects.requireNonNull(file.getOriginalFilename()));
 
     Path tempPath = Path.of(appDefaults.getMinioTempUploadDir(), objectName);
     Files.copy(file.getInputStream(), tempPath);
@@ -127,17 +127,6 @@ public class UploadCenterService {
   public String getFileUrlFromBucketKey(String objectName) throws Exception {
     String[] split = objectName.split("/");
     return minioProvider.getPublicUrl(split[0], split[1]);
-  }
-
-  private String buildObjectName(String originalName) {
-    String name = originalName.substring(0, originalName.lastIndexOf("."));
-
-    String extension = originalName.substring(originalName.lastIndexOf("."));
-
-    Slugify slg = new Slugify().withLowerCase(true);
-    String safeName = slg.slugify(name);
-
-    return System.currentTimeMillis() + "-" + safeName + extension;
   }
 
 }

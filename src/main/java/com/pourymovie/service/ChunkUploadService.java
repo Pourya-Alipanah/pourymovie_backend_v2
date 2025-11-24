@@ -1,200 +1,150 @@
 package com.pourymovie.service;
 
-import com.github.slugify.Slugify;
 import com.pourymovie.dto.request.InitiateChunkUploadDto;
-import com.pourymovie.dto.response.ChunkUploadProgressResponse;
-import com.pourymovie.entity.ChunkUploadEntity;
+import com.pourymovie.dto.request.UploadChunkDto;
+import com.pourymovie.dto.response.ChunkUploadDto;
+import com.pourymovie.dto.response.UploadResultDto;
+import com.pourymovie.dto.response.UploadedPartInfoDto;
+import com.pourymovie.entity.UploadCenterEntity;
+import com.pourymovie.entity.UploadPartEntity;
+import com.pourymovie.entity.UploadSessionEntity;
 import com.pourymovie.enums.UploadStatus;
+import com.pourymovie.mapper.UploadSessionMapper;
+import com.pourymovie.provider.ChunkUploadProvider;
 import com.pourymovie.provider.MinioProvider;
-import com.pourymovie.repository.ChunkUploadRepository;
+import com.pourymovie.repository.UploadCenterRepository;
+import com.pourymovie.repository.UploadPartRepository;
+import com.pourymovie.repository.UploadSessionRepository;
+import com.pourymovie.util.MinioUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class ChunkUploadService {
   @Autowired
-  private ChunkUploadRepository chunkUploadRepository;
+  private ChunkUploadProvider chunkUploadProvider;
 
   @Autowired
   private MinioProvider minioProvider;
 
-  public Map<String, Object> initiateUpload(InitiateChunkUploadDto dto) throws Exception {
-    String fileKey = buildObjectName(dto.fileName());
-    String uploadId = UUID.randomUUID().toString();
+  @Autowired
+  private UploadPartRepository uploadPartRepository;
 
-    Map<String, String> minioData = minioProvider.initiateMultipartUpload(
-            dto.bucketName(),
-            fileKey
+  @Autowired
+  private UploadSessionRepository uploadSessionRepository;
+
+  @Autowired
+  private UploadCenterRepository uploadCenterRepository;
+
+  @Autowired
+  private UploadSessionMapper uploadSessionMapper;
+
+
+  public ChunkUploadDto initiateChunkUpload(InitiateChunkUploadDto initiateChunkUploadDto) {
+    UploadSessionEntity session = uploadSessionMapper.toEntity(initiateChunkUploadDto);
+
+    String uploadId = chunkUploadProvider.initiateUpload(
+            session.getBucket().getValue(),
+            session.getFileName()
     );
 
-    ChunkUploadEntity entity = ChunkUploadEntity.builder()
-            .uploadId(uploadId)
-            .fileKey(fileKey)
-            .bucketName(dto.bucketName())
-            .totalSize(dto.totalSize())
-            .totalChunks(dto.totalChunks())
-            .minioUploadId(minioData.get("uploadUrl"))
+    session.setUploadId(uploadId);
+    session.setSessionId(UUID.randomUUID().toString());
+    uploadSessionRepository.save(session);
+    return uploadSessionMapper.toDto(session);
+  }
+
+  @Transactional
+  public void uploadPart(UploadChunkDto uploadChunkDto, MultipartFile file) throws IOException {
+    UploadSessionEntity session = uploadSessionRepository.findBySessionId(uploadChunkDto.sessionId())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    String objectName = MinioUtils.buildObjectName(Objects.requireNonNull(file.getOriginalFilename()));
+
+    String eTag = chunkUploadProvider.uploadPart(
+            session.getUploadId(),
+            objectName,
+            uploadChunkDto.partNumber(),
+            session.getBucket().getValue(),
+            file
+    );
+
+    UploadPartEntity.builder()
+            .session(session)
+            .partNumber(uploadChunkDto.partNumber())
+            .eTag(eTag)
+            .build();
+  }
+
+  public List<UploadedPartInfoDto> listUploadedParts(String sessionId) {
+    List<UploadPartEntity> parts = uploadPartRepository.findBySession_SessionIdOrderByPartNumberAsc(sessionId);
+
+    return parts.stream()
+            .map(part ->
+                    new UploadedPartInfoDto(part.getETag(), part.getPartNumber())
+            )
+            .toList();
+  }
+
+  @Transactional
+  public UploadResultDto completeUpload(String sessionId) throws Exception {
+    UploadSessionEntity session = uploadSessionRepository.findBySessionId(sessionId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    List<UploadPartEntity> parts = uploadPartRepository.findBySession_SessionIdOrderByPartNumberAsc(sessionId);
+
+    chunkUploadProvider.completeUpload(
+            session.getUploadId(),
+            parts,
+            session.getFileName(),
+            session.getBucket().getValue()
+    );
+
+    String url = minioProvider.generatePresignedDownloadUrl(
+            session.getBucket().getValue(),
+            session.getFileName()
+    );
+
+    var result = new UploadResultDto(session.getBucket().getValue(), session.getFileName(), url);
+
+    UploadCenterEntity upload = UploadCenterEntity.builder()
+            .fileKey(session.getFileName())
+            .bucket(session.getBucket().getMain())
             .status(UploadStatus.PENDING)
             .build();
 
-    chunkUploadRepository.save(entity);
+    uploadCenterRepository.save(upload);
 
-    Map<String, Object> response = new HashMap<>();
-    response.put("uploadId", uploadId);
-    response.put("fileKey", fileKey);
-    response.put("uploadedChunks", 0);
-    response.put("initiateUrl", minioData.get("uploadUrl"));
+    uploadSessionRepository.delete(session);
 
-    return response;
+    return result;
   }
 
-  public Map<String, Object> getChunkUploadUrl(String uploadId, Integer chunkNumber) throws Exception {
-    ChunkUploadEntity entity = chunkUploadRepository.findByUploadId(uploadId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Upload not found"));
+  public void abortUpload(String sessionId) throws Exception {
+    UploadSessionEntity session = uploadSessionRepository.findBySessionId(sessionId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-    if (entity.getStatus() == UploadStatus.CONFIRMED) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Upload already completed");
-    }
-
-    String presignedUrl = minioProvider.generatePresignedChunkUploadUrl(
-            entity.getBucketName(),
-            entity.getFileKey(),
-            chunkNumber,
-            entity.getMinioUploadId(),
-            60 // 60 minutes expiry
+    chunkUploadProvider.abortUpload(
+            session.getUploadId(),
+            session.getBucket().getValue(),
+            session.getFileName()
     );
 
-    Map<String, Object> response = new HashMap<>();
-    response.put("chunkNumber", chunkNumber);
-    response.put("uploadUrl", presignedUrl);
-    response.put("method", "PUT");
-
-    return response;
+    uploadSessionRepository.delete(session);
   }
 
-  public ChunkUploadProgressResponse markChunkUploaded(String uploadId, Integer chunkNumber, String etag) {
-    ChunkUploadEntity entity = chunkUploadRepository.findByUploadId(uploadId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Upload not found"));
-
-    while (entity.getUploadedParts().size() < chunkNumber) {
-      entity.getUploadedParts().add(null);
-    }
-
-    entity.getUploadedParts().set(chunkNumber - 1, etag);
-    chunkUploadRepository.save(entity);
-
-    return new ChunkUploadProgressResponse(
-            uploadId,
-            (int) entity.getUploadedParts().stream().filter(Objects::nonNull).count(),
-            entity.getTotalChunks(),
-            entity.getStatus().name()
-    );
-  }
-
-  public Map<String, Object> getCompleteUploadUrl(String uploadId) throws Exception {
-    ChunkUploadEntity entity = chunkUploadRepository.findByUploadId(uploadId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Upload not found"));
-
-    long uploadedCount = entity.getUploadedParts().stream().filter(Objects::nonNull).count();
-    if (uploadedCount != entity.getTotalChunks()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-              "Not all chunks uploaded: " + uploadedCount + "/" + entity.getTotalChunks());
-    }
-
-    String completeUrl = minioProvider.generateCompleteMultipartUrl(
-            entity.getBucketName(),
-            entity.getFileKey(),
-            entity.getMinioUploadId(),
-            60
-    );
-
-    Map<String, Object> response = new HashMap<>();
-    response.put("completeUrl", completeUrl);
-    response.put("method", "POST");
-    response.put("parts", buildPartsXml(entity.getUploadedParts()));
-
-    return response;
-  }
-
-  public String finalizeUpload(String uploadId) {
-    ChunkUploadEntity entity = chunkUploadRepository.findByUploadId(uploadId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Upload not found"));
-
-    entity.setStatus(UploadStatus.CONFIRMED);
-    chunkUploadRepository.save(entity);
-
-    return minioProvider.getPublicUrl(entity.getBucketName(), entity.getFileKey());
-  }
-
-  public ChunkUploadProgressResponse getProgress(String uploadId) {
-    ChunkUploadEntity entity = chunkUploadRepository.findByUploadId(uploadId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Upload not found"));
-
-    long uploadedCount = entity.getUploadedParts().stream().filter(Objects::nonNull).count();
-
-    return new ChunkUploadProgressResponse(
-            uploadId,
-            (int) uploadedCount,
-            entity.getTotalChunks(),
-            entity.getStatus().name()
-    );
-  }
-
-  public Map<String, Object> getCancelUploadUrl(String uploadId) throws Exception {
-    ChunkUploadEntity entity = chunkUploadRepository.findByUploadId(uploadId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Upload not found"));
-
-    String abortUrl = minioProvider.generateAbortMultipartUrl(
-            entity.getBucketName(),
-            entity.getFileKey(),
-            entity.getMinioUploadId(),
-            60
-    );
-
-    Map<String, Object> response = new HashMap<>();
-    response.put("abortUrl", abortUrl);
-    response.put("method", "DELETE");
-
-    return response;
-  }
-
-  public void deleteUploadRecord(String uploadId) {
-    chunkUploadRepository.findByUploadId(uploadId)
-            .ifPresent(chunkUploadRepository::delete);
-  }
-
-  public List<ChunkUploadEntity> getExpiredUploads() {
-    LocalDateTime twelveHoursAgo = LocalDateTime.now().minusHours(12);
-    return chunkUploadRepository.findAllByStatusAndCreatedAtBefore(
-            UploadStatus.PENDING,
-            twelveHoursAgo
-    );
-  }
-
-  private String buildPartsXml(List<String> parts) {
-    StringBuilder xml = new StringBuilder("<CompleteMultipartUpload>");
-    for (int i = 0; i < parts.size(); i++) {
-      if (parts.get(i) != null) {
-        xml.append("<Part>")
-                .append("<PartNumber>").append(i + 1).append("</PartNumber>")
-                .append("<ETag>").append(parts.get(i)).append("</ETag>")
-                .append("</Part>");
-      }
-    }
-    xml.append("</CompleteMultipartUpload>");
-    return xml.toString();
-  }
-
-  private String buildObjectName(String originalName) {
-    String name = originalName.substring(0, originalName.lastIndexOf("."));
-    String extension = originalName.substring(originalName.lastIndexOf("."));
-    Slugify slg = new Slugify().withLowerCase(true);
-    String safeName = slg.slugify(name);
-    return System.currentTimeMillis() + "-" + safeName + extension;
+  public List<UploadSessionEntity> getExpiredUploads() {
+    return uploadSessionRepository.findByStatus(UploadStatus.PENDING).stream().filter(
+            UploadSessionEntity::isExpired
+    ).toList();
   }
 }

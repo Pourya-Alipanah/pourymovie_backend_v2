@@ -1,67 +1,54 @@
 package com.pourymovie.controller;
 
 import com.pourymovie.dto.request.InitiateChunkUploadDto;
-import com.pourymovie.dto.response.ChunkUploadProgressResponse;
+import com.pourymovie.dto.request.UploadChunkDto;
+import com.pourymovie.dto.response.ChunkUploadDto;
+import com.pourymovie.dto.response.UploadResultDto;
+import com.pourymovie.dto.response.UploadedPartInfoDto;
 import com.pourymovie.service.ChunkUploadService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
+import java.io.IOException;
+import java.util.List;
 
 @RestController
-@RequestMapping("/chunk-upload")
-@Tag(name = "Chunk Upload", description = "Endpoints for resumable chunk upload")
+@RequestMapping("/upload-chunk")
+@Tag(name = "Chunk Upload", description = "Endpoints for handling chunked file uploads")
 public class ChunkUploadController {
 
   @Autowired
   private ChunkUploadService chunkUploadService;
 
   @PostMapping("/initiate")
-  public Map<String, Object> initiate(@Valid @RequestBody InitiateChunkUploadDto dto) throws Exception {
-    return chunkUploadService.initiateUpload(dto);
+  public ChunkUploadDto initiateChunkUpload(@Valid @RequestBody InitiateChunkUploadDto initiateChunkUploadDto) {
+    return chunkUploadService.initiateChunkUpload(initiateChunkUploadDto);
   }
 
-  @GetMapping("/{uploadId}/chunk/{chunkNumber}/url")
-  public Map<String, Object> getChunkUploadUrl(
-          @PathVariable String uploadId,
-          @PathVariable Integer chunkNumber
-  ) throws Exception {
-    return chunkUploadService.getChunkUploadUrl(uploadId, chunkNumber);
+  @PostMapping(
+          value = "/chunk",
+          consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+  )
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void chunkUpload(
+          @RequestPart("file") MultipartFile file,
+          @Valid @ModelAttribute UploadChunkDto dto
+  ) throws IOException {
+    chunkUploadService.uploadPart(dto, file);
   }
 
-  @PostMapping("/{uploadId}/chunk/{chunkNumber}/confirm")
-  public ChunkUploadProgressResponse confirmChunk(
-          @PathVariable String uploadId,
-          @PathVariable Integer chunkNumber,
-          @RequestParam String etag
-  ) {
-    return chunkUploadService.markChunkUploaded(uploadId, chunkNumber, etag);
+  @GetMapping("/parts/{sessionId}")
+  public List<UploadedPartInfoDto> getUploadedParts(@PathVariable String sessionId) {
+    return chunkUploadService.listUploadedParts(sessionId);
   }
 
-  @GetMapping("/{uploadId}/complete-url")
-  public Map<String, Object> getCompleteUrl(@PathVariable String uploadId) throws Exception {
-    return chunkUploadService.getCompleteUploadUrl(uploadId);
-  }
-
-  @PostMapping("/{uploadId}/finalize")
-  public String finalize(@PathVariable String uploadId) {
-    return chunkUploadService.finalizeUpload(uploadId);
-  }
-
-  @GetMapping("/{uploadId}/progress")
-  public ChunkUploadProgressResponse getProgress(@PathVariable String uploadId) {
-    return chunkUploadService.getProgress(uploadId);
-  }
-
-  @GetMapping("/{uploadId}/cancel-url")
-  public Map<String, Object> getCancelUrl(@PathVariable String uploadId) throws Exception {
-    return chunkUploadService.getCancelUploadUrl(uploadId);
-  }
-
-  @DeleteMapping("/{uploadId}")
-  public void delete(@PathVariable String uploadId) {
-    chunkUploadService.deleteUploadRecord(uploadId);
+  @PostMapping("/complete/{sessionId}")
+  public UploadResultDto completeChunkUpload(@PathVariable String sessionId) throws Exception {
+    return chunkUploadService.completeUpload(sessionId);
   }
 }

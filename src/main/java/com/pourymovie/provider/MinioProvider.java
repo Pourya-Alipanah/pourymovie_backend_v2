@@ -5,19 +5,29 @@ import com.pourymovie.enums.PublicBucketNames;
 import io.minio.*;
 import io.minio.http.Method;
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Component
 public class MinioProvider {
   @Autowired
-  private MinioClient minioClient;
+  private S3Client minioClient;
+
+  @Autowired
+  private S3Presigner presigner;
 
   @Autowired
   private AppDefaults appDefaults;
@@ -28,38 +38,32 @@ public class MinioProvider {
   }
 
   public void ensureBucket(String bucket) throws Exception {
-    boolean exists = minioClient.bucketExists(
-            BucketExistsArgs.builder().bucket(bucket).build()
-    );
-    if (!exists) {
-      minioClient.makeBucket(
-              MakeBucketArgs.builder()
-                      .bucket(bucket)
-                      .region("us-east-1")
-                      .build()
-      );
+    try {
+      minioClient.headBucket(HeadBucketRequest.builder().bucket(bucket).build());
+    } catch (NoSuchBucketException e) {
+      minioClient.createBucket(CreateBucketRequest.builder().bucket(bucket).build());
     }
   }
 
   public void makeBucketPublic(PublicBucketNames bucket) throws Exception {
     String policy = """
+            {
+              "Version": "2012-10-17",
+              "Statement": [
                 {
-                  "Version": "2012-10-17",
-                  "Statement": [
-                    {
-                      "Effect": "Allow",
-                      "Principal": {"AWS": ["*"]},
-                      "Action": ["s3:GetObject"],
-                      "Resource": ["arn:aws:s3:::%s/*"]
-                    }
-                  ]
+                  "Effect": "Allow",
+                  "Principal": {"AWS": ["*"]},
+                  "Action": ["s3:GetObject"],
+                  "Resource": ["arn:aws:s3:::%s/*"]
                 }
-                """.formatted(bucket);
+              ]
+            }
+            """.formatted(bucket);
 
-    minioClient.setBucketPolicy(
-            SetBucketPolicyArgs.builder()
+    minioClient.putBucketPolicy(
+            PutBucketPolicyRequest.builder()
                     .bucket(bucket.getValue())
-                    .config(policy)
+                    .policy(policy)
                     .build()
     );
   }
@@ -80,54 +84,40 @@ public class MinioProvider {
     return protocol + "://" + appDefaults.getMinioUrl() + ":" + appDefaults.getMinioPort() + "/" + bucket + "/" + objectName;
   }
 
-  public String generatePresignedUploadUrl(String bucket, String objectName, Optional<Integer> expires) throws Exception {
-    ensureBucket(bucket);
-    int expiry = 60 * expires.orElse(Integer.parseInt(appDefaults.getMinioExpirationInMinutes()));
-    return minioClient.getPresignedObjectUrl(
-            GetPresignedObjectUrlArgs.builder()
-                    .bucket(bucket)
-                    .object(objectName)
-                    .method(Method.PUT)
-                    .expiry(expiry)
-                    .build()
-    );
-  }
-
-  public String generatePresignedDownloadUrl(String bucket, String objectName, Integer expiry) throws Exception {
-    return minioClient.getPresignedObjectUrl(
-            GetPresignedObjectUrlArgs.builder()
-                    .bucket(bucket)
-                    .object(objectName)
-                    .method(Method.GET)
-                    .expiry(expiry * 60)
-                    .build()
-    );
+  public String generatePresignedDownloadUrl(String bucket, String objectName, Duration expiry) throws Exception {
+    GetObjectRequest getReq = GetObjectRequest.builder()
+            .bucket(bucket)
+            .key(objectName)
+            .build();
+    GetObjectPresignRequest presignReq = GetObjectPresignRequest.builder()
+            .getObjectRequest(getReq)
+            .signatureDuration(expiry)
+            .build();
+    PresignedGetObjectRequest presigned = presigner.presignGetObject(presignReq);
+    return presigned.url().toExternalForm();
   }
 
   public String generatePresignedDownloadUrl(String bucket, String objectName) throws Exception {
-    int expiry = 60 * Integer.parseInt(appDefaults.getMinioExpirationInMinutes());
-    return minioClient.getPresignedObjectUrl(
-            GetPresignedObjectUrlArgs.builder()
-                    .bucket(bucket)
-                    .object(objectName)
-                    .method(Method.GET)
-                    .expiry(expiry)
-                    .build()
-    );
+    Duration expiry = Duration.parse("PT" + appDefaults.getMinioExpirationInMinutes() + "M");
+
+    GetObjectRequest getReq = GetObjectRequest.builder()
+            .bucket(bucket)
+            .key(objectName)
+            .build();
+    GetObjectPresignRequest presignReq = GetObjectPresignRequest.builder()
+            .getObjectRequest(getReq)
+            .signatureDuration(expiry)
+            .build();
+    PresignedGetObjectRequest presigned = presigner.presignGetObject(presignReq);
+    return presigned.url().toExternalForm();
   }
 
   public boolean objectExists(String bucket, String objectName) {
     try {
-      minioClient.statObject(
-              StatObjectArgs.builder()
-                      .bucket(bucket)
-                      .object(objectName)
-                      .build()
-      );
+      minioClient.headObject(HeadObjectRequest.builder().bucket(bucket).key(objectName).build());
       return true;
-    } catch (Exception e) {
-      if (e.getMessage().contains("Not found")) return false;
-      throw new RuntimeException(e);
+    } catch (NoSuchKeyException e) {
+      return false;
     }
   }
 
@@ -135,118 +125,43 @@ public class MinioProvider {
     ensureBucket(bucket);
 
     try (ByteArrayInputStream inputStream = new ByteArrayInputStream(buffer)) {
-      minioClient.putObject(
-              PutObjectArgs.builder()
-                      .bucket(bucket)
-                      .object(objectName)
-                      .stream(inputStream, buffer.length, -1)
-                      .contentType(mimeType)
-                      .build()
-      );
+      PutObjectRequest req = PutObjectRequest.builder()
+              .bucket(bucket)
+              .key(objectName)
+              .contentType(mimeType)
+              .build();
+      minioClient.putObject(req, RequestBody.fromInputStream(inputStream, buffer.length));
     }
   }
 
   public void uploadStream(String bucket, String objectName, InputStream stream, long size, String mimeType) throws Exception {
     ensureBucket(bucket);
 
-    minioClient.putObject(
-            PutObjectArgs.builder()
-                    .bucket(bucket)
-                    .object(objectName)
-                    .stream(stream, size, 20 * 1024 * 1024)
-                    .contentType(mimeType)
-                    .build()
-    );
+    PutObjectRequest req = PutObjectRequest.builder()
+            .bucket(bucket)
+            .key(objectName)
+            .contentType(mimeType)
+            .build();
+    minioClient.putObject(req, RequestBody.fromInputStream(stream, size));
   }
 
   public void removeObject(String bucket, String objectName) throws Exception {
-    minioClient.removeObject(
-            RemoveObjectArgs.builder()
+    minioClient.deleteObject(
+            DeleteObjectRequest.builder()
                     .bucket(bucket)
-                    .object(objectName)
+                    .key(objectName)
                     .build()
     );
   }
 
-  public StatObjectResponse statObject(String bucket, String objectName) throws Exception {
-    return minioClient.statObject(
-            StatObjectArgs.builder()
-                    .bucket(bucket)
-                    .object(objectName)
-                    .build()
+  public ObjectMetadata statObject(String bucket, String objectName) throws Exception {
+    var response = minioClient.headObject(HeadObjectRequest.builder()
+            .bucket(bucket)
+            .key(objectName)
+            .build()
     );
+    return new ObjectMetadata(response.contentLength(), response.contentType());
   }
 
-  public String generatePresignedChunkUploadUrl(String bucket, String objectName, int partNumber, String uploadId, int expiryMinutes) throws Exception {
-    ensureBucket(bucket);
-
-    Map<String, String> queryParams = new HashMap<>();
-    queryParams.put("uploadId", uploadId);
-    queryParams.put("partNumber", String.valueOf(partNumber));
-
-    return minioClient.getPresignedObjectUrl(
-            GetPresignedObjectUrlArgs.builder()
-                    .method(Method.PUT)
-                    .bucket(bucket)
-                    .object(objectName)
-                    .expiry(expiryMinutes * 60)
-                    .extraQueryParams(queryParams)
-                    .build()
-    );
-  }
-
-  public Map<String, String> initiateMultipartUpload(String bucket, String objectName) throws Exception {
-    ensureBucket(bucket);
-
-    // برای initiate از یک presigned URL با action خاص استفاده می‌کنیم
-    Map<String, String> queryParams = new HashMap<>();
-    queryParams.put("uploads", "");
-
-    String url = minioClient.getPresignedObjectUrl(
-            GetPresignedObjectUrlArgs.builder()
-                    .method(Method.POST)
-                    .bucket(bucket)
-                    .object(objectName)
-                    .expiry(60 * 60) // 1 hour
-                    .extraQueryParams(queryParams)
-                    .build()
-    );
-
-    Map<String, String> result = new HashMap<>();
-    result.put("uploadUrl", url);
-    result.put("bucket", bucket);
-    result.put("objectName", objectName);
-
-    return result;
-  }
-
-  public String generateCompleteMultipartUrl(String bucket, String objectName, String uploadId, int expiryMinutes) throws Exception {
-    Map<String, String> queryParams = new HashMap<>();
-    queryParams.put("uploadId", uploadId);
-
-    return minioClient.getPresignedObjectUrl(
-            GetPresignedObjectUrlArgs.builder()
-                    .method(Method.POST)
-                    .bucket(bucket)
-                    .object(objectName)
-                    .expiry(expiryMinutes * 60)
-                    .extraQueryParams(queryParams)
-                    .build()
-    );
-  }
-
-  public String generateAbortMultipartUrl(String bucket, String objectName, String uploadId, int expiryMinutes) throws Exception {
-    Map<String, String> queryParams = new HashMap<>();
-    queryParams.put("uploadId", uploadId);
-
-    return minioClient.getPresignedObjectUrl(
-            GetPresignedObjectUrlArgs.builder()
-                    .method(Method.DELETE)
-                    .bucket(bucket)
-                    .object(objectName)
-                    .expiry(expiryMinutes * 60)
-                    .extraQueryParams(queryParams)
-                    .build()
-    );
-  }
+  public record ObjectMetadata(long size, String contentType) {}
 }
