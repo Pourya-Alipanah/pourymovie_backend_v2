@@ -21,4 +21,6 @@ public class AppDefaults {
   private boolean minioSecure;
   private String minioExpirationInMinutes;
   private String minioTempUploadDir;
+  private String geminiApiKey;
+  private String geminiModelName;
 }

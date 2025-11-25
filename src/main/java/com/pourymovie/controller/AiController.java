@@ -1,0 +1,62 @@
+package com.pourymovie.controller;
+
+import com.google.genai.ResponseStream;
+import com.google.genai.types.GenerateContentResponse;
+import com.pourymovie.dto.request.TitleSummaryDto;
+import com.pourymovie.service.AiService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import java.util.Objects;
+
+@RestController
+@RequestMapping("/ai")
+public class AiController {
+  @Autowired
+  private AiService aiService;
+
+  @GetMapping(
+          value = "/comments-summary/{titleId}",
+          produces = MediaType.TEXT_EVENT_STREAM_VALUE
+  )
+  public SseEmitter commentsSummary(@PathVariable Long titleId) {
+    SseEmitter emitter = new SseEmitter();
+
+    new Thread(() -> {
+      try (ResponseStream<GenerateContentResponse> stream = aiService.getCommentsSummary(titleId)) {
+        for (GenerateContentResponse chunk : stream) {
+          emitter.send(Objects.requireNonNull(chunk.text()));
+        }
+        emitter.complete();
+      } catch (Exception e) {
+        emitter.completeWithError(e);
+      }
+    }).start();
+
+    return emitter;
+  }
+
+  @PostMapping(
+          value = "/title-summary",
+          produces = MediaType.TEXT_EVENT_STREAM_VALUE
+  )
+  public SseEmitter titleSummary(@Valid @RequestBody TitleSummaryDto titleSummaryDto) {
+    SseEmitter emitter = new SseEmitter();
+
+    new Thread(() -> {
+      try (ResponseStream<GenerateContentResponse> stream = aiService.getTitleSummary(titleSummaryDto)) {
+        for (GenerateContentResponse chunk : stream) {
+          emitter.send(Objects.requireNonNull(chunk.text()));
+        }
+        emitter.complete();
+      } catch (Exception e) {
+        emitter.completeWithError(e);
+      }
+    }).start();
+
+    return emitter;
+  }
+}
