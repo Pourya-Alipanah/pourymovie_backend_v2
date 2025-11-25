@@ -2,10 +2,7 @@ package com.pourymovie.provider;
 
 import com.pourymovie.config.AppDefaults;
 import com.pourymovie.enums.PublicBucketNames;
-import io.minio.*;
-import io.minio.http.Method;
 import jakarta.annotation.PostConstruct;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -18,8 +15,6 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class MinioProvider {

@@ -1,5 +1,6 @@
 package com.pourymovie.service;
 
+import com.pourymovie.dto.request.ConfirmUploadDto;
 import com.pourymovie.dto.request.CreateTitleDto;
 import com.pourymovie.dto.request.CreateTitlePeopleDto;
 import com.pourymovie.dto.request.UpdateTitleDto;
@@ -9,6 +10,8 @@ import com.pourymovie.entity.GenreEntity;
 import com.pourymovie.entity.PeopleEntity;
 import com.pourymovie.entity.TitleEntity;
 import com.pourymovie.entity.TitlePeopleEntity;
+import com.pourymovie.enums.UploadFromEntity;
+import com.pourymovie.enums.UploadType;
 import com.pourymovie.mapper.TitleMapper;
 import com.pourymovie.mapper.TitlePeopleMapper;
 import com.pourymovie.repository.TitleRepository;
@@ -48,11 +51,16 @@ public class TitleService {
   @Autowired
   private TitlePeopleMapper titlePeopleMapper;
 
+  @Autowired
+  private UploadCenterService uploadCenterService;
+
   @Transactional
-  public TitleDetailsDto create(CreateTitleDto createTitleDto) {
+  public TitleDetailsDto create(CreateTitleDto createTitleDto) throws Exception {
     var titleEntity = titleMapper.toEntity(createTitleDto);
     var language = languageService.getById(createTitleDto.languageId());
     var country = countryService.getById(createTitleDto.countryId());
+
+    fillUploadUrl(titleEntity, createTitleDto.coverUrl(), createTitleDto.thumbnailUrl(), createTitleDto.trailerUrl());
 
     List<GenreEntity> genres = new ArrayList<>();
     List<TitlePeopleEntity> titlePeopleEntities = new ArrayList<>();
@@ -99,9 +107,12 @@ public class TitleService {
   }
 
   @Transactional
-  public TitleDetailsDto update(UpdateTitleDto updateTitleDto, Long id) {
+  public TitleDetailsDto update(UpdateTitleDto updateTitleDto, Long id) throws Exception {
     var titleEntity = findById(id);
     titleMapper.updateEntityFromDto(updateTitleDto, titleEntity);
+
+    fillUploadUrl(titleEntity, updateTitleDto.coverUrl(), updateTitleDto.thumbnailUrl(), updateTitleDto.trailerUrl());
+
     if (updateTitleDto.languageId() != null) {
       titleEntity.setLanguage(languageService.getById(updateTitleDto.languageId()));
     }
@@ -137,6 +148,40 @@ public class TitleService {
 
     var updatedEntity = titleRepository.save(titleEntity);
     return titleMapper.toDetailsDto(updatedEntity);
+  }
+
+  private void fillUploadUrl(
+      TitleEntity titleEntity,
+      ConfirmUploadDto coverUploadDto,
+      ConfirmUploadDto thumbnailUrlDto,
+      ConfirmUploadDto trailerUrlDto
+  ) throws Exception {
+    if (coverUploadDto != null) {
+      var coverUploadUrl = uploadCenterService.confirmUpload(
+              coverUploadDto.key(),
+              UploadFromEntity.TITLE,
+              UploadType.COVER
+      );
+      titleEntity.setCoverUrl(coverUploadUrl);
+    }
+
+    if (thumbnailUrlDto != null) {
+      var thumbnailUrl = uploadCenterService.confirmUpload(
+              thumbnailUrlDto.key(),
+              UploadFromEntity.TITLE,
+              UploadType.THUMBNAIL
+      );
+      titleEntity.setThumbnailUrl(thumbnailUrl);
+    }
+
+    if (trailerUrlDto != null) {
+      var trailerUrl = uploadCenterService.confirmUpload(
+              trailerUrlDto.key(),
+              UploadFromEntity.TITLE,
+              UploadType.TRAILER
+      );
+      titleEntity.setTrailerUrl(trailerUrl);
+    }
   }
 
   public void deleteById(Long id) {

@@ -6,6 +6,8 @@ import com.pourymovie.dto.response.ChunkUploadDto;
 import com.pourymovie.dto.response.UploadResultDto;
 import com.pourymovie.dto.response.UploadedPartInfoDto;
 import com.pourymovie.service.ChunkUploadService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,11 @@ public class ChunkUploadController {
   @PostMapping(
           value = "/chunk",
           consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+  )
+  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          content = @Content(
+                  schema = @Schema(implementation = UploadChunkDto.class)
+          )
   )
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void chunkUpload(

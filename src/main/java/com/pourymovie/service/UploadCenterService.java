@@ -1,6 +1,5 @@
 package com.pourymovie.service;
 
-import com.github.slugify.Slugify;
 import com.pourymovie.config.AppDefaults;
 import com.pourymovie.dto.response.UploadResultDto;
 import com.pourymovie.entity.UploadCenterEntity;
@@ -50,7 +49,7 @@ public class UploadCenterService {
             file.getContentType()
     );
 
-    String url = minioProvider.generatePresignedDownloadUrl(bucket.getValue(), objectName);
+    String url = minioProvider.getPublicUrl(bucket.getValue(), objectName);
 
     UploadCenterEntity upload = UploadCenterEntity.builder()
             .fileKey(objectName)
@@ -83,7 +82,9 @@ public class UploadCenterService {
 
     Files.deleteIfExists(tempPath);
 
-    String url = minioProvider.generatePresignedDownloadUrl(bucket.getValue(), objectName);
+    String url = bucket.equals(StreamBucketNames.VIDEO)
+            ? minioProvider.generatePresignedDownloadUrl(bucket.getValue(), objectName)
+            : minioProvider.getPublicUrl(bucket.getValue(), objectName);
 
     UploadCenterEntity upload = UploadCenterEntity.builder()
             .fileKey(objectName)
@@ -102,13 +103,17 @@ public class UploadCenterService {
 
   public String confirmUpload(String fileKey, UploadFromEntity entity, UploadType type) throws Exception {
     UploadCenterEntity record = uploadCenterRepository.findByFileKey(fileKey)
-            .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     record.setFromEntity(entity);
     record.setType(type);
     record.setStatus(UploadStatus.CONFIRMED);
 
     uploadCenterRepository.save(record);
+
+    if (entity.equals(UploadFromEntity.VIDEO)) {
+      return getBucketAndKeyCombinationFromBucketAndKey(record.getBucket().getValue(), record.getFileKey());
+    }
 
     return minioProvider.getPublicUrl(record.getBucket().getValue(), record.getFileKey());
   }
@@ -124,9 +129,21 @@ public class UploadCenterService {
     });
   }
 
-  public String getFileUrlFromBucketKey(String objectName) throws Exception {
+  /**
+   * @param objectName in format "bucket/objectKey"
+   *
+   */
+  public String getDownloadUrlFromBucketAndKeyCombination(String objectName) throws Exception {
     String[] split = objectName.split("/");
-    return minioProvider.getPublicUrl(split[0], split[1]);
+    return minioProvider.generatePresignedDownloadUrl(split[0], split[1]);
+  }
+
+  /**
+   * @return "bucket/objectKey" combination
+   *
+   */
+  public String getBucketAndKeyCombinationFromBucketAndKey(String bucket, String key) {
+    return bucket + "/" + key;
   }
 
 }

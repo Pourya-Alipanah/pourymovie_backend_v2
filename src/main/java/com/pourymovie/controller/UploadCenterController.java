@@ -4,6 +4,8 @@ import com.pourymovie.dto.request.UploadBufferDto;
 import com.pourymovie.dto.request.UploadStreamDto;
 import com.pourymovie.dto.response.UploadResultDto;
 import com.pourymovie.service.UploadCenterService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,11 @@ public class UploadCenterController {
           value = "/buffer" ,
           consumes = MediaType.MULTIPART_FORM_DATA_VALUE
   )
+  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          content = @Content(
+                  schema = @Schema(implementation = UploadBufferDto.class)
+          )
+  )
   public UploadResultDto withBuffer(
           @RequestPart("file") MultipartFile file,
           @Valid @ModelAttribute UploadBufferDto dto
@@ -32,6 +39,11 @@ public class UploadCenterController {
   @PostMapping(
           value = "/stream" ,
           consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+  )
+  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          content = @Content(
+                  schema = @Schema(implementation = UploadStreamDto.class)
+          )
   )
   public UploadResultDto uploadStream(
           @RequestPart("file") MultipartFile file,
