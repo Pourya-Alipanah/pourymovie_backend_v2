@@ -8,6 +8,8 @@ import org.mapstruct.Mapping;
 
 @Mapper
 public interface UploadSessionMapper {
+  @Mapping(target = "expireAt", ignore = true)
+  @Mapping(target = "createdAt", ignore = true)
   @Mapping(target = "uploadId", ignore = true)
   @Mapping(target = "sessionId", ignore = true)
   @Mapping(target = "uploadedParts", ignore = true)

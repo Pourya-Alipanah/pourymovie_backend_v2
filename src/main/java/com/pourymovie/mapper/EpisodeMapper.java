@@ -11,7 +11,10 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 
-@Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        uses = VideoLinkMapper.class
+)
 public interface EpisodeMapper {
 
   EpisodeDto toDto(EpisodeEntity entity);

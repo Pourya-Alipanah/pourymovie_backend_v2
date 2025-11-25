@@ -8,7 +8,10 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        uses = VideoLinkMapper.class
+)
 public interface SeasonMapper {
   SeasonDto toDto(SeasonEntity entity);
 
