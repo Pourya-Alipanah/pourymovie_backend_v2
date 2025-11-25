@@ -27,7 +27,7 @@ public class PeopleController {
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public PeopleDetailsDto createPeople(@Valid @RequestBody CreatePeopleDto createPeopleDto) {
+  public PeopleDetailsDto createPeople(@Valid @RequestBody CreatePeopleDto createPeopleDto) throws Exception {
     return peopleService.create(createPeopleDto);
   }
 
@@ -45,7 +45,7 @@ public class PeopleController {
   @PatchMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public PeopleDetailsDto updatePeople(@Valid @RequestBody UpdatePeopleDto updatePeopleDto , @PathVariable Long id) {
+  public PeopleDetailsDto updatePeople(@Valid @RequestBody UpdatePeopleDto updatePeopleDto , @PathVariable Long id) throws Exception {
     return peopleService.update(updatePeopleDto , id);
   }
 

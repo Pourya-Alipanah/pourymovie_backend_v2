@@ -5,6 +5,8 @@ import com.pourymovie.dto.request.UpdatePeopleDto;
 import com.pourymovie.dto.response.PeopleDetailsDto;
 import com.pourymovie.dto.response.PeopleDto;
 import com.pourymovie.entity.PeopleEntity;
+import com.pourymovie.enums.UploadFromEntity;
+import com.pourymovie.enums.UploadType;
 import com.pourymovie.mapper.PeopleMapper;
 import com.pourymovie.repository.PeopleRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,8 +30,21 @@ public class PeopleService {
   @Autowired
   private PeopleMapper peopleMapper;
 
-  public PeopleDetailsDto create(CreatePeopleDto createPeopleDto) {
+  @Autowired
+  private UploadCenterService uploadCenterService;
+
+  public PeopleDetailsDto create(CreatePeopleDto createPeopleDto) throws Exception {
     var peopleEntity = peopleMapper.toEntity(createPeopleDto);
+
+    if(createPeopleDto.imageUrl() != null){
+      var imageUrl = uploadCenterService.confirmUpload(
+              createPeopleDto.imageUrl().key(),
+              UploadFromEntity.PERSON,
+              UploadType.PROFILE
+      );
+      peopleEntity.setImageUrl(imageUrl);
+    }
+
     var savedEntity = peopleRepository.save(peopleEntity);
     return peopleMapper.toDetailsDto(savedEntity);
   }
@@ -72,9 +87,19 @@ public class PeopleService {
   }
 
   @Transactional
-  public PeopleDetailsDto update(UpdatePeopleDto updatePeopleDto , Long id){
+  public PeopleDetailsDto update(UpdatePeopleDto updatePeopleDto , Long id) throws Exception {
     var peopleEntity = findById(id);
     peopleMapper.updateEntityFromDto(updatePeopleDto, peopleEntity);
+
+    if(updatePeopleDto.imageUrl() != null){
+      var imageUrl = uploadCenterService.confirmUpload(
+              updatePeopleDto.imageUrl().key(),
+              UploadFromEntity.PERSON,
+              UploadType.PROFILE
+      );
+      peopleEntity.setImageUrl(imageUrl);
+    }
+
     var updatedEntity = peopleRepository.save(peopleEntity);
     return peopleMapper.toDetailsDto(updatedEntity);
   }

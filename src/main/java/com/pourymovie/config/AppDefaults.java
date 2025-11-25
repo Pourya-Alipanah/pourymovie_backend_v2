@@ -14,4 +14,11 @@ public class AppDefaults {
   private int defaultRefreshTokenTTlInMinutes;
   private String jwtSecretKey;
   private String[] publicPaths;
+  private String minioUrl;
+  private String minioAccessKey;
+  private String minioSecretKey;
+  private int minioPort;
+  private boolean minioSecure;
+  private String minioExpirationInMinutes;
+  private String minioTempUploadDir;
 }

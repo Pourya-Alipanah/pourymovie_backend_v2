@@ -4,13 +4,18 @@ import com.pourymovie.enums.AllBucketNames;
 import com.pourymovie.enums.UploadFromEntity;
 import com.pourymovie.enums.UploadStatus;
 import com.pourymovie.enums.UploadType;
+import com.pourymovie.persistence.BucketNameConverter;
+import com.pourymovie.persistence.UploadFromEntityConverter;
+import com.pourymovie.persistence.UploadStatusConverter;
+import com.pourymovie.persistence.UploadTypeConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -19,6 +24,7 @@ import java.time.ZonedDateTime;
 @Table(
         name = "uploads"
 )
+@Builder
 public class UploadCenterEntity {
 
   @Id
@@ -28,22 +34,22 @@ public class UploadCenterEntity {
   @Column
   private String fileKey;
 
-  @Column
-  @Enumerated(EnumType.STRING)
-  private AllBucketNames bucketName;
+  @Column(nullable = false)
+  @Convert(converter = BucketNameConverter.class)
+  private AllBucketNames bucket;
 
   @Column
-  @Enumerated(EnumType.STRING)
+  @Convert(converter = UploadTypeConverter.class)
   private UploadType type;
 
   @Column
-  @Enumerated(EnumType.STRING)
+  @Convert(converter = UploadStatusConverter.class)
   private UploadStatus status = UploadStatus.PENDING;
 
   @Column
-  @Enumerated(EnumType.STRING)
+  @Convert(converter = UploadFromEntityConverter.class)
   private UploadFromEntity fromEntity;
 
   @CreationTimestamp
-  private ZonedDateTime createTime;
+  private LocalDateTime createTime;
 }

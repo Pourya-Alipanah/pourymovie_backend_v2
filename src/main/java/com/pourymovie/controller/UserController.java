@@ -30,7 +30,7 @@ public class UserController {
   @PreAuthorize("hasRole('SUPER_ADMIN')")
   @Operation(summary = "Required Role = Super Admin")
   @PostMapping("/admin")
-  public ResponseEntity<UserEntity> addUser(@Valid @RequestBody SignUpDto signUpDto) {
+  public ResponseEntity<UserEntity> addUser(@Valid @RequestBody SignUpDto signUpDto) throws Exception {
     return new ResponseEntity<>(userService.createUser(signUpDto, UserRole.ADMIN) , HttpStatus.CREATED);
   }
 
@@ -55,14 +55,14 @@ public class UserController {
   }
 
   @PatchMapping("/current")
-  public UserEntity updateCurrentUser(@Valid @RequestBody UpdateUserDto userDto) {
+  public UserEntity updateCurrentUser(@Valid @RequestBody UpdateUserDto userDto) throws Exception {
     return userService.updateCurrentUser(userDto);
   }
 
   @PreAuthorize("hasRole('ADMIN')")
   @PatchMapping("/{id}")
   @Operation(summary = "Required Role = Admin")
-  public UserEntity updateUser(@Valid @RequestBody UpdateUserDto userDto , @PathVariable Long id) {
+  public UserEntity updateUser(@Valid @RequestBody UpdateUserDto userDto , @PathVariable Long id) throws Exception {
     return userService.updateUserById(id , userDto);
   }
 
