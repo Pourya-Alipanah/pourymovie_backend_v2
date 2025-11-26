@@ -1,0 +1,37 @@
+name: backend V2 CI
+
+on:
+
+  push:
+    branches:
+      - release/*
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Copy code to /opt/pourymovie/backend
+        run: |
+          sudo rm -rf /opt/pourymovie/backendV2/*
+          sudo cp -r . /opt/pourymovie/backendV2
+
+      - name: Docker Compose Down
+        run: |
+          cd /opt/pourymovie/infra
+          docker compose down backendv2
+
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - name: Docker Compose Up
+        run: |
+          cd /opt/pourymovie/infra
+          docker compose up -d --build --force-recreate --force-recreate backendv2
