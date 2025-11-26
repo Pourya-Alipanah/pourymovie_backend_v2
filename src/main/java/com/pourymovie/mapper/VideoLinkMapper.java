@@ -30,5 +30,6 @@ public interface VideoLinkMapper {
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "episode", ignore = true)
   @Mapping(target = "url", ignore = true)
-  void updateEntityFromDto(UpdateVideoLinkDto updateVideoLinkDto , @MappingTarget VideoLinkEntity entity);
+  void updateEntityFromDto(
+      UpdateVideoLinkDto updateVideoLinkDto, @MappingTarget VideoLinkEntity entity);
 }

@@ -17,4 +17,3 @@ public class StringToStreamBucketNamesConverter implements Converter<String, Str
     throw new IllegalArgumentException("Invalid bucket: " + source);
   }
 }
-

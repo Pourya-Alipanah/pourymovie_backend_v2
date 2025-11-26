@@ -18,28 +18,21 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
-  @Autowired
-  private UserRepository userRepository;
-  @Autowired
-  private PasswordEncoder passwordEncoder;
-  @Autowired
-  private UserMapper userMapper;
-  @Autowired
-  private UploadCenterService uploadCenterService;
+  @Autowired private UserRepository userRepository;
+  @Autowired private PasswordEncoder passwordEncoder;
+  @Autowired private UserMapper userMapper;
+  @Autowired private UploadCenterService uploadCenterService;
 
   public UserEntity getUserByEmail(String email) {
-    return userRepository.findByEmail(email)
-            .orElseThrow();
+    return userRepository.findByEmail(email).orElseThrow();
   }
 
-  public UserEntity createUser(SignUpDto user , UserRole role) throws Exception {
+  public UserEntity createUser(SignUpDto user, UserRole role) throws Exception {
     UserEntity mappedUser = userMapper.toEntity(user);
-    if(user.avatarUrl() != null){
-      var avatarUrl = uploadCenterService.confirmUpload(
-              user.avatarUrl().key(),
-              UploadFromEntity.USER,
-              UploadType.AVATAR
-      );
+    if (user.avatarUrl() != null) {
+      var avatarUrl =
+          uploadCenterService.confirmUpload(
+              user.avatarUrl().key(), UploadFromEntity.USER, UploadType.AVATAR);
       mappedUser.setAvatarUrl(avatarUrl);
     }
     mappedUser.setPassword(passwordEncoder.encode(user.password()));
@@ -64,12 +57,10 @@ public class UserService {
     UserEntity existingUser = getUserByEmail(email);
     userMapper.updateEntityFromDto(updateUserDto, existingUser);
 
-    if(updateUserDto.avatarUrl() != null){
-      var avatarUrl = uploadCenterService.confirmUpload(
-              updateUserDto.avatarUrl().key(),
-              UploadFromEntity.USER,
-              UploadType.AVATAR
-      );
+    if (updateUserDto.avatarUrl() != null) {
+      var avatarUrl =
+          uploadCenterService.confirmUpload(
+              updateUserDto.avatarUrl().key(), UploadFromEntity.USER, UploadType.AVATAR);
       existingUser.setAvatarUrl(avatarUrl);
     }
     return userRepository.save(existingUser);
@@ -79,7 +70,7 @@ public class UserService {
     userRepository.deleteById(id);
   }
 
-  public void deleteCurrentUser(){
+  public void deleteCurrentUser() {
     String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
     UserEntity user = getUserByEmail(userEmail);
     userRepository.delete(user);

@@ -7,8 +7,7 @@ import org.springframework.stereotype.Component;
 @Component("commentSecurity")
 public class CommentSecurity {
 
-  @Autowired
-  private CommentRepository commentRepository;
+  @Autowired private CommentRepository commentRepository;
 
   public boolean isCommentOwner(Long commentId, Long userId) {
     return commentRepository.existsByIdAndUserId(commentId, userId);

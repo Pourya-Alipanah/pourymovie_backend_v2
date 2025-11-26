@@ -10,20 +10,21 @@ public enum BufferBucketNames implements BaseAsymmetricEnum {
   COVER(AllBucketNames.COVER),
   THUMBNAIL(AllBucketNames.THUMBNAIL);
 
-//  @JsonValue
-//  private final String value;
+  //  @JsonValue
+  //  private final String value;
 
-  @JsonValue
-  private final AllBucketNames main;
+  @JsonValue private final AllBucketNames main;
 
   @Override
   public String getValue() {
     return main.getValue();
   }
 
-  BufferBucketNames(AllBucketNames main) { this.main = main; }
+  BufferBucketNames(AllBucketNames main) {
+    this.main = main;
+  }
 
-//  BufferBucketNames(String value) {
-//    this.value = value;
-//  }
+  //  BufferBucketNames(String value) {
+  //    this.value = value;
+  //  }
 }

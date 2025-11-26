@@ -4,10 +4,9 @@ import com.pourymovie.dto.request.CreateTitlePeopleDto;
 import com.pourymovie.dto.response.TitlePeopleDto;
 import com.pourymovie.entity.PeopleEntity;
 import com.pourymovie.entity.TitlePeopleEntity;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
-import java.util.List;
 
 @Mapper
 public interface TitlePeopleMapper {

@@ -2,11 +2,10 @@ package com.pourymovie.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Entity
 @Data
@@ -19,8 +18,7 @@ public class EpisodeEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column
-  private Integer episodeNumber;
+  @Column private Integer episodeNumber;
 
   @OneToMany(mappedBy = "episode", fetch = FetchType.LAZY)
   private List<VideoLinkEntity> videoLinks;

@@ -3,6 +3,9 @@ package com.pourymovie.provider;
 import com.pourymovie.config.AppDefaults;
 import com.pourymovie.enums.PublicBucketNames;
 import jakarta.annotation.PostConstruct;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.time.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -11,10 +14,6 @@ import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.time.Duration;
 
 @Component
 public class MinioProvider {

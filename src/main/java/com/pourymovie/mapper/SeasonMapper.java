@@ -4,9 +4,8 @@ import com.pourymovie.dto.request.CreateSeasonDto;
 import com.pourymovie.dto.request.UpdateSeasonDto;
 import com.pourymovie.dto.response.SeasonDto;
 import com.pourymovie.entity.SeasonEntity;
-import org.mapstruct.*;
-
 import java.util.List;
+import org.mapstruct.*;
 
 @Mapper(
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,

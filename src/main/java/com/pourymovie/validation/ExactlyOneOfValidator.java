@@ -11,8 +11,7 @@ public class ExactlyOneOfValidator implements ConstraintValidator<ExactlyOneOf, 
   @Override
   public void initialize(ExactlyOneOf constraintAnnotation) {
     this.fields = constraintAnnotation.fields();
-    this.message = constraintAnnotation.message()
-            .replace("{fields}", String.join(", ", fields));
+    this.message = constraintAnnotation.message().replace("{fields}", String.join(", ", fields));
   }
 
   @Override
@@ -36,8 +35,7 @@ public class ExactlyOneOfValidator implements ConstraintValidator<ExactlyOneOf, 
 
     if (nonNullCount != 1) {
       context.disableDefaultConstraintViolation();
-      context.buildConstraintViolationWithTemplate(message)
-              .addConstraintViolation();
+      context.buildConstraintViolationWithTemplate(message).addConstraintViolation();
       return false;
     }
 

@@ -5,22 +5,18 @@ import com.google.genai.ResponseStream;
 import com.google.genai.types.GenerateContentResponse;
 import com.pourymovie.config.AppDefaults;
 import com.pourymovie.dto.request.AiTitleSummaryDto;
-import com.pourymovie.dto.response.TitleSummaryDto;
 import com.pourymovie.entity.CommentEntity;
 import com.pourymovie.enums.TitleType;
 import com.pourymovie.provider.GeminiProvider;
 import com.pourymovie.util.BaseRequestPrompt;
-import com.pourymovie.util.BaseResponsePrompt;
 import com.pourymovie.util.LinkPrompt;
-import io.opencensus.trace.Link;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
 
 @Service
 public class AiService {

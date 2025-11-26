@@ -16,31 +16,32 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
 
-  @Autowired
-  AuthService authService;
+  @Autowired AuthService authService;
 
-  @ApiResponse(responseCode = "204" , description = "Successful Operation And Set Cookies")
+  @ApiResponse(responseCode = "204", description = "Successful Operation And Set Cookies")
   @PostMapping("/sign-in")
-  public void signIn(@Valid @RequestBody SignInDto signInDto , HttpServletResponse response) throws Exception {
-    authService.signIn(signInDto , response);
+  public void signIn(@Valid @RequestBody SignInDto signInDto, HttpServletResponse response)
+      throws Exception {
+    authService.signIn(signInDto, response);
   }
 
-  @ApiResponse(responseCode = "204" , description = "Successful Operation And Set Cookies")
+  @ApiResponse(responseCode = "204", description = "Successful Operation And Set Cookies")
   @PostMapping("/sign-up")
-  public void signUp(@Valid @RequestBody SignUpDto signInDto , HttpServletResponse response) throws Exception {
+  public void signUp(@Valid @RequestBody SignUpDto signInDto, HttpServletResponse response)
+      throws Exception {
     authService.signUp(signInDto, response);
   }
 
-  @ApiResponse(responseCode = "204" , description = "Successful Operation And Set Cookies")
+  @ApiResponse(responseCode = "204", description = "Successful Operation And Set Cookies")
   @GetMapping("/refresh-tokens")
-  public void refreshToken(HttpServletRequest request , HttpServletResponse response) throws Exception {
-    authService.refreshToken(request , response);
+  public void refreshToken(HttpServletRequest request, HttpServletResponse response)
+      throws Exception {
+    authService.refreshToken(request, response);
   }
 
-  @ApiResponse(responseCode = "204" , description = "Successful Operation And Remove Cookies")
+  @ApiResponse(responseCode = "204", description = "Successful Operation And Remove Cookies")
   @PostMapping("/sign-out")
-  public void signOut(HttpServletRequest request , HttpServletResponse response) throws Exception {
-    authService.signOut(request , response);
+  public void signOut(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    authService.signOut(request, response);
   }
-
 }

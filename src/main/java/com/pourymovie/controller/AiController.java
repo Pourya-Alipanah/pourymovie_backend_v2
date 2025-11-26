@@ -5,12 +5,11 @@ import com.google.genai.types.GenerateContentResponse;
 import com.pourymovie.dto.request.AiTitleSummaryDto;
 import com.pourymovie.service.AiService;
 import jakarta.validation.Valid;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/ai")

@@ -12,5 +12,4 @@ public enum TokenNames {
   TokenNames(String tokenName) {
     this.tokenName = tokenName;
   }
-
 }

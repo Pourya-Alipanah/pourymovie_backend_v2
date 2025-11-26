@@ -5,16 +5,14 @@ import com.pourymovie.enums.UploadStatus;
 import com.pourymovie.persistence.StreamBucketNameConverter;
 import com.pourymovie.persistence.UploadStatusConverter;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Formula;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Data

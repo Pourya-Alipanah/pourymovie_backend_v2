@@ -9,5 +9,4 @@ public class PourymovieBackendV2Application {
   public static void main(String[] args) {
     SpringApplication.run(PourymovieBackendV2Application.class, args);
   }
-
 }

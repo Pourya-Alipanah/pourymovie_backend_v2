@@ -3,10 +3,9 @@ package com.pourymovie.mapper;
 import com.pourymovie.dto.response.CountryDetailsDto;
 import com.pourymovie.dto.response.CountryDto;
 import com.pourymovie.entity.CountryEntity;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-
-import java.util.List;
 
 @Mapper
 public interface CountryMapper {

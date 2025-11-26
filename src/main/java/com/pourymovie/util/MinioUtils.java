@@ -14,5 +14,4 @@ public class MinioUtils {
 
     return System.currentTimeMillis() + "-" + safeName + extension;
   }
-
 }

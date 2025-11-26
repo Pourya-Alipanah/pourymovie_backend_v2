@@ -15,11 +15,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class LanguageService {
-  @Autowired
-  private LanguageRepository languageRepository;
+  @Autowired private LanguageRepository languageRepository;
 
-  @Autowired
-  private LanguageMapper languageMapper;
+  @Autowired private LanguageMapper languageMapper;
 
   public LanguageDto create(CreateLanguageDto createLanguageDto) {
     LanguageEntity languageEntity = languageMapper.toEntity(createLanguageDto);
@@ -27,28 +25,28 @@ public class LanguageService {
   }
 
   public Page<LanguageDto> getAll(Pageable pageable) {
-    return languageMapper.toDto(
-            languageRepository.findAll(pageable)
-    );
+    return languageMapper.toDto(languageRepository.findAll(pageable));
   }
 
   public LanguageDto getBySlug(String slug) {
-    LanguageEntity languageEntity = languageRepository.findBySlug(slug).orElseThrow(
-            () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
-    );
+    LanguageEntity languageEntity =
+        languageRepository
+            .findBySlug(slug)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     return languageMapper.toDto(languageEntity);
   }
 
   public LanguageEntity getById(Long id) {
-    return languageRepository.findById(id).orElseThrow(
-            () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
-    );
+    return languageRepository
+        .findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
   }
 
-  public LanguageDto update(Long id ,UpdateLanguageDto updateLanguageDto) {
-    var languageEntity = languageRepository.findById(id).orElseThrow(
-            ()-> new ResponseStatusException(HttpStatus.NOT_FOUND)
-    );
+  public LanguageDto update(Long id, UpdateLanguageDto updateLanguageDto) {
+    var languageEntity =
+        languageRepository
+            .findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     languageMapper.updateEntityFromDto(updateLanguageDto, languageEntity);
 

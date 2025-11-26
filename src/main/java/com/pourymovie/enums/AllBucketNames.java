@@ -12,11 +12,9 @@ public enum AllBucketNames implements BaseAsymmetricEnum {
   TRAILER("pourymovie-trailer"),
   VIDEO("pourymovie-video");
 
-  @JsonValue
-  private final String value;
+  @JsonValue private final String value;
 
   AllBucketNames(String value) {
     this.value = value;
   }
-
 }
