@@ -5,33 +5,45 @@ on:
   push:
     branches:
       - release/*
-  pull_request:
-    branches:
-      - main
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
         with:
-          fetch-depth: 0
+          distribution: 'temurin'
+          java-version: '21'
 
-      - name: Copy code to /opt/pourymovie/backend
-        run: |
-          sudo rm -rf /opt/pourymovie/backendV2/*
-          sudo cp -r . /opt/pourymovie/backendV2
+      - name: Build Jar
+        run: ./mvnw clean package -DskipTests
 
-      - name: Docker Compose Down
-        run: |
-          cd /opt/pourymovie/infra
-          docker compose down backendv2
+      - name: Upload Jar Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jar
+          path: target/*.jar
 
   deploy:
     runs-on: self-hosted
     needs: build
     steps:
+      - name: Download Jar Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-jar
+          path: /opt/pourymovie/backendV2
+
+      - name: Rename JAR
+        run: |
+          cd /opt/pourymovie/backendV2
+          mv *.jar app.jar
+
       - name: Docker Compose Up
         run: |
           cd /opt/pourymovie/infra
-          docker compose up -d --build --force-recreate --force-recreate backendv2
+          docker compose up -d --build --force-recreate backendv2
