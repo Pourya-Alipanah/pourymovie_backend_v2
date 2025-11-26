@@ -22,13 +22,13 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Titles", description = "Endpoints for managing movie and series titles")
 public class TitleController {
 
-  @Autowired
-  private TitleService titleService;
+  @Autowired private TitleService titleService;
 
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public TitleDetailsDto createTitle(@Valid @RequestBody CreateTitleDto createTitleDto) throws Exception {
+  public TitleDetailsDto createTitle(@Valid @RequestBody CreateTitleDto createTitleDto)
+      throws Exception {
     return titleService.create(createTitleDto);
   }
 
@@ -46,8 +46,9 @@ public class TitleController {
   @PatchMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public TitleDetailsDto updateTitle(@PathVariable Long id, @Valid @RequestBody UpdateTitleDto updateTitleDto) throws Exception {
-    return titleService.update(updateTitleDto , id);
+  public TitleDetailsDto updateTitle(
+      @PathVariable Long id, @Valid @RequestBody UpdateTitleDto updateTitleDto) throws Exception {
+    return titleService.update(updateTitleDto, id);
   }
 
   @DeleteMapping("/{id}")

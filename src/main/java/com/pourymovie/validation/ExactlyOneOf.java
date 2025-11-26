@@ -9,8 +9,11 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = ExactlyOneOfValidator.class)
 @Documented
 public @interface ExactlyOneOf {
-  String message() default "Exactly one field must be provided among this fields: " + "{fields}" ;
+  String message() default "Exactly one field must be provided among this fields: " + "{fields}";
+
   Class<?>[] groups() default {};
+
   Class<? extends Payload>[] payload() default {};
+
   String[] fields();
 }

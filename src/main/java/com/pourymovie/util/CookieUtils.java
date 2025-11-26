@@ -36,12 +36,11 @@ public class CookieUtils {
     return cookie;
   }
 
-  public static List<Cookie> tokenToRemove(HttpServletRequest request, HttpServletResponse response) {
+  public static List<Cookie> tokenToRemove(
+      HttpServletRequest request, HttpServletResponse response) {
 
-    var tokenNamesToRemove = Set.of(
-            TokenNames.ACCESS_TOKEN.getTokenName(),
-            TokenNames.REFRESH_TOKEN.getTokenName()
-    );
+    var tokenNamesToRemove =
+        Set.of(TokenNames.ACCESS_TOKEN.getTokenName(), TokenNames.REFRESH_TOKEN.getTokenName());
 
     var cookiesToRemove = new ArrayList<Cookie>();
 
@@ -60,13 +59,18 @@ public class CookieUtils {
     return cookiesToRemove;
   }
 
-  public static List<Cookie> generateTokenCookies(String accessToken, RefreshTokenEntity refreshToken, int accessTokenExpiry, int refreshTokenExpiry) {
+  public static List<Cookie> generateTokenCookies(
+      String accessToken,
+      RefreshTokenEntity refreshToken,
+      int accessTokenExpiry,
+      int refreshTokenExpiry) {
 
-    Cookie accessTokenCookie = generateTokenCookie(TokenNames.ACCESS_TOKEN, accessToken, accessTokenExpiry);
+    Cookie accessTokenCookie =
+        generateTokenCookie(TokenNames.ACCESS_TOKEN, accessToken, accessTokenExpiry);
 
-    Cookie refreshTokenCookie = generateTokenCookie(TokenNames.REFRESH_TOKEN, refreshToken.getToken(), refreshTokenExpiry);
+    Cookie refreshTokenCookie =
+        generateTokenCookie(TokenNames.REFRESH_TOKEN, refreshToken.getToken(), refreshTokenExpiry);
 
     return List.of(accessTokenCookie, refreshTokenCookie);
   }
-
 }

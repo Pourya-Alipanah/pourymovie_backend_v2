@@ -21,8 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Genres", description = "Endpoints for managing genres")
 public class GenreController {
 
-  @Autowired
-  private GenreService genreService;
+  @Autowired private GenreService genreService;
 
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
@@ -45,7 +44,8 @@ public class GenreController {
   @PatchMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public GenreDto updateGenre(@PathVariable Long id, @Valid @RequestBody UpdateGenreDto updateGenreDto) {
+  public GenreDto updateGenre(
+      @PathVariable Long id, @Valid @RequestBody UpdateGenreDto updateGenreDto) {
     return genreService.update(id, updateGenreDto);
   }
 

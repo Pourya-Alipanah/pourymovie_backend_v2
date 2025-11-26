@@ -6,7 +6,7 @@ import jakarta.persistence.Converter;
 
 @Converter
 public abstract class EnumConverter<E extends Enum<E> & BaseAsymmetricEnum>
-        implements AttributeConverter<E, String> {
+    implements AttributeConverter<E, String> {
 
   private final Class<E> enumClass;
 
@@ -28,6 +28,6 @@ public abstract class EnumConverter<E extends Enum<E> & BaseAsymmetricEnum>
       }
     }
     throw new IllegalArgumentException(
-            "Unknown " + enumClass.getSimpleName() + " value: " + dbData);
+        "Unknown " + enumClass.getSimpleName() + " value: " + dbData);
   }
 }

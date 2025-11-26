@@ -23,32 +23,27 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "comment", description = "Endpoints for managing comments")
 public class CommentController {
 
-  @Autowired
-  private CommentService commentService;
+  @Autowired private CommentService commentService;
 
   @PostMapping
   public CommentDto createComment(
-          @Valid @RequestBody CreateCommentDto commentDto,
-          @AuthenticationPrincipal CustomUserDetails userDetails
-  ) {
+      @Valid @RequestBody CreateCommentDto commentDto,
+      @AuthenticationPrincipal CustomUserDetails userDetails) {
     return commentService.create(commentDto, userDetails.user());
   }
 
   @GetMapping
   @PageableAsQueryParam
   public Page<CommentDto> getCurrentUserComments(
-          @AuthenticationPrincipal CustomUserDetails userDetails,
-          @Parameter(hidden = true) Pageable pageable
-  ) {
+      @AuthenticationPrincipal CustomUserDetails userDetails,
+      @Parameter(hidden = true) Pageable pageable) {
     return commentService.getAllUserComments(userDetails.user().getId(), pageable);
   }
 
   @GetMapping("/{titleId}")
   @PageableAsQueryParam
   public Page<CommentDto> getTitleComments(
-          @PathVariable Long titleId,
-          @Parameter(hidden = true) Pageable pageable
-  ) {
+      @PathVariable Long titleId, @Parameter(hidden = true) Pageable pageable) {
     return commentService.getAllTitleComments(titleId, pageable);
   }
 
@@ -56,10 +51,9 @@ public class CommentController {
   @PreAuthorize("hasRole('ADMIN') or @commentSecurity.isCommentOwner(#id, #userDetails.user().id)")
   @Operation(summary = "Just For Comment's Owner Or Admin")
   public CommentDto updateComment(
-          @Valid @RequestBody UpdateCommentDto commentDto,
-          @PathVariable Long id,
-          @AuthenticationPrincipal CustomUserDetails userDetails
-  ) {
+      @Valid @RequestBody UpdateCommentDto commentDto,
+      @PathVariable Long id,
+      @AuthenticationPrincipal CustomUserDetails userDetails) {
     return commentService.update(commentDto, id);
   }
 
@@ -68,9 +62,7 @@ public class CommentController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(summary = "Just For Comment's Owner Or Admin")
   public void deleteComment(
-          @PathVariable Long id,
-          @AuthenticationPrincipal CustomUserDetails userDetails
-  ) {
+      @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
     commentService.delete(id);
   }
 }

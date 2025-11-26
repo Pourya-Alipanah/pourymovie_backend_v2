@@ -13,12 +13,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(
-        name = "video_link",
-        indexes = {
-                @Index(columnList = "quality,episodeId", name = "idx_quality_episode" , unique = true),
-                @Index(columnList = "quality,titleId", name = "idx_quality_title" , unique = true)
-        }
-)
+    name = "video_link",
+    indexes = {
+      @Index(columnList = "quality,episodeId", name = "idx_quality_episode", unique = true),
+      @Index(columnList = "quality,titleId", name = "idx_quality_title", unique = true)
+    })
 public class VideoLinkEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

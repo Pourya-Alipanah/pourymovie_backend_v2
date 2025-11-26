@@ -6,16 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 public record UploadChunkDto(
-        @NotNull
-        MultipartFile file,
-
-        @NotNull
-        StreamBucketNames bucket,
-
-        @NotBlank
-        String sessionId,
-
-        @NotNull
-        int partNumber
-) {
-}
+    @NotNull MultipartFile file,
+    @NotNull StreamBucketNames bucket,
+    @NotBlank String sessionId,
+    @NotNull int partNumber) {}

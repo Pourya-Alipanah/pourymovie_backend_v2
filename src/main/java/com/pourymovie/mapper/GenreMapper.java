@@ -21,7 +21,10 @@ public interface GenreMapper {
 
   GenreDto toDto(GenreEntity genreEntity);
 
-  default Page<GenreDto> toDtoPage(Page<GenreEntity> genreEntities){return genreEntities.map(this::toDto);};
+  default Page<GenreDto> toDtoPage(Page<GenreEntity> genreEntities) {
+    return genreEntities.map(this::toDto);
+  }
+  ;
 
   @Mapping(target = "titles", ignore = true)
   @Mapping(target = "id", ignore = true)

@@ -1,6 +1,5 @@
 package com.pourymovie.dto.response;
 
-
 import com.pourymovie.enums.TitleType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TitleDto{
+public class TitleDto {
   private Long id;
   private String titleFa;
   private String titleEn;

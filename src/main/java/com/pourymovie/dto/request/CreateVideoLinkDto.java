@@ -6,14 +6,4 @@ import jakarta.validation.constraints.NotNull;
 
 @ExactlyOneOf(fields = {"episodeId", "titleId"})
 public record CreateVideoLinkDto(
-        @NotNull
-        ConfirmUploadDto url,
-
-        @NotNull
-        VideoQuality quality,
-
-        Long episodeId,
-
-        Long titleId
-) {
-}
+    @NotNull ConfirmUploadDto url, @NotNull VideoQuality quality, Long episodeId, Long titleId) {}

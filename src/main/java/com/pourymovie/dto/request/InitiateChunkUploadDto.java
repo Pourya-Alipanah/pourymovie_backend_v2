@@ -5,16 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record InitiateChunkUploadDto(
-        @NotBlank
-        String fileName,
-
-        @NotNull
-        int totalParts,
-
-        @NotNull
-        long totalSize,
-
-        @NotNull
-        StreamBucketNames bucket
-) {
-}
+    @NotBlank String fileName,
+    @NotNull int totalParts,
+    @NotNull long totalSize,
+    @NotNull StreamBucketNames bucket) {}

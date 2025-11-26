@@ -1,5 +1,6 @@
 package com.pourymovie.config;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.PageRequest;
@@ -9,26 +10,25 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.List;
-
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-  @Autowired
-  AppDefaults appDefaults;
+  @Autowired AppDefaults appDefaults;
 
   @Override
   public void addCorsMappings(@NonNull CorsRegistry registry) {
-    registry.addMapping("/**")
-            .allowedOriginPatterns("*")
-            .allowedMethods("*")
-            .allowCredentials(true);
+    registry
+        .addMapping("/**")
+        .allowedOriginPatterns("*")
+        .allowedMethods("*")
+        .allowCredentials(true);
   }
 
   @Override
   public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
     PageableHandlerMethodArgumentResolver resolver = new PageableHandlerMethodArgumentResolver();
-    resolver.setFallbackPageable(PageRequest.of(appDefaults.getDefaultPageNumber(), appDefaults.getDefaultPageSize()));
+    resolver.setFallbackPageable(
+        PageRequest.of(appDefaults.getDefaultPageNumber(), appDefaults.getDefaultPageSize()));
     resolvers.add(resolver);
   }
 }

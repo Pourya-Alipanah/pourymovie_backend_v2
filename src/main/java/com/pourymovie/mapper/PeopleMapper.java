@@ -12,9 +12,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.springframework.data.domain.Page;
 
 @Mapper(
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = { TitlePeopleMapper.class }
-)
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+    uses = {TitlePeopleMapper.class})
 public interface PeopleMapper {
 
   PeopleDto toDto(PeopleEntity entity);
@@ -22,7 +21,7 @@ public interface PeopleMapper {
   @Mapping(target = "titles", source = "titlePersons")
   PeopleDetailsDto toDetailsDto(PeopleEntity entity);
 
-  default Page<PeopleDto> toDto(Page<PeopleEntity> entities){
+  default Page<PeopleDto> toDto(Page<PeopleEntity> entities) {
     return entities.map(this::toDto);
   }
 

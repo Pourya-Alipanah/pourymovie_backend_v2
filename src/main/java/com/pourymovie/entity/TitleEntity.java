@@ -2,28 +2,25 @@ package com.pourymovie.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pourymovie.enums.TitleType;
-import com.pourymovie.persistence.PersonRoleConverter;
 import com.pourymovie.persistence.TitleTypeConverter;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
-import lombok.*;
-import org.hibernate.annotations.*;
-
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.*;
+import org.hibernate.annotations.*;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "title",
-        indexes = {
-          @Index(name = "idx_title_en", columnList = "titleEn"),
-        }
-)
+@Table(
+    name = "title",
+    indexes = {
+      @Index(name = "idx_title_en", columnList = "titleEn"),
+    })
 public class TitleEntity {
 
   @Id
@@ -40,26 +37,20 @@ public class TitleEntity {
   @Column(length = 100)
   private String titleEn;
 
-  @Column(length = 120 , unique = true)
+  @Column(length = 120, unique = true)
   private String slug;
 
-  @Column
-  private Integer releaseYear;
+  @Column private Integer releaseYear;
 
-  @Column
-  private Integer durationMinutes;
+  @Column private Integer durationMinutes;
 
-  @Column
-  private Float imdbRating;
+  @Column private Float imdbRating;
 
-  @Column
-  private Integer imdbVotes;
+  @Column private Integer imdbVotes;
 
-  @Column
-  private boolean isTop250;
+  @Column private boolean isTop250;
 
-  @Column
-  private Integer top250Rank;
+  @Column private Integer top250Rank;
 
   @Column(length = 500)
   private String summary;
@@ -67,20 +58,15 @@ public class TitleEntity {
   @Column(length = 10)
   private String ageRating;
 
-  @Column
-  private boolean hasSubtitle = false;
+  @Column private boolean hasSubtitle = false;
 
-  @Column
-  private String awards;
+  @Column private String awards;
 
-  @Column
-  private String trailerUrl;
+  @Column private String trailerUrl;
 
-  @Column
-  private String coverUrl;
+  @Column private String coverUrl;
 
-  @Column
-  private String thumbnailUrl;
+  @Column private String thumbnailUrl;
 
   @ManyToOne
   @JoinColumn(name = "languageId")
@@ -88,10 +74,9 @@ public class TitleEntity {
 
   @ManyToMany
   @JoinTable(
-          name = "title_genres_genre",
-          joinColumns = @JoinColumn(name = "titleId"),
-          inverseJoinColumns = @JoinColumn(name = "genreId")
-  )
+      name = "title_genres_genre",
+      joinColumns = @JoinColumn(name = "titleId"),
+      inverseJoinColumns = @JoinColumn(name = "genreId"))
   private List<GenreEntity> genres;
 
   @OneToMany(mappedBy = "title", fetch = FetchType.EAGER)
@@ -106,12 +91,9 @@ public class TitleEntity {
   @SQLRestriction("role = 'director'")
   private List<TitlePeopleEntity> directorLinks = new ArrayList<>();
 
-  @Transient
-  private List<PeopleEntity> actors;
-  @Transient
-  private List<PeopleEntity> directors;
-  @Transient
-  private List<PeopleEntity> writers;
+  @Transient private List<PeopleEntity> actors;
+  @Transient private List<PeopleEntity> directors;
+  @Transient private List<PeopleEntity> writers;
 
   @ManyToOne
   @JoinColumn(name = "countryId")

@@ -5,11 +5,5 @@ import com.pourymovie.validation.ValidBucketName;
 import jakarta.validation.constraints.NotEmpty;
 
 public record ConfirmUploadDto(
-        @ValidBucketName(enumClass = AllBucketNames.class)
-        @NotEmpty
-        AllBucketNames bucketName,
-
-        @NotEmpty
-        String key
-) {
-}
+    @ValidBucketName(enumClass = AllBucketNames.class) @NotEmpty AllBucketNames bucketName,
+    @NotEmpty String key) {}

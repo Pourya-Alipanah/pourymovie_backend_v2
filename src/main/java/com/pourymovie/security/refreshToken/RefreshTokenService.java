@@ -4,11 +4,10 @@ import com.pourymovie.config.AppDefaults;
 import com.pourymovie.entity.RefreshTokenEntity;
 import com.pourymovie.entity.UserEntity;
 import com.pourymovie.repository.RefreshTokenRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class RefreshTokenService {

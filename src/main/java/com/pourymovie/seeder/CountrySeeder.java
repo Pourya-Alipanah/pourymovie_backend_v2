@@ -19,8 +19,7 @@ public class CountrySeeder implements CommandLineRunner {
   @Value("classpath:countries.json")
   private Resource countriesFile;
 
-  @Autowired
-  private CountryRepository countryRepository;
+  @Autowired private CountryRepository countryRepository;
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 

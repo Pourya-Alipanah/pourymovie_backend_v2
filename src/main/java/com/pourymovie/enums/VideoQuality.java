@@ -1,4 +1,3 @@
-
 package com.pourymovie.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -23,11 +22,9 @@ public enum VideoQuality implements BaseAsymmetricEnum {
   TS("TS"),
   HDTV("HDTV");
 
-  @JsonValue
-  private final String value;
+  @JsonValue private final String value;
 
   VideoQuality(String value) {
     this.value = value;
   }
-
 }

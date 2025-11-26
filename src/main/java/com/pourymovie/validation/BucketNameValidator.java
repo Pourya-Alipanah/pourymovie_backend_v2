@@ -18,7 +18,8 @@ public class BucketNameValidator implements ConstraintValidator<ValidBucketName,
     if (value == null || value.isBlank()) return false;
 
     return Arrays.stream(enumClass.getEnumConstants())
-            .anyMatch(e -> {
+        .anyMatch(
+            e -> {
               try {
                 return e.getClass().getMethod("getValue").invoke(e).equals(value);
               } catch (Exception ex) {

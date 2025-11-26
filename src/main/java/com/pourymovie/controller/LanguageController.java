@@ -20,8 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/language")
 @Tag(name = "Languages", description = "Endpoints for managing languages")
 public class LanguageController {
-  @Autowired
-  private LanguageService languageService;
+  @Autowired private LanguageService languageService;
 
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
@@ -44,7 +43,8 @@ public class LanguageController {
   @PatchMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public LanguageDto updateLanguage(@PathVariable Long id ,@Valid @RequestBody UpdateLanguageDto updateLanguageDto) {
+  public LanguageDto updateLanguage(
+      @PathVariable Long id, @Valid @RequestBody UpdateLanguageDto updateLanguageDto) {
     return languageService.update(id, updateLanguageDto);
   }
 

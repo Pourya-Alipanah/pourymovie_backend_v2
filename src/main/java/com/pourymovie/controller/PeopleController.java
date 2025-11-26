@@ -19,15 +19,15 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/people")
-@Tag(name = "People" , description = "Endpoints for managing people")
+@Tag(name = "People", description = "Endpoints for managing people")
 public class PeopleController {
-  @Autowired
-  private PeopleService peopleService;
+  @Autowired private PeopleService peopleService;
 
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public PeopleDetailsDto createPeople(@Valid @RequestBody CreatePeopleDto createPeopleDto) throws Exception {
+  public PeopleDetailsDto createPeople(@Valid @RequestBody CreatePeopleDto createPeopleDto)
+      throws Exception {
     return peopleService.create(createPeopleDto);
   }
 
@@ -45,8 +45,9 @@ public class PeopleController {
   @PatchMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public PeopleDetailsDto updatePeople(@Valid @RequestBody UpdatePeopleDto updatePeopleDto , @PathVariable Long id) throws Exception {
-    return peopleService.update(updatePeopleDto , id);
+  public PeopleDetailsDto updatePeople(
+      @Valid @RequestBody UpdatePeopleDto updatePeopleDto, @PathVariable Long id) throws Exception {
+    return peopleService.update(updatePeopleDto, id);
   }
 
   @DeleteMapping("/{id}")

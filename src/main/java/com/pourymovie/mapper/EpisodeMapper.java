@@ -4,12 +4,11 @@ import com.pourymovie.dto.request.CreateEpisodeDto;
 import com.pourymovie.dto.request.UpdateEpisodeDto;
 import com.pourymovie.dto.response.EpisodeDto;
 import com.pourymovie.entity.EpisodeEntity;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-
-import java.util.List;
 
 @Mapper(
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,

@@ -15,40 +15,25 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/upload-center")
-@Tag(name = "Upload Center" , description = "Endpoints for managing upload center operations")
+@Tag(name = "Upload Center", description = "Endpoints for managing upload center operations")
 public class UploadCenterController {
-  @Autowired
-  private UploadCenterService uploadCenterService;
+  @Autowired private UploadCenterService uploadCenterService;
 
-  @PostMapping(
-          value = "/buffer" ,
-          consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-  )
+  @PostMapping(value = "/buffer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @io.swagger.v3.oas.annotations.parameters.RequestBody(
-          content = @Content(
-                  schema = @Schema(implementation = UploadBufferDto.class)
-          )
-  )
+      content = @Content(schema = @Schema(implementation = UploadBufferDto.class)))
   public UploadResultDto withBuffer(
-          @RequestPart("file") MultipartFile file,
-          @Valid @ModelAttribute UploadBufferDto dto
-  ) throws Exception {
-    return uploadCenterService.withBuffer(file , dto.bucket());
+      @RequestPart("file") MultipartFile file, @Valid @ModelAttribute UploadBufferDto dto)
+      throws Exception {
+    return uploadCenterService.withBuffer(file, dto.bucket());
   }
 
-  @PostMapping(
-          value = "/stream" ,
-          consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-  )
+  @PostMapping(value = "/stream", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @io.swagger.v3.oas.annotations.parameters.RequestBody(
-          content = @Content(
-                  schema = @Schema(implementation = UploadStreamDto.class)
-          )
-  )
+      content = @Content(schema = @Schema(implementation = UploadStreamDto.class)))
   public UploadResultDto uploadStream(
-          @RequestPart("file") MultipartFile file,
-          @Valid @ModelAttribute UploadStreamDto dto
-  ) throws Exception {
+      @RequestPart("file") MultipartFile file, @Valid @ModelAttribute UploadStreamDto dto)
+      throws Exception {
     return uploadCenterService.withStream(file, dto.bucket());
   }
 }

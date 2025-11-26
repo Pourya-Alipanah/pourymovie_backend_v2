@@ -14,9 +14,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(
-        name = "title_person"
-)
+@Table(name = "title_person")
 public class TitlePeopleEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

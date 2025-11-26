@@ -8,6 +8,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,59 +20,51 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Optional;
-
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-  @Autowired
-  private JwtService jwtService;
+  @Autowired private JwtService jwtService;
 
-  @Autowired
-  private CustomUserDetailsService userDetailsService;
+  @Autowired private CustomUserDetailsService userDetailsService;
 
-  @Autowired
-  private AppDefaults appDefaults;
-
+  @Autowired private AppDefaults appDefaults;
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
     String path = request.getServletPath();
     AntPathMatcher pathMatcher = new AntPathMatcher();
     return Arrays.stream(appDefaults.getPublicPaths())
-            .anyMatch(pattern -> pathMatcher.match(pattern, path));
+        .anyMatch(pattern -> pathMatcher.match(pattern, path));
   }
 
   @Override
-  protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+  protected void doFilterInternal(
+      @NonNull HttpServletRequest request,
+      @NonNull HttpServletResponse response,
+      @NonNull FilterChain filterChain)
+      throws ServletException, IOException {
 
     Optional<String> token = CookieUtils.getToken(TokenNames.ACCESS_TOKEN, request);
-
 
     if (token.isEmpty()) {
       filterChain.doFilter(request, response);
     }
 
+    Long userId = jwtService.extractUserId(token.get());
+    String userEmail = jwtService.extractEmail(token.get());
 
-      Long userId = jwtService.extractUserId(token.get());
-      String userEmail = jwtService.extractEmail(token.get());
+    var userDetails = userDetailsService.loadUserByUsername(userEmail);
 
-      var userDetails = userDetailsService.loadUserByUsername(userEmail);
+    if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+      if (jwtService.validateToken(token.get(), userDetails)) {
+        var authToken =
+            new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
+        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-      if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-        if (jwtService.validateToken(token.get(), userDetails)) {
-          var authToken = new UsernamePasswordAuthenticationToken(
-                  userDetails, null, userDetails.getAuthorities()
-          );
-          authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-
-          SecurityContextHolder.getContext().setAuthentication(authToken);
-        }
+        SecurityContextHolder.getContext().setAuthentication(authToken);
       }
-
+    }
 
     filterChain.doFilter(request, response);
   }

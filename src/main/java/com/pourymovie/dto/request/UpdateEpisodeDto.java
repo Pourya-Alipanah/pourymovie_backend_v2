@@ -1,8 +1,3 @@
 package com.pourymovie.dto.request;
 
-
-public record UpdateEpisodeDto(
-        Integer episodeNumber,
-        Long seasonId
-) {
-}
+public record UpdateEpisodeDto(Integer episodeNumber, Long seasonId) {}

@@ -11,19 +11,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(
-        name = "upload_parts"
-)
+@Table(name = "upload_parts")
 public class UploadPartEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column
-  private int partNumber;
+  @Column private int partNumber;
 
-  @Column
-  private String eTag;
+  @Column private String eTag;
 
   @ManyToOne(fetch = FetchType.LAZY)
   private UploadSessionEntity session;

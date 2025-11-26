@@ -3,6 +3,7 @@ package com.pourymovie.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pourymovie.enums.DeletedBy;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,17 +11,11 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-
-
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(
-        name = "comment"
-)
+@Table(name = "comment")
 public class CommentEntity {
 
   @Id
@@ -33,17 +28,11 @@ public class CommentEntity {
   @Column(length = 250)
   private String content;
 
-  @CreationTimestamp
-  private LocalDateTime createdAt;
+  @CreationTimestamp private LocalDateTime createdAt;
 
-  @JsonIgnore
-  @Column
-  private LocalDateTime deletedAt;
+  @JsonIgnore @Column private LocalDateTime deletedAt;
 
-  @JsonIgnore
-  @UpdateTimestamp
-  @Column
-  private LocalDateTime updateAt;
+  @JsonIgnore @UpdateTimestamp @Column private LocalDateTime updateAt;
 
   @JsonIgnore
   @Column

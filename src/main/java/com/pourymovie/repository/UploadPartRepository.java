@@ -1,10 +1,9 @@
 package com.pourymovie.repository;
 
 import com.pourymovie.entity.UploadPartEntity;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface UploadPartRepository extends JpaRepository<UploadPartEntity, Long> {

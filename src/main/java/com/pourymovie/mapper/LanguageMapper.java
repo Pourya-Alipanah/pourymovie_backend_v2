@@ -15,20 +15,17 @@ public interface LanguageMapper {
     return entities.map(this::toDto);
   }
 
-  @Mappings({
-          @Mapping(target = "id", ignore = true),
-          @Mapping(target = "titles", ignore = true)
-  })
+  @Mappings({@Mapping(target = "id", ignore = true), @Mapping(target = "titles", ignore = true)})
   LanguageEntity toEntity(CreateLanguageDto dto);
 
   @Mapping(target = "titles", ignore = true)
   LanguageEntity toEntity(LanguageDto dto);
 
   @Mappings({
-          @Mapping(target = "slug", ignore = true),
-          @Mapping(target = "nameFa", ignore = true),
-          @Mapping(target = "id", ignore = true),
-          @Mapping(target = "titles", ignore = true)
+    @Mapping(target = "slug", ignore = true),
+    @Mapping(target = "nameFa", ignore = true),
+    @Mapping(target = "id", ignore = true),
+    @Mapping(target = "titles", ignore = true)
   })
   void updateEntityFromDto(UpdateLanguageDto dto, @MappingTarget LanguageEntity entity);
 }
