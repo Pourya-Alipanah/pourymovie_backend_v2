@@ -1,11 +1,13 @@
 package com.pourymovie.service;
 
+import com.github.slugify.Slugify;
 import com.pourymovie.dto.request.ConfirmUploadDto;
 import com.pourymovie.dto.request.CreateTitleDto;
 import com.pourymovie.dto.request.CreateTitlePeopleDto;
 import com.pourymovie.dto.request.UpdateTitleDto;
 import com.pourymovie.dto.response.TitleDetailsDto;
 import com.pourymovie.dto.response.TitleDto;
+import com.pourymovie.dto.response.TitleSummaryDto;
 import com.pourymovie.entity.GenreEntity;
 import com.pourymovie.entity.PeopleEntity;
 import com.pourymovie.entity.TitleEntity;
@@ -30,29 +32,21 @@ import java.util.stream.Collectors;
 @Service
 public class TitleService {
 
-  @Autowired
-  private TitleRepository titleRepository;
+  @Autowired private TitleRepository titleRepository;
 
-  @Autowired
-  private TitleMapper titleMapper;
+  @Autowired private TitleMapper titleMapper;
 
-  @Autowired
-  private LanguageService languageService;
+  @Autowired private LanguageService languageService;
 
-  @Autowired
-  private CountryService countryService;
+  @Autowired private CountryService countryService;
 
-  @Autowired
-  private GenreService genreService;
+  @Autowired private GenreService genreService;
 
-  @Autowired
-  private PeopleService peopleService;
+  @Autowired private PeopleService peopleService;
 
-  @Autowired
-  private TitlePeopleMapper titlePeopleMapper;
+  @Autowired private TitlePeopleMapper titlePeopleMapper;
 
-  @Autowired
-  private UploadCenterService uploadCenterService;
+  @Autowired private UploadCenterService uploadCenterService;
 
   @Transactional
   public TitleDetailsDto create(CreateTitleDto createTitleDto) throws Exception {
@@ -60,7 +54,11 @@ public class TitleService {
     var language = languageService.getById(createTitleDto.languageId());
     var country = countryService.getById(createTitleDto.countryId());
 
-    fillUploadUrl(titleEntity, createTitleDto.coverUrl(), createTitleDto.thumbnailUrl(), createTitleDto.trailerUrl());
+    fillUploadUrl(
+        titleEntity,
+        createTitleDto.coverUrl(),
+        createTitleDto.thumbnailUrl(),
+        createTitleDto.trailerUrl());
 
     List<GenreEntity> genres = new ArrayList<>();
     List<TitlePeopleEntity> titlePeopleEntities = new ArrayList<>();
@@ -71,14 +69,15 @@ public class TitleService {
 
     if (!createTitleDto.titlePeople().isEmpty()) {
 
-      List<PeopleEntity> existingPeople = peopleService.findMultipleByIds(
-              createTitleDto.titlePeople().stream().map(CreateTitlePeopleDto::id).toList()
-      );
+      List<PeopleEntity> existingPeople =
+          peopleService.findMultipleByIds(
+              createTitleDto.titlePeople().stream().map(CreateTitlePeopleDto::id).toList());
 
-      var peopleMap = existingPeople.stream()
-              .collect(Collectors.toMap(PeopleEntity::getId, p -> p));
+      var peopleMap =
+          existingPeople.stream().collect(Collectors.toMap(PeopleEntity::getId, p -> p));
 
-      titlePeopleEntities = createTitleDto.titlePeople().stream()
+      titlePeopleEntities =
+          createTitleDto.titlePeople().stream()
               .map(p -> titlePeopleMapper.toEntity(p, peopleMap.get(p.id())))
               .peek(tpe -> tpe.setTitle(titleEntity))
               .toList();
@@ -96,10 +95,18 @@ public class TitleService {
     return titleMapper.toDetailsDto(titleRepository.findBySlug(slug).orElseThrow());
   }
 
+  public TitleSummaryDto findLinkByTitleName(String title) {
+    var titleEntT =
+        titleRepository
+            .findBySlugLikeOrTitleEnLikeIgnoreCase(title, title)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    return titleMapper.toSummaryDto(titleEntT);
+  }
+
   public TitleEntity findById(Long id) {
-    return titleRepository.findById(id).orElseThrow(
-            () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
-    );
+    return titleRepository
+        .findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
   }
 
   public Page<TitleDto> findAll(Pageable pageable) {
@@ -111,7 +118,11 @@ public class TitleService {
     var titleEntity = findById(id);
     titleMapper.updateEntityFromDto(updateTitleDto, titleEntity);
 
-    fillUploadUrl(titleEntity, updateTitleDto.coverUrl(), updateTitleDto.thumbnailUrl(), updateTitleDto.trailerUrl());
+    fillUploadUrl(
+        titleEntity,
+        updateTitleDto.coverUrl(),
+        updateTitleDto.thumbnailUrl(),
+        updateTitleDto.trailerUrl());
 
     if (updateTitleDto.languageId() != null) {
       titleEntity.setLanguage(languageService.getById(updateTitleDto.languageId()));
@@ -122,21 +133,23 @@ public class TitleService {
     }
 
     if (updateTitleDto.genreIds() != null) {
-      titleEntity.setGenres(genreService.findMultipleByIds(new ArrayList<>(updateTitleDto.genreIds())));
+      titleEntity.setGenres(
+          genreService.findMultipleByIds(new ArrayList<>(updateTitleDto.genreIds())));
     }
 
     if (updateTitleDto.titlePeople() != null) {
       if (updateTitleDto.titlePeople().isEmpty()) {
         titleEntity.getPeople().clear();
       } else {
-        List<PeopleEntity> existingPeople = peopleService.findMultipleByIds(
-                updateTitleDto.titlePeople().stream().map(CreateTitlePeopleDto::id).toList()
-        );
+        List<PeopleEntity> existingPeople =
+            peopleService.findMultipleByIds(
+                updateTitleDto.titlePeople().stream().map(CreateTitlePeopleDto::id).toList());
 
-        var peopleMap = existingPeople.stream()
-                .collect(Collectors.toMap(PeopleEntity::getId, p -> p));
+        var peopleMap =
+            existingPeople.stream().collect(Collectors.toMap(PeopleEntity::getId, p -> p));
 
-        var people = updateTitleDto.titlePeople().stream()
+        var people =
+            updateTitleDto.titlePeople().stream()
                 .map(p -> titlePeopleMapper.toEntity(p, peopleMap.get(p.id())))
                 .peek(tpe -> tpe.setTitle(titleEntity))
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -154,32 +167,26 @@ public class TitleService {
       TitleEntity titleEntity,
       ConfirmUploadDto coverUploadDto,
       ConfirmUploadDto thumbnailUrlDto,
-      ConfirmUploadDto trailerUrlDto
-  ) throws Exception {
+      ConfirmUploadDto trailerUrlDto)
+      throws Exception {
     if (coverUploadDto != null) {
-      var coverUploadUrl = uploadCenterService.confirmUpload(
-              coverUploadDto.key(),
-              UploadFromEntity.TITLE,
-              UploadType.COVER
-      );
+      var coverUploadUrl =
+          uploadCenterService.confirmUpload(
+              coverUploadDto.key(), UploadFromEntity.TITLE, UploadType.COVER);
       titleEntity.setCoverUrl(coverUploadUrl);
     }
 
     if (thumbnailUrlDto != null) {
-      var thumbnailUrl = uploadCenterService.confirmUpload(
-              thumbnailUrlDto.key(),
-              UploadFromEntity.TITLE,
-              UploadType.THUMBNAIL
-      );
+      var thumbnailUrl =
+          uploadCenterService.confirmUpload(
+              thumbnailUrlDto.key(), UploadFromEntity.TITLE, UploadType.THUMBNAIL);
       titleEntity.setThumbnailUrl(thumbnailUrl);
     }
 
     if (trailerUrlDto != null) {
-      var trailerUrl = uploadCenterService.confirmUpload(
-              trailerUrlDto.key(),
-              UploadFromEntity.TITLE,
-              UploadType.TRAILER
-      );
+      var trailerUrl =
+          uploadCenterService.confirmUpload(
+              trailerUrlDto.key(), UploadFromEntity.TITLE, UploadType.TRAILER);
       titleEntity.setTrailerUrl(trailerUrl);
     }
   }

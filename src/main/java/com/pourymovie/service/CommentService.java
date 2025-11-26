@@ -3,6 +3,7 @@ package com.pourymovie.service;
 import com.pourymovie.dto.request.CreateCommentDto;
 import com.pourymovie.dto.request.UpdateCommentDto;
 import com.pourymovie.dto.response.CommentDto;
+import com.pourymovie.entity.CommentEntity;
 import com.pourymovie.entity.UserEntity;
 import com.pourymovie.mapper.CommentMapper;
 import com.pourymovie.repository.CommentRepository;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Service
 public class CommentService {
@@ -36,6 +39,9 @@ public class CommentService {
 
   public Page<CommentDto> getAllTitleComments(Long titleId, Pageable pageable) {
     return commentMapper.toDto(commentRepository.findAllByTitleId(titleId, pageable));
+  }
+  public List<CommentEntity> getAllTitleComments(Long titleId) {
+    return commentRepository.findAllByTitleId(titleId);
   }
 
   public Page<CommentDto> getAllUserComments(Long userId, Pageable pageable) {
