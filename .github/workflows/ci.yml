@@ -1,0 +1,64 @@
+name: backend V2 CI
+
+on:
+
+  push:
+    branches:
+      - release/*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Make mvnw executable
+        run: chmod +x ./mvnw
+
+      - name: Build Jar
+        run: ./mvnw clean package -DskipTests
+
+      - name: Upload Jar Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jar
+          path: target/*.jar
+
+      - name: Upload Dockerfile Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dockerfile
+          path: Dockerfile
+
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - name: Download Jar Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-jar
+          path: /opt/pourymovie/backendV2
+
+      - name: Download Dockerfile Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dockerfile
+          path: /opt/pourymovie/backendV2
+
+      - name: Rename JAR
+        run: |
+          cd /opt/pourymovie/backendV2
+          mv *.jar app.jar
+
+      - name: Docker Compose Up
+        run: |
+          cd /opt/pourymovie/infra
+          docker compose up -d --build --force-recreate backendv2
