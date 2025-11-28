@@ -1,6 +1,5 @@
 package com.pourymovie.util;
 
-import com.pourymovie.entity.TitleEntity;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
@@ -29,5 +28,9 @@ public class SpecificationUtil {
       query.distinct(true);
       return null;
     };
+  }
+
+  public static <T> Specification<T> flagEquals(String field, Boolean value) {
+    return (root, query, cb) -> value == null ? null : cb.equal(root.get(field), value);
   }
 }

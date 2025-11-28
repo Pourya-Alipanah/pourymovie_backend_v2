@@ -62,10 +62,6 @@ public class TitleSpecification {
     };
   }
 
-  private static Specification<TitleEntity> flagEquals(String field, Boolean value) {
-    return (root, query, cb) -> value == null ? null : cb.equal(root.get(field), value);
-  }
-
   private static Specification<TitleEntity> genresIn(List<String> values) {
     return listSpec(
         values,
