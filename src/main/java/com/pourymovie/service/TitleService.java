@@ -1,9 +1,6 @@
 package com.pourymovie.service;
 
-import com.pourymovie.dto.request.ConfirmUploadDto;
-import com.pourymovie.dto.request.CreateTitleDto;
-import com.pourymovie.dto.request.CreateTitlePeopleDto;
-import com.pourymovie.dto.request.UpdateTitleDto;
+import com.pourymovie.dto.request.*;
 import com.pourymovie.dto.response.TitleDetailsDto;
 import com.pourymovie.dto.response.TitleDto;
 import com.pourymovie.dto.response.TitleSummaryDto;
@@ -19,9 +16,12 @@ import com.pourymovie.repository.TitleRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.pourymovie.specification.TitleSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,6 +109,11 @@ public class TitleService {
 
   public Page<TitleDto> findAll(Pageable pageable) {
     return titleMapper.toDtoPage(titleRepository.findAll(pageable));
+  }
+
+  public Page<TitleDto> findAll(TitleFilterDto filters, Pageable pageable) {
+    Specification<TitleEntity> spec = TitleSpecification.withFilters(filters);
+    return titleMapper.toDtoPage(titleRepository.findAll(spec, pageable));
   }
 
   @Transactional

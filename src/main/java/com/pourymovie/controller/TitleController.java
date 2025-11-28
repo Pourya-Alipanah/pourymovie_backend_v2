@@ -1,6 +1,7 @@
 package com.pourymovie.controller;
 
 import com.pourymovie.dto.request.CreateTitleDto;
+import com.pourymovie.dto.request.TitleFilterDto;
 import com.pourymovie.dto.request.UpdateTitleDto;
 import com.pourymovie.dto.response.TitleDetailsDto;
 import com.pourymovie.dto.response.TitleDto;
@@ -30,6 +31,13 @@ public class TitleController {
   public TitleDetailsDto createTitle(@Valid @RequestBody CreateTitleDto createTitleDto)
       throws Exception {
     return titleService.create(createTitleDto);
+  }
+
+  @PostMapping("/filter")
+  @PageableAsQueryParam
+  public Page<TitleDto> findAllWithFilter(
+      @Parameter(hidden = true) Pageable pageable, @RequestBody TitleFilterDto filters) {
+    return titleService.findAll(filters, pageable);
   }
 
   @GetMapping
