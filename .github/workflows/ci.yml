@@ -56,12 +56,8 @@ jobs:
       - name: Rename JAR
         run: |
           cd /opt/pourymovie/backendV2
-          if ls *.jar 1> /dev/null 2>&1; then
-            mv *.jar app.jar
-          else
-            echo "No JAR files found to rename."
-            exit 1
-          fi
+          rm -f app.jar
+          mv *.jar app.jar
 
       - name: Docker Compose Up
         run: |
