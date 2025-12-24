@@ -10,7 +10,7 @@
     </parent>
     <groupId>com</groupId>
     <artifactId>pourymovie_backend_v2</artifactId>
-    <version>1.0.0-BUILD</version>
+    <version>1.1.0-BUILD</version>
     <name>pourymovie_backend_v2</name>
     <description>pourymovie_backend_v2</description>
     <url/>
