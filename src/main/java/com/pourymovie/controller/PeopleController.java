@@ -33,8 +33,9 @@ public class PeopleController {
 
   @GetMapping
   @PageableAsQueryParam
-  public Page<PeopleDto> findAll(@Parameter(hidden = true) Pageable pageable) {
-    return peopleService.findAll(pageable);
+  public Page<PeopleDto> findAll(
+      @Parameter(hidden = true) Pageable pageable, @RequestParam(required = false) String name) {
+    return peopleService.findAll(pageable, name);
   }
 
   @GetMapping("/{slug}")
