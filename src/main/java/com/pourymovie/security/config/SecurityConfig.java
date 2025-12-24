@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -25,11 +26,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-  @Autowired
-  private JwtFilter jwtFilter;
+  @Autowired private JwtFilter jwtFilter;
 
-  @Autowired
-  private AppDefaults appDefaults;
+  @Autowired private AppDefaults appDefaults;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -47,32 +46,42 @@ public class SecurityConfig {
   }
 
   @Bean
-  public DaoAuthenticationProvider authenticationManager(PasswordEncoder passwordEncoder, CustomUserDetailsService userDetailsService) {
+  public DaoAuthenticationProvider authenticationManager(
+      PasswordEncoder passwordEncoder, CustomUserDetailsService userDetailsService) {
     var authProvider = new DaoAuthenticationProvider(userDetailsService);
     authProvider.setPasswordEncoder(passwordEncoder);
     return authProvider;
   }
 
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http, DaoAuthenticationProvider authenticationProvider,
-                                                 AuthenticationEntryPoint authenticationEntrypoint, AccessDeniedHandler accessDeniedHandler) throws Exception {
+  public SecurityFilterChain securityFilterChain(
+      HttpSecurity http,
+      DaoAuthenticationProvider authenticationProvider,
+      AuthenticationEntryPoint authenticationEntrypoint,
+      AccessDeniedHandler accessDeniedHandler)
+      throws Exception {
 
-    http.csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests((requests) -> requests
+    http.cors(Customizer.withDefaults());
+
+    http.csrf(AbstractHttpConfigurer::disable);
+
+    http.authorizeHttpRequests(
+            (requests) ->
+                requests
                     .requestMatchers(appDefaults.getPublicPaths())
                     .permitAll()
                     .anyRequest()
-                    .authenticated()
-            )
-            .exceptionHandling(ex -> ex
-                    .authenticationEntryPoint(authenticationEntrypoint)
-                    .accessDeniedHandler(accessDeniedHandler)
-            )
-            .formLogin(AbstractHttpConfigurer::disable)
-            .logout(AbstractHttpConfigurer::disable)
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-            .authenticationProvider(authenticationProvider)
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                    .authenticated())
+        .exceptionHandling(
+            ex ->
+                ex.authenticationEntryPoint(authenticationEntrypoint)
+                    .accessDeniedHandler(accessDeniedHandler))
+        .formLogin(AbstractHttpConfigurer::disable)
+        .logout(AbstractHttpConfigurer::disable)
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+        .authenticationProvider(authenticationProvider)
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
     return http.build();
   }
