@@ -5,15 +5,16 @@ import com.pourymovie.config.AppDefaults;
 import com.pourymovie.exception.AccessDeniedHandlerImpl;
 import com.pourymovie.exception.AuthenticationEntrypoint;
 import com.pourymovie.security.jwt.JwtFilter;
-import com.pourymovie.security.userDetails.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,17 +47,14 @@ public class SecurityConfig {
   }
 
   @Bean
-  public DaoAuthenticationProvider authenticationManager(
-      PasswordEncoder passwordEncoder, CustomUserDetailsService userDetailsService) {
-    var authProvider = new DaoAuthenticationProvider(userDetailsService);
-    authProvider.setPasswordEncoder(passwordEncoder);
-    return authProvider;
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig)
+      throws Exception {
+    return authConfig.getAuthenticationManager();
   }
 
   @Bean
   public SecurityFilterChain securityFilterChain(
       HttpSecurity http,
-      DaoAuthenticationProvider authenticationProvider,
       AuthenticationEntryPoint authenticationEntrypoint,
       AccessDeniedHandler accessDeniedHandler)
       throws Exception {
@@ -79,7 +77,16 @@ public class SecurityConfig {
         .formLogin(AbstractHttpConfigurer::disable)
         .logout(AbstractHttpConfigurer::disable)
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-        .authenticationProvider(authenticationProvider)
+        .headers(
+            headers ->
+                headers
+                    .contentSecurityPolicy(
+                        csp ->
+                            csp.policyDirectives(
+                                "default-src 'self'; script-src 'self'; style-src 'self';"))
+                    .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+                    .httpStrictTransportSecurity(
+                        hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000)))
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
