@@ -8,6 +8,8 @@ import com.pourymovie.entity.UserEntity;
 import com.pourymovie.mapper.CommentMapper;
 import com.pourymovie.repository.CommentRepository;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,18 +18,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class CommentService {
 
-  @Autowired
-  private CommentRepository commentRepository;
+  private final CommentRepository commentRepository;
 
-  @Autowired
-  private CommentMapper commentMapper;
+  private final CommentMapper commentMapper;
 
-  @Autowired
-  private TitleService titleService;
+  private final TitleService titleService;
 
-  public CommentDto create(CreateCommentDto commentDto , UserEntity user) {
+  public CommentDto create(CreateCommentDto commentDto, UserEntity user) {
     var comment = commentMapper.toEntity(commentDto);
     var title = titleService.findById(commentDto.titleId());
     comment.setTitle(title);
@@ -39,6 +39,7 @@ public class CommentService {
   public Page<CommentDto> getAllTitleComments(Long titleId, Pageable pageable) {
     return commentMapper.toDto(commentRepository.findAllByTitleId(titleId, pageable));
   }
+
   public List<CommentEntity> getAllTitleComments(Long titleId) {
     return commentRepository.findAllByTitleId(titleId);
   }
@@ -47,9 +48,11 @@ public class CommentService {
     return commentMapper.toDto(commentRepository.findAllByUserId(userId, pageable));
   }
 
-  public CommentDto update(UpdateCommentDto commentDto , Long commentId) {
-    var existingComment = commentRepository.findById(commentId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+  public CommentDto update(UpdateCommentDto commentDto, Long commentId) {
+    var existingComment =
+        commentRepository
+            .findById(commentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     commentMapper.updateEntityFromDto(commentDto, existingComment);
     var updatedComment = commentRepository.save(existingComment);

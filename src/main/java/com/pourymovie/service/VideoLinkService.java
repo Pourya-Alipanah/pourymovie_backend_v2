@@ -11,6 +11,8 @@ import com.pourymovie.mapper.VideoLinkMapper;
 import com.pourymovie.repository.VideoLinkRepository;
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,30 +20,24 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class VideoLinkService {
-  @Autowired
-  private VideoLinkRepository videoLinkRepository;
+  private final VideoLinkRepository videoLinkRepository;
 
-  @Autowired
-  private VideoLinkMapper videoLinkMapper;
+  private final VideoLinkMapper videoLinkMapper;
 
-  @Autowired
-  private UploadCenterService uploadCenterService;
+  private final UploadCenterService uploadCenterService;
 
-  @Autowired
-  private TitleService titleService;
+  private final TitleService titleService;
 
-  @Autowired
-  private EpisodeService episodeService;
+  private final EpisodeService episodeService;
 
   @Transactional
   public VideoLinkDto create(CreateVideoLinkDto createVideoLinkDto) throws Exception {
     var videoLinkEntT = videoLinkMapper.toEntity(createVideoLinkDto);
-    var bucketAndKeyPair = uploadCenterService.confirmUpload(
-            createVideoLinkDto.url().key(),
-            UploadFromEntity.VIDEO,
-            UploadType.VIDEO
-    );
+    var bucketAndKeyPair =
+        uploadCenterService.confirmUpload(
+            createVideoLinkDto.url().key(), UploadFromEntity.VIDEO, UploadType.VIDEO);
     videoLinkEntT.setUrl(bucketAndKeyPair);
 
     if (createVideoLinkDto.episodeId() != null) {
@@ -73,11 +69,11 @@ public class VideoLinkService {
   }
 
   public VideoLinkEntity getById(Long id) throws Exception {
-    var videoLink = videoLinkRepository.findById(id)
+    var videoLink =
+        videoLinkRepository
+            .findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    var url = uploadCenterService.getDownloadUrlFromBucketAndKeyCombination(
-            videoLink.getUrl()
-    );
+    var url = uploadCenterService.getDownloadUrlFromBucketAndKeyCombination(videoLink.getUrl());
     videoLink.setUrl(url);
     return videoLink;
   }
@@ -85,9 +81,7 @@ public class VideoLinkService {
   public List<VideoLinkDto> getByEpisodeId(Long episodeId) throws Exception {
     var videoLinks = videoLinkRepository.findAllByEpisodeId(episodeId);
     for (var videoLink : videoLinks) {
-      var url = uploadCenterService.getDownloadUrlFromBucketAndKeyCombination(
-              videoLink.getUrl()
-      );
+      var url = uploadCenterService.getDownloadUrlFromBucketAndKeyCombination(videoLink.getUrl());
       videoLink.setUrl(url);
     }
     return videoLinkMapper.toDto(videoLinks);
@@ -96,9 +90,7 @@ public class VideoLinkService {
   public List<VideoLinkDto> getByTitleId(Long titleId) throws Exception {
     var videoLinks = videoLinkRepository.findAllByTitleId(titleId);
     for (var videoLink : videoLinks) {
-      var url = uploadCenterService.getDownloadUrlFromBucketAndKeyCombination(
-              videoLink.getUrl()
-      );
+      var url = uploadCenterService.getDownloadUrlFromBucketAndKeyCombination(videoLink.getUrl());
       videoLink.setUrl(url);
     }
     return videoLinkMapper.toDto(videoLinks);
@@ -108,26 +100,20 @@ public class VideoLinkService {
   public VideoLinkDto update(UpdateVideoLinkDto updateVideoLinkDto, Long id) throws Exception {
     var existing = getById(id);
 
-    if (
-            (existing.getEpisode() != null && updateVideoLinkDto.titleId() != null) ||
-                    (existing.getTitle() != null && updateVideoLinkDto.episodeId() != null)
-    ) {
+    if ((existing.getEpisode() != null && updateVideoLinkDto.titleId() != null)
+        || (existing.getTitle() != null && updateVideoLinkDto.episodeId() != null)) {
       throw new ResponseStatusException(HttpStatus.CONFLICT);
     }
 
     if (updateVideoLinkDto.url() != null) {
-      var bucketAndKeyPair = uploadCenterService.confirmUpload(
-              updateVideoLinkDto.url().key(),
-              UploadFromEntity.VIDEO,
-              UploadType.VIDEO
-      );
+      var bucketAndKeyPair =
+          uploadCenterService.confirmUpload(
+              updateVideoLinkDto.url().key(), UploadFromEntity.VIDEO, UploadType.VIDEO);
       existing.setUrl(bucketAndKeyPair);
     }
     videoLinkMapper.updateEntityFromDto(updateVideoLinkDto, existing);
     var savedEntity = videoLinkRepository.save(existing);
-    var url = uploadCenterService.getDownloadUrlFromBucketAndKeyCombination(
-            savedEntity.getUrl()
-    );
+    var url = uploadCenterService.getDownloadUrlFromBucketAndKeyCombination(savedEntity.getUrl());
     savedEntity.setUrl(url);
     return videoLinkMapper.toDto(savedEntity);
   }

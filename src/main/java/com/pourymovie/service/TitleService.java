@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.pourymovie.specification.TitleSpecification;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,23 +29,24 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class TitleService {
 
-  @Autowired private TitleRepository titleRepository;
+  private final TitleRepository titleRepository;
 
-  @Autowired private TitleMapper titleMapper;
+  private final TitleMapper titleMapper;
 
-  @Autowired private LanguageService languageService;
+  private final LanguageService languageService;
 
-  @Autowired private CountryService countryService;
+  private final CountryService countryService;
 
-  @Autowired private GenreService genreService;
+  private final GenreService genreService;
 
-  @Autowired private PeopleService peopleService;
+  private final PeopleService peopleService;
 
-  @Autowired private TitlePeopleMapper titlePeopleMapper;
+  private final TitlePeopleMapper titlePeopleMapper;
 
-  @Autowired private UploadCenterService uploadCenterService;
+  private final UploadCenterService uploadCenterService;
 
   @Transactional
   public TitleDetailsDto create(CreateTitleDto createTitleDto) throws Exception {

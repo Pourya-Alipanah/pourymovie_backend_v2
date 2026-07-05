@@ -6,6 +6,7 @@ import com.pourymovie.dto.response.LanguageDto;
 import com.pourymovie.entity.LanguageEntity;
 import com.pourymovie.mapper.LanguageMapper;
 import com.pourymovie.repository.LanguageRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,10 +15,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class LanguageService {
-  @Autowired private LanguageRepository languageRepository;
+  private final LanguageRepository languageRepository;
 
-  @Autowired private LanguageMapper languageMapper;
+  private final LanguageMapper languageMapper;
 
   public LanguageDto create(CreateLanguageDto createLanguageDto) {
     LanguageEntity languageEntity = languageMapper.toEntity(createLanguageDto);

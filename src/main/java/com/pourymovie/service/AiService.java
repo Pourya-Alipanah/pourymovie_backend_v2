@@ -13,21 +13,24 @@ import com.pourymovie.util.LinkPrompt;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class AiService {
 
-  @Autowired private GeminiProvider geminiProvider;
+  private final GeminiProvider geminiProvider;
 
-  @Autowired private CommentService commentService;
+  private final CommentService commentService;
 
-  @Autowired private TitleService titleService;
+  private final TitleService titleService;
 
-  @Autowired private AppDefaults appDefaults;
+  private final AppDefaults appDefaults;
 
   public ResponseStream<GenerateContentResponse> getCommentsSummary(Long titleId) {
     var comments = commentService.getAllTitleComments(titleId);

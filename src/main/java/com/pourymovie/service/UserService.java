@@ -9,6 +9,7 @@ import com.pourymovie.enums.UserRole;
 import com.pourymovie.mapper.UserMapper;
 import com.pourymovie.repository.UserRepository;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,11 +18,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-  @Autowired private UserRepository userRepository;
-  @Autowired private PasswordEncoder passwordEncoder;
-  @Autowired private UserMapper userMapper;
-  @Autowired private UploadCenterService uploadCenterService;
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final UserMapper userMapper;
+  private final UploadCenterService uploadCenterService;
 
   public UserEntity getUserByEmail(String email) {
     return userRepository.findByEmail(email).orElseThrow();

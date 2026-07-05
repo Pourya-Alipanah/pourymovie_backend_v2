@@ -5,15 +5,18 @@ import com.pourymovie.repository.TitlePeopleRepository;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class TitlePeopleService {
 
-  @Autowired private TitlePeopleRepository titlePeopleRepository;
+  private final TitlePeopleRepository titlePeopleRepository;
 
   public List<TitlePeopleEntity> createBulk(List<TitlePeopleEntity> titlePeopleEntities) {
     return titlePeopleRepository.saveAll(titlePeopleEntities);
