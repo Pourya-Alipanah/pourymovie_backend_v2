@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,9 +20,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/genre")
 @Tag(name = "Genres", description = "Endpoints for managing genres")
+@RequiredArgsConstructor
 public class GenreController {
 
-  @Autowired private GenreService genreService;
+  private final GenreService genreService;
 
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")

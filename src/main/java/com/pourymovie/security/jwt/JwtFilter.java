@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,13 +23,14 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
+@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-  @Autowired private JwtService jwtService;
+  private final JwtService jwtService;
 
-  @Autowired private CustomUserDetailsService userDetailsService;
+  private final CustomUserDetailsService userDetailsService;
 
-  @Autowired private AppDefaults appDefaults;
+  private final AppDefaults appDefaults;
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -48,6 +51,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     if (token.isEmpty()) {
       filterChain.doFilter(request, response);
+      return;
     }
 
     Long userId = jwtService.extractUserId(token.get());
@@ -56,7 +60,7 @@ public class JwtFilter extends OncePerRequestFilter {
     var userDetails = userDetailsService.loadUserByUsername(userEmail);
 
     if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-      if (jwtService.validateToken(token.get(), userDetails)) {
+      if (jwtService.validateToken(token.get())) {
         var authToken =
             new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities());

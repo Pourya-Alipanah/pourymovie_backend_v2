@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,16 +22,18 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/users")
 @Tag(name = "Users", description = "Endpoints for user management and create admin users")
+@RequiredArgsConstructor
 public class UserController {
 
-  @Autowired
-  private UserService userService;
+  private final UserService userService;
 
   @PreAuthorize("hasRole('SUPER_ADMIN')")
   @Operation(summary = "Required Role = Super Admin")
   @PostMapping("/admin")
-  public ResponseEntity<UserEntity> addUser(@Valid @RequestBody SignUpDto signUpDto) throws Exception {
-    return new ResponseEntity<>(userService.createUser(signUpDto, UserRole.ADMIN) , HttpStatus.CREATED);
+  public ResponseEntity<UserEntity> addUser(@Valid @RequestBody SignUpDto signUpDto)
+      throws Exception {
+    return new ResponseEntity<>(
+        userService.createUser(signUpDto, UserRole.ADMIN), HttpStatus.CREATED);
   }
 
   @PreAuthorize("hasRole('ADMIN')")
@@ -61,8 +64,9 @@ public class UserController {
   @PreAuthorize("hasRole('ADMIN')")
   @PatchMapping("/{id}")
   @Operation(summary = "Required Role = Admin")
-  public UserEntity updateUser(@Valid @RequestBody UpdateUserDto userDto , @PathVariable Long id) throws Exception {
-    return userService.updateUserById(id , userDto);
+  public UserEntity updateUser(@Valid @RequestBody UpdateUserDto userDto, @PathVariable Long id)
+      throws Exception {
+    return userService.updateUserById(id, userDto);
   }
 
   @DeleteMapping

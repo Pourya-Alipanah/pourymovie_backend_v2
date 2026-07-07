@@ -10,15 +10,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.function.Function;
 import javax.crypto.SecretKey;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
-  @Autowired
-  private AppDefaults appDefaults;
+  private final AppDefaults appDefaults;
 
   private SecretKey getKey() {
     byte[] keyBytes = appDefaults.getJwtSecretKey().getBytes(StandardCharsets.UTF_8);
@@ -47,9 +49,8 @@ public class JwtService {
     return extractClaim(token, Claims::getExpiration);
   }
 
-  public boolean validateToken(String token, UserDetails userDetails) {
-    final String userEmail = extractEmail(token);
-    return (userEmail.equals(userDetails.getUsername()) && !isTokenExpired(token));
+  public boolean validateToken(String token) {
+    return !isTokenExpired(token);
   }
 
   private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
@@ -58,11 +59,7 @@ public class JwtService {
   }
 
   private Claims extractAllClaims(String token) {
-    return Jwts.parser()
-            .verifyWith(getKey())
-            .build()
-            .parseSignedClaims(token)
-            .getPayload();
+    return Jwts.parser().verifyWith(getKey()).build().parseSignedClaims(token).getPayload();
   }
 
   public String generateAccessToken(UserEntity user) {
@@ -72,16 +69,17 @@ public class JwtService {
     claims.put("role", user.getRole());
 
     var now = new Date(System.currentTimeMillis());
-    var expiry = new Date(System.currentTimeMillis() + 1000L * 60 * appDefaults.getDefaultAccessTokenTTlInMinutes());
+    var expiry =
+        new Date(
+            System.currentTimeMillis()
+                + 1000L * 60 * appDefaults.getDefaultAccessTokenTTlInMinutes());
 
     return Jwts.builder()
-            .subject(Long.toString(user.getId()))
-            .claims(claims)
-            .issuedAt(now)
-            .expiration(expiry)
-            .signWith(getKey())
-            .compact();
+        .subject(Long.toString(user.getId()))
+        .claims(claims)
+        .issuedAt(now)
+        .expiration(expiry)
+        .signWith(getKey())
+        .compact();
   }
-
-
 }

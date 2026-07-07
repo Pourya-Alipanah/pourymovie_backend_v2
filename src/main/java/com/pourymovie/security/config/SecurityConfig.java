@@ -1,10 +1,8 @@
 package com.pourymovie.security.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pourymovie.config.AppDefaults;
-import com.pourymovie.exception.AccessDeniedHandlerImpl;
-import com.pourymovie.exception.AuthenticationEntrypoint;
 import com.pourymovie.security.jwt.JwtFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,25 +23,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-  @Autowired private JwtFilter jwtFilter;
+  private final JwtFilter jwtFilter;
 
-  @Autowired private AppDefaults appDefaults;
+  private final AppDefaults appDefaults;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
-  }
-
-  @Bean
-  public AuthenticationEntryPoint authenticationEntrypoint(ObjectMapper objectMapper) {
-    return new AuthenticationEntrypoint(objectMapper);
-  }
-
-  @Bean
-  public AccessDeniedHandler accessDeniedHandler(ObjectMapper objectMapper) {
-    return new AccessDeniedHandlerImpl(objectMapper);
   }
 
   @Bean

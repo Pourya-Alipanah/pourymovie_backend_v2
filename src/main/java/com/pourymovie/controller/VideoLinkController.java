@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,21 +19,23 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/video-link")
 @Tag(name = "Video Link", description = "Endpoints for managing video links")
+@RequiredArgsConstructor
 public class VideoLinkController {
-  @Autowired
-  private VideoLinkService videoLinkService;
+  private final VideoLinkService videoLinkService;
 
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public VideoLinkDto createVideoLink(@Valid @RequestBody CreateVideoLinkDto createVideoLinkDto) throws Exception {
+  public VideoLinkDto createVideoLink(@Valid @RequestBody CreateVideoLinkDto createVideoLinkDto)
+      throws Exception {
     return videoLinkService.create(createVideoLinkDto);
   }
 
   @PostMapping("/multi")
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public List<VideoLinkDto> createMultipleVideoLinks(@Valid @RequestBody CreateMultipleVideoLinkDto createMultipleVideoLinkDto) {
+  public List<VideoLinkDto> createMultipleVideoLinks(
+      @Valid @RequestBody CreateMultipleVideoLinkDto createMultipleVideoLinkDto) {
     return videoLinkService.createMultiple(createMultipleVideoLinkDto);
   }
 
@@ -41,14 +45,17 @@ public class VideoLinkController {
   }
 
   @GetMapping("/by-episode/{episodeId}")
-  public List<VideoLinkDto> getVideoLinksByEpisodeId(@PathVariable Long episodeId) throws Exception {
+  public List<VideoLinkDto> getVideoLinksByEpisodeId(@PathVariable Long episodeId)
+      throws Exception {
     return videoLinkService.getByEpisodeId(episodeId);
   }
 
   @PatchMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public VideoLinkDto updateVideoLink(@PathVariable Long id, @Valid @RequestBody UpdateVideoLinkDto updateVideoLinkDto) throws Exception {
+  public VideoLinkDto updateVideoLink(
+      @PathVariable Long id, @Valid @RequestBody UpdateVideoLinkDto updateVideoLinkDto)
+      throws Exception {
     return videoLinkService.update(updateVideoLinkDto, id);
   }
 

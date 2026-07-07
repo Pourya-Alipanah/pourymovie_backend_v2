@@ -5,6 +5,8 @@ import com.pourymovie.entity.UploadSessionEntity;
 import com.pourymovie.service.ChunkUploadService;
 import com.pourymovie.service.UploadCenterService;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,13 +14,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @EnableScheduling
+@RequiredArgsConstructor
 public class MinioCleanUpProvider {
 
-  @Autowired
-  private UploadCenterService uploadCenterService;
+  private final UploadCenterService uploadCenterService;
 
-  @Autowired
-  private ChunkUploadService chunkUploadService;
+  private final ChunkUploadService chunkUploadService;
 
   @Scheduled(fixedRate = 1000 * 60 * 60 * 12) // every 12 hours
   public void handleCron() {
@@ -38,9 +39,11 @@ public class MinioCleanUpProvider {
     for (UploadSessionEntity upload : expiredChunks) {
       try {
         chunkUploadService.abortUpload(upload.getSessionId());
-        System.out.println("Chunk upload " + upload.getUploadId() + " has been cleaned up By Cron.");
+        System.out.println(
+            "Chunk upload " + upload.getUploadId() + " has been cleaned up By Cron.");
       } catch (Exception e) {
-        System.err.println("Cron Error cleaning chunk upload " + upload.getId() + ": " + e.getMessage());
+        System.err.println(
+            "Cron Error cleaning chunk upload " + upload.getId() + ": " + e.getMessage());
       }
     }
   }

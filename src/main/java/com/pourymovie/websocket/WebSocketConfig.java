@@ -1,5 +1,6 @@
 package com.pourymovie.websocket;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +12,9 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 
 @Configuration
 @EnableWebSocket
+@RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketConfigurer {
-  @Autowired private AiChatWebSocketHandler aiChatWebSocketHandler;
+  private final AiChatWebSocketHandler aiChatWebSocketHandler;
 
   @Override
   public void registerWebSocketHandlers(@NonNull WebSocketHandlerRegistry registry) {

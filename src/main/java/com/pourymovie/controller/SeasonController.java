@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,9 +18,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/season")
 @Tag(name = "Seasons", description = "Endpoints for managing seasons of series titles")
+@RequiredArgsConstructor
 public class SeasonController {
-  @Autowired
-  SeasonService seasonService;
+  private final SeasonService seasonService;
 
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
@@ -35,8 +37,9 @@ public class SeasonController {
   @PatchMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public SeasonDto updateSeason(@PathVariable Long id ,@Valid @RequestBody UpdateSeasonDto updateSeasonDto) {
-    return seasonService.updateSeason(id,updateSeasonDto);
+  public SeasonDto updateSeason(
+      @PathVariable Long id, @Valid @RequestBody UpdateSeasonDto updateSeasonDto) {
+    return seasonService.updateSeason(id, updateSeasonDto);
   }
 
   @DeleteMapping("/{id}")

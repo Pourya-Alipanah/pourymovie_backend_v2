@@ -4,14 +4,16 @@ import com.google.genai.Client;
 import com.google.genai.ResponseStream;
 import com.google.genai.types.*;
 import com.pourymovie.config.AppDefaults;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class GeminiProvider {
-  @Autowired private Client client;
+  private final Client client;
 
-  @Autowired private AppDefaults appDefaults;
+  private final AppDefaults appDefaults;
 
   public ResponseStream<GenerateContentResponse> generateResponseStream(String prompt) {
 
