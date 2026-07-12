@@ -4,24 +4,20 @@ import com.pourymovie.config.AppDefaults;
 import com.pourymovie.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-
 @Component
+@RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-  private final AuthService authService;
+  @Lazy private final AuthService authService;
   private final AppDefaults appDefaults;
-
-  public OAuth2SuccessHandler(@Lazy AuthService authService, AppDefaults appDefaults) {
-    this.authService = authService;
-    this.appDefaults = appDefaults;
-  }
 
   @Override
   public void onAuthenticationSuccess(
