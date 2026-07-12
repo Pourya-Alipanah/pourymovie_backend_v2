@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -39,8 +40,8 @@ public class UploadCenterService {
   }
 
   public UploadResultDto withBuffer(MultipartFile file, BufferBucketNames bucket) throws Exception {
-    String objectName =
-        MinioUtils.buildObjectName(Objects.requireNonNull(file.getOriginalFilename()));
+    String cleanFilename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+    String objectName = MinioUtils.buildObjectName(cleanFilename);
 
     minioProvider.uploadBuffer(
         bucket.getValue(), objectName, file.getBytes(), file.getContentType());
@@ -60,28 +61,26 @@ public class UploadCenterService {
   }
 
   public UploadResultDto withStream(MultipartFile file, StreamBucketNames bucket) throws Exception {
-    String objectName =
-        MinioUtils.buildObjectName(Objects.requireNonNull(file.getOriginalFilename()));
-
+    String cleanFilename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+    String objectName = MinioUtils.buildObjectName(cleanFilename);
     Path tempPath = Path.of(appDefaults.getMinioTempUploadDir(), objectName);
-    Files.copy(file.getInputStream(), tempPath);
 
-    long size = Files.size(tempPath);
+    try {
+      file.transferTo(tempPath);
 
-    try (InputStream stream = Files.newInputStream(tempPath)) {
-      minioProvider.uploadStream(
-          bucket.getValue(), objectName, stream, size, file.getContentType());
+      try (InputStream stream = Files.newInputStream(tempPath)) {
+        minioProvider.uploadStream(
+                bucket.getValue(), objectName, stream, file.getSize(), file.getContentType());
+      }
+    } finally {
+      Files.deleteIfExists(tempPath);
     }
 
-    Files.deleteIfExists(tempPath);
-
-    String url =
-        bucket.equals(StreamBucketNames.VIDEO)
+    String url = bucket.equals(StreamBucketNames.VIDEO)
             ? minioProvider.generatePresignedDownloadUrl(bucket.getValue(), objectName)
             : minioProvider.getPublicUrl(bucket.getValue(), objectName);
 
-    UploadCenterEntity upload =
-        UploadCenterEntity.builder()
+    UploadCenterEntity upload = UploadCenterEntity.builder()
             .fileKey(objectName)
             .bucket(bucket.getMain())
             .status(UploadStatus.PENDING)
