@@ -1,6 +1,8 @@
 package com.pourymovie.config;
 
 import java.net.URI;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,8 +14,9 @@ import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 @Configuration
+@RequiredArgsConstructor
 public class S3ClientConfig {
-  @Autowired private AppDefaults appDefaults;
+  private final AppDefaults appDefaults;
 
   @Bean
   public S3Client s3Client() {

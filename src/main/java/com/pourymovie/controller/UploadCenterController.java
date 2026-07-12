@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/upload-center")
 @Tag(name = "Upload Center", description = "Endpoints for managing upload center operations")
+@RequiredArgsConstructor
 public class UploadCenterController {
-  @Autowired private UploadCenterService uploadCenterService;
+  private final UploadCenterService uploadCenterService;
 
   @PostMapping(value = "/buffer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @io.swagger.v3.oas.annotations.parameters.RequestBody(

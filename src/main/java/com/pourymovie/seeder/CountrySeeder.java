@@ -3,6 +3,7 @@ package com.pourymovie.seeder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pourymovie.entity.CountryEntity;
 import com.pourymovie.repository.CountryRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -14,12 +15,13 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class CountrySeeder implements CommandLineRunner {
 
   @Value("classpath:countries.json")
   private Resource countriesFile;
 
-  @Autowired private CountryRepository countryRepository;
+  private final CountryRepository countryRepository;
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 

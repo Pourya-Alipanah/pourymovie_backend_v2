@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,8 +21,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/people")
 @Tag(name = "People", description = "Endpoints for managing people")
+@RequiredArgsConstructor
 public class PeopleController {
-  @Autowired private PeopleService peopleService;
+  private final PeopleService peopleService;
 
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")

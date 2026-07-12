@@ -8,15 +8,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
 @Tag(name = "Authentication", description = "Endpoints for user authentication and authorization")
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-  @Autowired AuthService authService;
+  private final AuthService authService;
 
   @ApiResponse(responseCode = "204", description = "Successful Operation And Set Cookies")
   @PostMapping("/sign-in")

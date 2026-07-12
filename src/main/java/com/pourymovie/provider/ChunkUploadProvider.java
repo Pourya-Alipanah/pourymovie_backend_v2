@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,8 +15,9 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
 @Component
+@RequiredArgsConstructor
 public class ChunkUploadProvider {
-  @Autowired private S3Client s3Client;
+  private final S3Client s3Client;
 
   public String initiateUpload(String bucket, String objectName) {
     CreateMultipartUploadRequest request =

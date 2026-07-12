@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,34 +25,28 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/upload-chunk")
 @Tag(name = "Chunk Upload", description = "Endpoints for handling chunked file uploads")
+@RequiredArgsConstructor
 public class ChunkUploadController {
 
-  @Autowired
-  private ChunkUploadService chunkUploadService;
+  private final ChunkUploadService chunkUploadService;
 
   @PostMapping("/initiate")
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
-  public ChunkUploadDto initiateChunkUpload(@Valid @RequestBody InitiateChunkUploadDto initiateChunkUploadDto) {
+  public ChunkUploadDto initiateChunkUpload(
+      @Valid @RequestBody InitiateChunkUploadDto initiateChunkUploadDto) {
     return chunkUploadService.initiateChunkUpload(initiateChunkUploadDto);
   }
 
-  @PostMapping(
-          value = "/chunk",
-          consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-  )
+  @PostMapping(value = "/chunk", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @io.swagger.v3.oas.annotations.parameters.RequestBody(
-          content = @Content(
-                  schema = @Schema(implementation = UploadChunkDto.class)
-          )
-  )
+      content = @Content(schema = @Schema(implementation = UploadChunkDto.class)))
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @PreAuthorize("hasRole('ADMIN')")
   @Operation(summary = "Required Role = Admin")
   public void chunkUpload(
-          @RequestPart("file") MultipartFile file,
-          @Valid @ModelAttribute UploadChunkDto dto
-  ) throws IOException {
+      @RequestPart("file") MultipartFile file, @Valid @ModelAttribute UploadChunkDto dto)
+      throws IOException {
     chunkUploadService.uploadPart(dto, file);
   }
 

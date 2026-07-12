@@ -7,6 +7,8 @@ import com.pourymovie.entity.EpisodeEntity;
 import com.pourymovie.mapper.EpisodeMapper;
 import com.pourymovie.repository.EpisodeRepository;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,15 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class EpisodeService {
-  @Autowired
-  private EpisodeRepository episodeRepository;
+  private final EpisodeRepository episodeRepository;
 
-  @Autowired
-  private EpisodeMapper episodeMapper;
+  private final EpisodeMapper episodeMapper;
 
-  @Autowired
-  private SeasonService seasonService;
+  private final SeasonService seasonService;
 
   @Transactional
   public EpisodeDto create(CreateEpisodeDto createEpisodeDto) {
@@ -39,13 +39,13 @@ public class EpisodeService {
   }
 
   public EpisodeEntity getEpisodeById(Long id) {
-    return episodeRepository.findById(id).orElseThrow(
-            ()-> new ResponseStatusException(HttpStatus.NOT_FOUND)
-    );
+    return episodeRepository
+        .findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
   }
 
   @Transactional
-  public EpisodeDto update(Long id , UpdateEpisodeDto updateEpisodeDto) {
+  public EpisodeDto update(Long id, UpdateEpisodeDto updateEpisodeDto) {
     var episodeEntity = getEpisodeById(id);
     episodeMapper.updateEntityFromDto(updateEpisodeDto, episodeEntity);
     var updatedEntity = episodeRepository.save(episodeEntity);

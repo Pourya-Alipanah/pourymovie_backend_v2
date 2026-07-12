@@ -8,21 +8,21 @@ import com.pourymovie.entity.TitleEntity;
 import com.pourymovie.mapper.SeasonMapper;
 import com.pourymovie.repository.SeasonRepository;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class SeasonService {
-  @Autowired
-  SeasonRepository seasonRepository;
+  private final SeasonRepository seasonRepository;
 
-  @Autowired
-  SeasonMapper seasonMapper;
+  private final SeasonMapper seasonMapper;
 
-  @Autowired
-  TitleService titleService;
+  private final TitleService titleService;
 
   public SeasonDto createSeason(CreateSeasonDto seasonDto) {
     SeasonEntity seasonEntity = seasonMapper.toEntity(seasonDto);
@@ -33,8 +33,9 @@ public class SeasonService {
   }
 
   public SeasonEntity getSeasonById(Long id) {
-    return seasonRepository.findById(id).orElseThrow(
-            () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    return seasonRepository
+        .findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
   }
 
   public List<SeasonDto> getAllSeasonsByTitleId(Long titleId) {
@@ -42,9 +43,10 @@ public class SeasonService {
   }
 
   public SeasonDto updateSeason(Long id, UpdateSeasonDto updateSeasonDto) {
-    SeasonEntity seasonEntity = seasonRepository.findById(id).orElseThrow(
-            () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
-    );
+    SeasonEntity seasonEntity =
+        seasonRepository
+            .findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     seasonMapper.updateEntityFromDto(updateSeasonDto, seasonEntity);
     var updatedEntity = seasonRepository.save(seasonEntity);
     return seasonMapper.toDto(updatedEntity);

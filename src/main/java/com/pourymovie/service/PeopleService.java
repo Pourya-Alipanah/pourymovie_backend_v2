@@ -13,6 +13,8 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,12 +23,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class PeopleService {
-  @Autowired private PeopleRepository peopleRepository;
+  private final PeopleRepository peopleRepository;
 
-  @Autowired private PeopleMapper peopleMapper;
+  private final PeopleMapper peopleMapper;
 
-  @Autowired private UploadCenterService uploadCenterService;
+  private final UploadCenterService uploadCenterService;
 
   public PeopleDetailsDto create(CreatePeopleDto createPeopleDto) throws Exception {
     var peopleEntity = peopleMapper.toEntity(createPeopleDto);

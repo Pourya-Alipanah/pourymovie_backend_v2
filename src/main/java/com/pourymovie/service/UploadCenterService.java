@@ -13,22 +13,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class UploadCenterService {
-  @Autowired
-  private MinioProvider minioProvider;
+  private final MinioProvider minioProvider;
 
-  @Autowired
-  private UploadCenterRepository uploadCenterRepository;
+  private final UploadCenterRepository uploadCenterRepository;
 
-  @Autowired
-  private AppDefaults appDefaults;
+  private final AppDefaults appDefaults;
 
   @PostConstruct
   public void init() {
@@ -39,18 +40,16 @@ public class UploadCenterService {
   }
 
   public UploadResultDto withBuffer(MultipartFile file, BufferBucketNames bucket) throws Exception {
-    String objectName = MinioUtils.buildObjectName(Objects.requireNonNull(file.getOriginalFilename()));
+    String cleanFilename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+    String objectName = MinioUtils.buildObjectName(cleanFilename);
 
     minioProvider.uploadBuffer(
-            bucket.getValue(),
-            objectName,
-            file.getBytes(),
-            file.getContentType()
-    );
+        bucket.getValue(), objectName, file.getBytes(), file.getContentType());
 
     String url = minioProvider.getPublicUrl(bucket.getValue(), objectName);
 
-    UploadCenterEntity upload = UploadCenterEntity.builder()
+    UploadCenterEntity upload =
+        UploadCenterEntity.builder()
             .fileKey(objectName)
             .bucket(bucket.getMain())
             .status(UploadStatus.PENDING)
@@ -62,24 +61,20 @@ public class UploadCenterService {
   }
 
   public UploadResultDto withStream(MultipartFile file, StreamBucketNames bucket) throws Exception {
-    String objectName = MinioUtils.buildObjectName(Objects.requireNonNull(file.getOriginalFilename()));
-
+    String cleanFilename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+    String objectName = MinioUtils.buildObjectName(cleanFilename);
     Path tempPath = Path.of(appDefaults.getMinioTempUploadDir(), objectName);
-    Files.copy(file.getInputStream(), tempPath);
 
-    long size = Files.size(tempPath);
+    try {
+      file.transferTo(tempPath);
 
-    try (InputStream stream = Files.newInputStream(tempPath)) {
-      minioProvider.uploadStream(
-              bucket.getValue(),
-              objectName,
-              stream,
-              size,
-              file.getContentType()
-      );
+      try (InputStream stream = Files.newInputStream(tempPath)) {
+        minioProvider.uploadStream(
+                bucket.getValue(), objectName, stream, file.getSize(), file.getContentType());
+      }
+    } finally {
+      Files.deleteIfExists(tempPath);
     }
-
-    Files.deleteIfExists(tempPath);
 
     String url = bucket.equals(StreamBucketNames.VIDEO)
             ? minioProvider.generatePresignedDownloadUrl(bucket.getValue(), objectName)
@@ -100,8 +95,11 @@ public class UploadCenterService {
     return uploadCenterRepository.findAllByStatus(UploadStatus.PENDING);
   }
 
-  public String confirmUpload(String fileKey, UploadFromEntity entity, UploadType type) throws Exception {
-    UploadCenterEntity record = uploadCenterRepository.findByFileKey(fileKey)
+  public String confirmUpload(String fileKey, UploadFromEntity entity, UploadType type)
+      throws Exception {
+    UploadCenterEntity record =
+        uploadCenterRepository
+            .findByFileKey(fileKey)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     record.setFromEntity(entity);
@@ -111,26 +109,29 @@ public class UploadCenterService {
     uploadCenterRepository.save(record);
 
     if (entity.equals(UploadFromEntity.VIDEO)) {
-      return getBucketAndKeyCombinationFromBucketAndKey(record.getBucket().getValue(), record.getFileKey());
+      return getBucketAndKeyCombinationFromBucketAndKey(
+          record.getBucket().getValue(), record.getFileKey());
     }
 
     return minioProvider.getPublicUrl(record.getBucket().getValue(), record.getFileKey());
   }
 
   public void removeUpload(String fileKey) {
-    uploadCenterRepository.findByFileKey(fileKey).ifPresent(record -> {
-      uploadCenterRepository.delete(record);
-      try {
-        minioProvider.removeObject(record.getBucket().getValue(), record.getFileKey());
-      } catch (Exception e) {
-        throw new RuntimeException(e);
-      }
-    });
+    uploadCenterRepository
+        .findByFileKey(fileKey)
+        .ifPresent(
+            record -> {
+              uploadCenterRepository.delete(record);
+              try {
+                minioProvider.removeObject(record.getBucket().getValue(), record.getFileKey());
+              } catch (Exception e) {
+                throw new RuntimeException(e);
+              }
+            });
   }
 
   /**
    * @param objectName in format "bucket/objectKey"
-   *
    */
   public String getDownloadUrlFromBucketAndKeyCombination(String objectName) throws Exception {
     String[] split = objectName.split("/");
@@ -139,10 +140,8 @@ public class UploadCenterService {
 
   /**
    * @return "bucket/objectKey" combination
-   *
    */
   public String getBucketAndKeyCombinationFromBucketAndKey(String bucket, String key) {
     return bucket + "/" + key;
   }
-
 }

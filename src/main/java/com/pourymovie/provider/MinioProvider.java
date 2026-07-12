@@ -6,6 +6,8 @@ import jakarta.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.Duration;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -16,15 +18,13 @@ import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignReques
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 @Component
+@RequiredArgsConstructor
 public class MinioProvider {
-  @Autowired
-  private S3Client minioClient;
+  private final S3Client minioClient;
 
-  @Autowired
-  private S3Presigner presigner;
+  private final S3Presigner presigner;
 
-  @Autowired
-  private AppDefaults appDefaults;
+  private final AppDefaults appDefaults;
 
   @PostConstruct
   public void onInit() {
@@ -40,7 +40,8 @@ public class MinioProvider {
   }
 
   public void makeBucketPublic(PublicBucketNames bucket) throws Exception {
-    String policy = """
+    String policy =
+        """
             {
               "Version": "2012-10-17",
               "Statement": [
@@ -52,14 +53,11 @@ public class MinioProvider {
                 }
               ]
             }
-            """.formatted(bucket);
+            """
+            .formatted(bucket);
 
     minioClient.putBucketPolicy(
-            PutBucketPolicyRequest.builder()
-                    .bucket(bucket.getValue())
-                    .policy(policy)
-                    .build()
-    );
+        PutBucketPolicyRequest.builder().bucket(bucket.getValue()).policy(policy).build());
   }
 
   public void makeAllPublicBucketsPublic() {
@@ -75,15 +73,22 @@ public class MinioProvider {
 
   public String getPublicUrl(String bucket, String objectName) {
     String protocol = appDefaults.isMinioSecure() ? "https" : "http";
-    return protocol + "://" + appDefaults.getMinioUrl() + ":" + appDefaults.getMinioPort() + "/" + bucket + "/" + objectName;
+    return protocol
+        + "://"
+        + appDefaults.getMinioUrl()
+        + ":"
+        + appDefaults.getMinioPort()
+        + "/"
+        + bucket
+        + "/"
+        + objectName;
   }
 
-  public String generatePresignedDownloadUrl(String bucket, String objectName, Duration expiry) throws Exception {
-    GetObjectRequest getReq = GetObjectRequest.builder()
-            .bucket(bucket)
-            .key(objectName)
-            .build();
-    GetObjectPresignRequest presignReq = GetObjectPresignRequest.builder()
+  public String generatePresignedDownloadUrl(String bucket, String objectName, Duration expiry)
+      throws Exception {
+    GetObjectRequest getReq = GetObjectRequest.builder().bucket(bucket).key(objectName).build();
+    GetObjectPresignRequest presignReq =
+        GetObjectPresignRequest.builder()
             .getObjectRequest(getReq)
             .signatureDuration(expiry)
             .build();
@@ -94,11 +99,9 @@ public class MinioProvider {
   public String generatePresignedDownloadUrl(String bucket, String objectName) throws Exception {
     Duration expiry = Duration.parse("PT" + appDefaults.getMinioExpirationInMinutes() + "M");
 
-    GetObjectRequest getReq = GetObjectRequest.builder()
-            .bucket(bucket)
-            .key(objectName)
-            .build();
-    GetObjectPresignRequest presignReq = GetObjectPresignRequest.builder()
+    GetObjectRequest getReq = GetObjectRequest.builder().bucket(bucket).key(objectName).build();
+    GetObjectPresignRequest presignReq =
+        GetObjectPresignRequest.builder()
             .getObjectRequest(getReq)
             .signatureDuration(expiry)
             .build();
@@ -115,45 +118,34 @@ public class MinioProvider {
     }
   }
 
-  public void uploadBuffer(String bucket, String objectName, byte[] buffer, String mimeType) throws Exception {
+  public void uploadBuffer(String bucket, String objectName, byte[] buffer, String mimeType)
+      throws Exception {
     ensureBucket(bucket);
 
     try (ByteArrayInputStream inputStream = new ByteArrayInputStream(buffer)) {
-      PutObjectRequest req = PutObjectRequest.builder()
-              .bucket(bucket)
-              .key(objectName)
-              .contentType(mimeType)
-              .build();
+      PutObjectRequest req =
+          PutObjectRequest.builder().bucket(bucket).key(objectName).contentType(mimeType).build();
       minioClient.putObject(req, RequestBody.fromInputStream(inputStream, buffer.length));
     }
   }
 
-  public void uploadStream(String bucket, String objectName, InputStream stream, long size, String mimeType) throws Exception {
+  public void uploadStream(
+      String bucket, String objectName, InputStream stream, long size, String mimeType)
+      throws Exception {
     ensureBucket(bucket);
 
-    PutObjectRequest req = PutObjectRequest.builder()
-            .bucket(bucket)
-            .key(objectName)
-            .contentType(mimeType)
-            .build();
+    PutObjectRequest req =
+        PutObjectRequest.builder().bucket(bucket).key(objectName).contentType(mimeType).build();
     minioClient.putObject(req, RequestBody.fromInputStream(stream, size));
   }
 
   public void removeObject(String bucket, String objectName) throws Exception {
-    minioClient.deleteObject(
-            DeleteObjectRequest.builder()
-                    .bucket(bucket)
-                    .key(objectName)
-                    .build()
-    );
+    minioClient.deleteObject(DeleteObjectRequest.builder().bucket(bucket).key(objectName).build());
   }
 
   public ObjectMetadata statObject(String bucket, String objectName) throws Exception {
-    var response = minioClient.headObject(HeadObjectRequest.builder()
-            .bucket(bucket)
-            .key(objectName)
-            .build()
-    );
+    var response =
+        minioClient.headObject(HeadObjectRequest.builder().bucket(bucket).key(objectName).build());
     return new ObjectMetadata(response.contentLength(), response.contentType());
   }
 
