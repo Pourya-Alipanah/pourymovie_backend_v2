@@ -5,22 +5,23 @@ import com.pourymovie.enums.UserRole;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
-import org.hibernate.annotations.UpdateTimestamp;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Table;
+import lombok.*;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cache;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class UserEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,7 +63,6 @@ public class UserEntity {
   private boolean hasSubscription = false;
 
   @JsonIgnore
-  @EqualsAndHashCode.Exclude
   @OneToMany(
       mappedBy = "user",
       cascade = CascadeType.ALL,

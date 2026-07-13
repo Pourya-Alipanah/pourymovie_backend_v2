@@ -1,17 +1,21 @@
 package com.pourymovie.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import java.util.List;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "genre")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class GenreEntity {
 
   @Id
