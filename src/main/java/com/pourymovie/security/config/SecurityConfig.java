@@ -3,7 +3,6 @@ package com.pourymovie.security.config;
 import com.pourymovie.config.AppDefaults;
 import com.pourymovie.security.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -27,8 +27,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
   private final JwtFilter jwtFilter;
-
   private final AppDefaults appDefaults;
+  private final AuthenticationSuccessHandler oauth2SuccessHandler;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -65,6 +65,7 @@ public class SecurityConfig {
                     .accessDeniedHandler(accessDeniedHandler))
         .formLogin(AbstractHttpConfigurer::disable)
         .logout(AbstractHttpConfigurer::disable)
+        .oauth2Login(oauth2 -> oauth2.successHandler(oauth2SuccessHandler))
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
         .headers(
             headers ->
