@@ -15,7 +15,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +32,10 @@ public class UserService {
     return userRepository.findByEmail(email).orElseThrow();
   }
 
+  public Optional<UserEntity> getOptionalUserByEmail(String email) {
+    return userRepository.findByEmail(email);
+  }
+
   public UserEntity createUser(SignUpDto user, UserRole role) throws Exception {
     UserEntity mappedUser = userMapper.toEntity(user);
     if (user.avatarUrl() != null) {
@@ -40,6 +47,21 @@ public class UserService {
     mappedUser.setPassword(passwordEncoder.encode(user.password()));
     mappedUser.setRole(role);
     return userRepository.save(mappedUser);
+  }
+
+  public UserEntity createUserForOAuth2(OAuth2User oAuth2User, UserRole userRole) {
+    UserEntity user = new UserEntity();
+    String firstName = oAuth2User.getAttribute("given_name");
+    String lastName = oAuth2User.getAttribute("family_name");
+    String email = oAuth2User.getAttribute("email");
+    String picture = oAuth2User.getAttribute("picture");
+
+    user.setEmail(email);
+    user.setFirstName(firstName);
+    user.setLastName(lastName);
+    user.setAvatarUrl(picture);
+    user.setRole(userRole);
+    return userRepository.save(user);
   }
 
   public Page<UserEntity> getUsers(Pageable pageable) {
@@ -87,4 +109,5 @@ public class UserService {
     UserEntity existingUser = getUserById(id);
     return updateUserByEmail(existingUser.getEmail(), updateUserDto);
   }
+
 }

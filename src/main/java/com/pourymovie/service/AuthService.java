@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -47,6 +48,13 @@ public class AuthService {
   public void signUp(SignUpDto signUpDto, HttpServletResponse response) throws Exception {
 
     UserEntity user = userService.createUser(signUpDto, UserRole.USER);
+
+    signAndSendTokens(response, user);
+  }
+
+  public void handleOAuth2Success(OAuth2User oAuth2User, HttpServletResponse response) {
+    String email = oAuth2User.getAttribute("email");
+    UserEntity user = userService.getOptionalUserByEmail(email).orElseGet(() -> userService.createUserForOAuth2(oAuth2User, UserRole.USER));
 
     signAndSendTokens(response, user);
   }

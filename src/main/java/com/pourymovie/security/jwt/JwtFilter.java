@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -57,15 +56,12 @@ public class JwtFilter extends OncePerRequestFilter {
     Long userId = jwtService.extractUserId(token.get());
     String userEmail = jwtService.extractEmail(token.get());
 
-    var userDetails = userDetailsService.loadUserByUsername(userEmail);
-
     if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
       if (jwtService.validateToken(token.get())) {
-        var authToken =
-            new UsernamePasswordAuthenticationToken(
+        var userDetails = userDetailsService.loadUserByUsername(userEmail);
+        var authToken = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities());
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
         SecurityContextHolder.getContext().setAuthentication(authToken);
       }
     }

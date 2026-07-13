@@ -39,7 +39,7 @@ public class UserEntity {
   private String avatarUrl;
 
   @JsonIgnore
-  @Column(length = 96, nullable = false)
+  @Column(length = 96)
   private String password;
 
   @Enumerated(EnumType.STRING)

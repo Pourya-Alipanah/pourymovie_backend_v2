@@ -24,6 +24,7 @@ public class AppDefaults {
   private String geminiApiKey;
   private String geminiModelName;
   private String frontendUrl;
+  private String frontendOauthRedirectUrl;
   private String frontendMoviePath;
   private String frontendSeriesPath;
 }
