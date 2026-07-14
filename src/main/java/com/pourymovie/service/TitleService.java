@@ -19,7 +19,10 @@ import java.util.stream.Collectors;
 
 import com.pourymovie.specification.TitleSpecification;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -47,6 +50,8 @@ public class TitleService {
   private final TitlePeopleMapper titlePeopleMapper;
 
   private final UploadCenterService uploadCenterService;
+
+  private final CacheManager cacheManager;
 
   @Transactional
   public TitleDetailsDto create(CreateTitleDto createTitleDto) throws Exception {
@@ -91,10 +96,14 @@ public class TitleService {
     return titleMapper.toDetailsDto(savedEntity);
   }
 
+  @Cacheable(value = "titles:slug", key = "#slug")
+  @Transactional(readOnly = true)
   public TitleDetailsDto findBySlug(String slug) {
     return titleMapper.toDetailsDto(titleRepository.findBySlug(slug).orElseThrow());
   }
 
+  @Cacheable(value = "titles:title", key = "#title")
+  @Transactional(readOnly = true)
   public TitleSummaryDto findLinkByTitleName(String title) {
     var titleEntT =
         titleRepository
@@ -103,24 +112,30 @@ public class TitleService {
     return titleMapper.toSummaryDto(titleEntT);
   }
 
+  @Transactional(readOnly = true)
   public TitleEntity findById(Long id) {
     return titleRepository
         .findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
   }
 
+  @Transactional(readOnly = true)
   public Page<TitleDto> findAll(Pageable pageable) {
     return titleMapper.toDtoPage(titleRepository.findAll(pageable));
   }
 
+  @Transactional(readOnly = true)
   public Page<TitleDto> findAll(TitleFilterDto filters, Pageable pageable) {
     Specification<TitleEntity> spec = TitleSpecification.withFilters(filters);
     return titleMapper.toDtoPage(titleRepository.findAll(spec, pageable));
   }
 
   @Transactional
+  @CacheEvict(value = "titles:title", allEntries = true)
   public TitleDetailsDto update(UpdateTitleDto updateTitleDto, Long id) throws Exception {
     var titleEntity = findById(id);
+    String oldSlug = titleEntity.getSlug();
+
     titleMapper.updateEntityFromDto(updateTitleDto, titleEntity);
 
     fillUploadUrl(
@@ -165,6 +180,10 @@ public class TitleService {
     }
 
     var updatedEntity = titleRepository.save(titleEntity);
+
+    evictSlugCache(oldSlug);
+    evictSlugCache(updatedEntity.getSlug());
+
     return titleMapper.toDetailsDto(updatedEntity);
   }
 
@@ -196,7 +215,22 @@ public class TitleService {
     }
   }
 
+  @Caching(evict = {
+          @CacheEvict(value = "titles:slug", allEntries = true),
+          @CacheEvict(value = "titles:title", allEntries = true)
+  })
+  @Transactional
   public void deleteById(Long id) {
     titleRepository.deleteById(id);
+  }
+
+
+  private void evictSlugCache(String slug) {
+    if (slug != null) {
+      var cache = cacheManager.getCache("titles:slug");
+      if (cache != null) {
+        cache.evict(slug);
+      }
+    }
   }
 }

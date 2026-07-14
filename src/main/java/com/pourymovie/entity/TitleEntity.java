@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
 import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cache;
 
 @Entity
 @Data
@@ -21,6 +22,8 @@ import org.hibernate.annotations.*;
     indexes = {
       @Index(name = "idx_title_en", columnList = "titleEn"),
     })
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class TitleEntity {
 
   @Id
@@ -77,18 +80,22 @@ public class TitleEntity {
       name = "title_genres_genre",
       joinColumns = @JoinColumn(name = "titleId"),
       inverseJoinColumns = @JoinColumn(name = "genreId"))
+  @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
   private List<GenreEntity> genres;
 
-  @OneToMany(mappedBy = "title", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "title")
   @SQLRestriction("role = 'actor'")
+  @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
   private List<TitlePeopleEntity> actorLinks = new ArrayList<>();
 
-  @OneToMany(mappedBy = "title", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "title")
   @SQLRestriction("role = 'writer'")
+  @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
   private List<TitlePeopleEntity> writerLinks = new ArrayList<>();
 
-  @OneToMany(mappedBy = "title", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "title")
   @SQLRestriction("role = 'director'")
+  @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
   private List<TitlePeopleEntity> directorLinks = new ArrayList<>();
 
   @Transient private List<PeopleEntity> actors;
@@ -101,9 +108,11 @@ public class TitleEntity {
   private CountryEntity country;
 
   @OneToMany(mappedBy = "title", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
   private List<SeasonEntity> seasons;
 
   @OneToMany(mappedBy = "title", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
   private List<VideoLinkEntity> videoLinks;
 
   @JsonIgnore
