@@ -4,7 +4,8 @@ singleServerConfig:
   timeout: 3000
   retryAttempts: 3
   retryInterval: 1500
-  address: "redis://${REDIS_HOST}:${REDIS_PORT}"
-  password: "${REDIS_PASSWORD}"
+  address: redis://${REDIS_HOST}:${REDIS_PORT}
+  username: ${REDIS_USERNAME}
+  password: ${REDIS_PASSWORD}
   subscriptionsPerConnection: 5
-  clientName: "pourymovie-l2-cache"
+  clientName: pourymovie-l2-cache"

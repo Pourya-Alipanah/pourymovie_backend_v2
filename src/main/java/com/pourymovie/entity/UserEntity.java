@@ -18,8 +18,8 @@ import org.hibernate.annotations.Cache;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-@SQLDelete(sql = "UPDATE users SET deleted = true WHERE id = ?")
-@SQLRestriction("deleted = false")
+// @SQLDelete(sql = "UPDATE users SET deletedAt = now() WHERE id = ?")
+// @SQLRestriction("deletedAt = false")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class UserEntity {

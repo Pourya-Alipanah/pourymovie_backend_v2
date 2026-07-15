@@ -12,6 +12,7 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
+      username: ${REDIS_USERNAME}
       password: ${REDIS_PASSWORD}
 
   # ----------------------------------------------- DB Configuration
@@ -34,11 +35,11 @@ spring:
         cache:
           use_second_level_cache: true
           redisson:
-            config: classpath:redisson.yaml
+            config: redisson.yml
           region:
             factory_class: org.redisson.hibernate.RedissonRegionFactory
 
-# ----------------------------------------------- Google OAuth2 Configuration
+  # ----------------------------------------------- Google OAuth2 Configuration
   security:
     oauth2:
       client:

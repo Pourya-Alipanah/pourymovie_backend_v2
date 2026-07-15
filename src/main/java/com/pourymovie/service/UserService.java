@@ -11,12 +11,18 @@ import com.pourymovie.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -27,9 +33,15 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
   private final UserMapper userMapper;
   private final UploadCenterService uploadCenterService;
+  @Lazy private final UserService self;
 
+  @Cacheable(value = "users:email", key = "#email")
+  @Transactional(readOnly = true)
   public UserEntity getUserByEmail(String email) {
-    return userRepository.findByEmail(email).orElseThrow();
+    return userRepository
+        .findByEmail(email)
+        .orElseThrow(
+            () -> new UsernameNotFoundException("User with email " + email + " not found"));
   }
 
   public Optional<UserEntity> getOptionalUserByEmail(String email) {
@@ -70,15 +82,23 @@ public class UserService {
 
   public UserEntity getCurrentUser() {
     String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-    return getUserByEmail(userEmail);
+    return self.getUserByEmail(userEmail);
   }
 
+  @Cacheable(value = "users:id", key = "#id")
+  @Transactional(readOnly = true)
   public UserEntity getUserById(Long id) {
     return userRepository.findById(id).orElseThrow();
   }
 
+  @Transactional
+  @Caching(
+      evict = {
+        @CacheEvict(value = "users:email", key = "#email"),
+        @CacheEvict(value = "users:id", key = "#result.id")
+      })
   public UserEntity updateUserByEmail(String email, UpdateUserDto updateUserDto) throws Exception {
-    UserEntity existingUser = getUserByEmail(email);
+    UserEntity existingUser = userRepository.findByEmail(email).orElseThrow();
     userMapper.updateEntityFromDto(updateUserDto, existingUser);
 
     if (updateUserDto.avatarUrl() != null) {
@@ -90,24 +110,29 @@ public class UserService {
     return userRepository.save(existingUser);
   }
 
+  @Transactional
+  @Caching(
+      evict = {
+        @CacheEvict(value = "users:id", key = "#id"),
+        @CacheEvict(value = "users:email", allEntries = true)
+      })
   public void deleteUserById(Long id) {
     userRepository.deleteById(id);
   }
 
   public void deleteCurrentUser() {
     String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-    UserEntity user = getUserByEmail(userEmail);
-    userRepository.delete(user);
+    UserEntity user = self.getUserByEmail(userEmail);
+    self.deleteUserById(user.getId());
   }
 
   public UserEntity updateCurrentUser(UpdateUserDto userDto) throws Exception {
     String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-    return updateUserByEmail(userEmail, userDto);
+    return self.updateUserByEmail(userEmail, userDto);
   }
 
   public UserEntity updateUserById(Long id, @Valid UpdateUserDto updateUserDto) throws Exception {
-    UserEntity existingUser = getUserById(id);
-    return updateUserByEmail(existingUser.getEmail(), updateUserDto);
+    UserEntity existingUser = self.getUserById(id);
+    return self.updateUserByEmail(existingUser.getEmail(), updateUserDto);
   }
-
 }
