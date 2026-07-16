@@ -3,6 +3,7 @@ package com.pourymovie.security.jwt;
 import com.pourymovie.config.AppDefaults;
 import com.pourymovie.entity.UserEntity;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
@@ -37,6 +38,10 @@ public class JwtService {
     return extractClaim(token, claims -> claims.get("email", String.class));
   }
 
+  public String extractJti(String token) {
+    return extractClaim(token, Claims::getId);
+  }
+
   public String extractRole(String token) {
     return extractClaim(token, claims -> claims.get("role", String.class));
   }
@@ -62,7 +67,27 @@ public class JwtService {
     return Jwts.parser().verifyWith(getKey()).build().parseSignedClaims(token).getPayload();
   }
 
-  public String generateAccessToken(UserEntity user) {
+  public String extractJtiIgnoringExpiration(String token) {
+    try {
+      return extractJti(token);
+    } catch (ExpiredJwtException e) {
+      return e.getClaims().getId();
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
+  public Long extractUserIdIgnoringExpiration(String token) {
+    try {
+      return extractUserId(token);
+    } catch (ExpiredJwtException e) {
+      return Long.parseLong(e.getClaims().getSubject());
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
+  public String generateAccessToken(UserEntity user, String jti) {
 
     var claims = new HashMap<String, Object>();
     claims.put("email", user.getEmail());
@@ -75,8 +100,9 @@ public class JwtService {
                 + 1000L * 60 * appDefaults.getDefaultAccessTokenTTlInMinutes());
 
     return Jwts.builder()
-        .subject(Long.toString(user.getId()))
         .claims(claims)
+        .subject(Long.toString(user.getId()))
+        .id(jti)
         .issuedAt(now)
         .expiration(expiry)
         .signWith(getKey())
