@@ -1,14 +1,16 @@
 package com.pourymovie.security.session;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pourymovie.config.AppDefaults;
 import com.pourymovie.dto.response.UserSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserSessionManager {
 
-  private final RedisTemplate<String, Object> redisTemplate;
+  private final StringRedisTemplate redisTemplate;
   private final ObjectMapper objectMapper;
   private final AppDefaults appDefaults;
 
@@ -24,8 +26,14 @@ public class UserSessionManager {
 
   public void saveSession(Long userId, UserSession session) {
     String key = HASH_KEY_PREFIX + userId;
-    redisTemplate.opsForHash().put(key, session.jti(), session);
-    redisTemplate.expire(key, appDefaults.getDefaultRefreshTokenTTlInMinutes(), TimeUnit.MINUTES);
+    try {
+      String sessionJson = objectMapper.writeValueAsString(session);
+      redisTemplate.opsForHash().put(key, session.jti(), sessionJson);
+
+      redisTemplate.expire(key, appDefaults.getDefaultRefreshTokenTTlInMinutes(), TimeUnit.MINUTES);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException("Failed to serialize user session to JSON", e);
+    }
   }
 
   public boolean isSessionActive(Long userId, String jti) {
@@ -38,7 +46,15 @@ public class UserSessionManager {
     Map<Object, Object> entries = redisTemplate.opsForHash().entries(key);
 
     return entries.values().stream()
-        .map(value -> objectMapper.convertValue(value, UserSession.class))
+        .map(
+            value -> {
+              try {
+                return objectMapper.readValue((String) value, UserSession.class);
+              } catch (JsonProcessingException e) {
+                return null;
+              }
+            })
+        .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
 
