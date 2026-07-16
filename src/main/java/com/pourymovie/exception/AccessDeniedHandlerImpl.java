@@ -1,22 +1,22 @@
 package com.pourymovie.exception;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Component
 public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
 
-  private final ObjectMapper objectMapper;
+  private final HandlerExceptionResolver resolver;
 
-  public AccessDeniedHandlerImpl(ObjectMapper objectMapper) {
-    this.objectMapper = objectMapper;
+  public AccessDeniedHandlerImpl(
+      @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+    this.resolver = resolver;
   }
 
   @Override
@@ -26,13 +26,6 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
       AccessDeniedException accessDeniedException)
       throws IOException {
 
-    ProblemDetail problemDetail =
-        ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, "Access denied");
-    problemDetail.setTitle("Forbidden");
-
-    response.setStatus(HttpStatus.FORBIDDEN.value());
-    response.setContentType("application/problem+json;charset=UTF-8");
-
-    objectMapper.writeValue(response.getWriter(), problemDetail);
+    resolver.resolveException(request, response, null, accessDeniedException);
   }
 }
