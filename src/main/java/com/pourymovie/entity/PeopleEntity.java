@@ -6,6 +6,8 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cache;
 
 @Entity
 @Data
@@ -14,6 +16,8 @@ import lombok.NoArgsConstructor;
 @Table(
         name = "person"
 )
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class PeopleEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

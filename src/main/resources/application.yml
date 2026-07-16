@@ -8,8 +8,14 @@ spring:
     multipart:
       max-file-size: "${MINIO_MAX_FILE_SIZE_IN_GB}GB"
       max-request-size: "${MINIO_MAX_FILE_SIZE_IN_GB}GB"
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
 
-# ----------------------------------------------- DB Configuration
+  # ----------------------------------------------- DB Configuration
   datasource:
     driver-class-name: org.postgresql.Driver
     username: ${DB_USERNAME}
@@ -26,9 +32,14 @@ spring:
         globally_quoted_identifiers: true
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    # show-sql: true
+        cache:
+          use_second_level_cache: true
+          redisson:
+            config: redisson.yml
+          region:
+            factory_class: org.redisson.hibernate.RedissonRegionFactory
 
-# ----------------------------------------------- Google OAuth2 Configuration
+  # ----------------------------------------------- Google OAuth2 Configuration
   security:
     oauth2:
       client:

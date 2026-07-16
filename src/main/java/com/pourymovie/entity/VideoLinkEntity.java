@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Data
 @Entity
@@ -18,6 +20,8 @@ import lombok.NoArgsConstructor;
       @Index(columnList = "quality,episodeId", name = "idx_quality_episode", unique = true),
       @Index(columnList = "quality,titleId", name = "idx_quality_title", unique = true)
     })
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class VideoLinkEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
