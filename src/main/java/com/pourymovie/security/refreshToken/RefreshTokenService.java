@@ -9,7 +9,9 @@ import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +47,9 @@ public class RefreshTokenService {
   public RefreshTokenEntity findByToken(String token) {
     return refreshTokenRepository
         .findByToken(token)
-        .orElseThrow(() -> new RuntimeException("Refresh token not found"));
+        .orElseThrow(
+            () ->
+                new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "Refresh token not found or Expired"));
   }
 }

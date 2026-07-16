@@ -22,16 +22,22 @@ public class AuthController {
 
   @ApiResponse(responseCode = "204", description = "Successful Operation And Set Cookies")
   @PostMapping("/sign-in")
-  public void signIn(@Valid @RequestBody SignInDto signInDto, HttpServletResponse response)
+  public void signIn(
+      @Valid @RequestBody SignInDto signInDto,
+      HttpServletRequest request,
+      HttpServletResponse response)
       throws Exception {
-    authService.signIn(signInDto, response);
+    authService.signIn(signInDto, request, response);
   }
 
   @ApiResponse(responseCode = "204", description = "Successful Operation And Set Cookies")
   @PostMapping("/sign-up")
-  public void signUp(@Valid @RequestBody SignUpDto signInDto, HttpServletResponse response)
+  public void signUp(
+      @Valid @RequestBody SignUpDto signInDto,
+      HttpServletRequest request,
+      HttpServletResponse response)
       throws Exception {
-    authService.signUp(signInDto, response);
+    authService.signUp(signInDto, request, response);
   }
 
   @ApiResponse(responseCode = "204", description = "Successful Operation And Set Cookies")

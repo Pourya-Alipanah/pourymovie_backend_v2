@@ -4,18 +4,21 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pourymovie.enums.DeletedBy;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cache;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "comment")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class CommentEntity {
 
   @Id
@@ -44,9 +47,11 @@ public class CommentEntity {
 
   @ManyToOne
   @JoinColumn(name = "userId")
+  @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
   private UserEntity user;
 
   @ManyToOne
   @JoinColumn(name = "titleId")
+  @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
   private TitleEntity title;
 }

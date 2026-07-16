@@ -2,6 +2,7 @@ package com.pourymovie.security.jwt;
 
 import com.pourymovie.config.AppDefaults;
 import com.pourymovie.enums.TokenNames;
+import com.pourymovie.security.session.UserSessionManager;
 import com.pourymovie.security.userDetails.CustomUserDetailsService;
 import com.pourymovie.util.CookieUtils;
 import jakarta.servlet.FilterChain;
@@ -31,6 +32,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
   private final AppDefaults appDefaults;
 
+  private final UserSessionManager userSessionManager;
+
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
     String path = request.getServletPath();
@@ -53,17 +56,26 @@ public class JwtFilter extends OncePerRequestFilter {
       return;
     }
 
-    Long userId = jwtService.extractUserId(token.get());
-    String userEmail = jwtService.extractEmail(token.get());
+    try {
+      Long userId = jwtService.extractUserId(token.get());
+      String userEmail = jwtService.extractEmail(token.get());
+      String jti = jwtService.extractJti(token.get());
 
-    if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-      if (jwtService.validateToken(token.get())) {
-        var userDetails = userDetailsService.loadUserByUsername(userEmail);
-        var authToken = new UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.getAuthorities());
-        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authToken);
+      if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (jwtService.validateToken(token.get())
+            && userSessionManager.isSessionActive(userId, jti)) {
+          var userDetails = userDetailsService.loadUserByUsername(userEmail);
+          var authToken =
+              new UsernamePasswordAuthenticationToken(
+                  userDetails, null, userDetails.getAuthorities());
+          authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+          SecurityContextHolder.getContext().setAuthentication(authToken);
+        } else {
+          SecurityContextHolder.clearContext();
+        }
       }
+    } catch (Exception e) {
+      SecurityContextHolder.clearContext();
     }
 
     filterChain.doFilter(request, response);
