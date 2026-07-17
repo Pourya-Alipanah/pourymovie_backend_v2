@@ -64,7 +64,7 @@ public class UserController {
   @PreAuthorize("hasRole('ADMIN')")
   @PatchMapping("/{id}")
   @Operation(summary = "Required Role = Admin")
-  public UserEntity updateUser(@Valid @RequestBody UpdateUserDto userDto, @PathVariable Long id)
+  public UserDto updateUser(@Valid @RequestBody UpdateUserDto userDto, @PathVariable Long id)
       throws Exception {
     return userService.updateUserById(id, userDto);
   }

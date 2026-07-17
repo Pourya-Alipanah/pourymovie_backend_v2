@@ -8,6 +8,9 @@ spring:
     multipart:
       max-file-size: "${MINIO_MAX_FILE_SIZE_IN_GB}GB"
       max-request-size: "${MINIO_MAX_FILE_SIZE_IN_GB}GB"
+  threads:
+    virtual:
+      enabled: true
   data:
     redis:
       host: ${REDIS_HOST}
@@ -85,9 +88,14 @@ pourymovie:
   public-paths: /auth/**,/public/**,/apiDocs/**,/apiDocs-json/**,/swagger-ui**/**,/login/oauth2/**,/oauth2/**
   frontend-url: ${FRONTEND_URL}
   frontend-oauth-redirect-url: ${FRONTEND_OAUTH_REDIRECT_URL}
+  frontend-reset-password-url: ${FRONTEND_RESET_PASSWORD_URL}
   frontend-movie-path: ${FRONTEND_MOVIE_PATH}
   frontend-series-path: ${FRONTEND_SERIES_PATH}
   ip-info-token: ${IP_INFO_TOKEN}
+  resend-email-token: ${RESEND_EMAIL_TOKEN}
+  from-email: ${FROM_EMAIL}
+  reset-token-t-tl-in-minutes: 15
+
 
   # ----------------------------------------------- MinIO Configuration
   minio-url: ${MINIO_URL}

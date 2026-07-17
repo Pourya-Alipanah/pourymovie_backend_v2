@@ -18,12 +18,14 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -149,8 +151,19 @@ public class UserService {
         @CacheEvict(value = "users:id", key = "#id"),
         @CacheEvict(value = "users:email", allEntries = true)
       })
-  public UserEntity updateUserById(Long id, @Valid UpdateUserDto updateUserDto) throws Exception {
+  public UserDto updateUserById(Long id, UpdateUserDto updateUserDto) throws Exception {
     UserEntity existingUser = userRepository.findById(id).orElseThrow();
-    return self.updateUserByEmail(existingUser.getEmail(), updateUserDto);
+    return userMapper.toDto(self.updateUserByEmail(existingUser.getEmail(), updateUserDto));
+  }
+
+  @Transactional
+  public UserEntity changePassword(String email, String newPassword) {
+    UserEntity user =
+        userRepository
+            .findByEmail(email)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User no longer exists."));
+    user.setPassword(passwordEncoder.encode(newPassword));
+    return userRepository.save(user);
   }
 }
