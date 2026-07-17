@@ -55,7 +55,7 @@ public class AuthService {
   public void signUp(SignUpDto signUpDto, HttpServletRequest request, HttpServletResponse response)
       throws Exception {
 
-    UserEntity user = userService.createUser(signUpDto, UserRole.USER);
+    UserEntity user = userService.createUserInternal(signUpDto, UserRole.USER);
 
     signAndSendTokens(request, response, user);
   }
