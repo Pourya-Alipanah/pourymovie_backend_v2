@@ -87,6 +87,7 @@ pourymovie:
   frontend-oauth-redirect-url: ${FRONTEND_OAUTH_REDIRECT_URL}
   frontend-movie-path: ${FRONTEND_MOVIE_PATH}
   frontend-series-path: ${FRONTEND_SERIES_PATH}
+  ip-info-token: ${IP_INFO_TOKEN}
 
   # ----------------------------------------------- MinIO Configuration
   minio-url: ${MINIO_URL}

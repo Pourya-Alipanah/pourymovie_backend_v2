@@ -27,4 +27,5 @@ public class AppDefaults {
   private String frontendOauthRedirectUrl;
   private String frontendMoviePath;
   private String frontendSeriesPath;
+  private String ipInfoToken;
 }
