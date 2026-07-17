@@ -25,7 +25,11 @@ public class AppDefaults {
   private String geminiModelName;
   private String frontendUrl;
   private String frontendOauthRedirectUrl;
+  private String frontendResetPasswordUrl;
   private String frontendMoviePath;
   private String frontendSeriesPath;
   private String ipInfoToken;
+  private String resendEmailToken;
+  private String fromEmail;
+  private long resetTokenTTlInMinutes;
 }

@@ -9,10 +9,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@RestController()
+@RestController
 @Tag(name = "Authentication", description = "Endpoints for user authentication and authorization")
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -25,8 +24,7 @@ public class AuthController {
   public void signIn(
       @Valid @RequestBody SignInDto signInDto,
       HttpServletRequest request,
-      HttpServletResponse response)
-      throws Exception {
+      HttpServletResponse response) {
     authService.signIn(signInDto, request, response);
   }
 
@@ -42,14 +40,13 @@ public class AuthController {
 
   @ApiResponse(responseCode = "204", description = "Successful Operation And Set Cookies")
   @GetMapping("/refresh-tokens")
-  public void refreshToken(HttpServletRequest request, HttpServletResponse response)
-      throws Exception {
+  public void refreshToken(HttpServletRequest request, HttpServletResponse response) {
     authService.refreshToken(request, response);
   }
 
   @ApiResponse(responseCode = "204", description = "Successful Operation And Remove Cookies")
   @PostMapping("/sign-out")
-  public void signOut(HttpServletRequest request, HttpServletResponse response) throws Exception {
+  public void signOut(HttpServletRequest request, HttpServletResponse response) {
     authService.signOut(request, response);
   }
 }
