@@ -3,6 +3,7 @@ package com.pourymovie.service;
 import com.pourymovie.config.AppDefaults;
 import com.pourymovie.dto.request.SignInDto;
 import com.pourymovie.dto.request.SignUpDto;
+import com.pourymovie.dto.response.IpInfoResponse;
 import com.pourymovie.dto.response.UserSession;
 import com.pourymovie.entity.RefreshTokenEntity;
 import com.pourymovie.entity.UserEntity;
@@ -138,7 +139,9 @@ public class AuthService {
     int accessTokenExpiry = 60 * appDefaults.getDefaultAccessTokenTTlInMinutes();
     int refreshTokenExpiry = 60 * appDefaults.getDefaultRefreshTokenTTlInMinutes();
     String jti = UUID.randomUUID().toString();
-    var ip = RequestMetadataUtils.getIpAddress(request);
+    String ip = RequestMetadataUtils.getIpAddress(request);
+    IpInfoResponse locationInfo =
+        RequestMetadataUtils.getLocationFromIp(ip, appDefaults.getIpInfoToken());
     var deviceInfo = RequestMetadataUtils.getDeviceInfo(request);
     UserSession session =
         new UserSession(
@@ -146,7 +149,7 @@ public class AuthService {
             ip,
             deviceInfo.device(),
             deviceInfo.os(),
-            "Tehran, Iran",
+            locationInfo,
             System.currentTimeMillis());
 
     userSessionManager.saveSession(user.getId(), session);
