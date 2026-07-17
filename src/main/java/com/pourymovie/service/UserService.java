@@ -2,6 +2,7 @@ package com.pourymovie.service;
 
 import com.pourymovie.dto.request.SignUpDto;
 import com.pourymovie.dto.request.UpdateUserDto;
+import com.pourymovie.dto.response.UserDto;
 import com.pourymovie.entity.UserEntity;
 import com.pourymovie.enums.UploadFromEntity;
 import com.pourymovie.enums.UploadType;
@@ -9,8 +10,8 @@ import com.pourymovie.enums.UserRole;
 import com.pourymovie.mapper.UserMapper;
 import com.pourymovie.repository.UserRepository;
 import jakarta.validation.Valid;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -23,8 +24,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +47,20 @@ public class UserService {
     return userRepository.findByEmail(email);
   }
 
-  public UserEntity createUser(SignUpDto user, UserRole role) throws Exception {
+  @Transactional
+  public UserDto createUser(SignUpDto user, UserRole role) throws Exception {
+    UserEntity mappedUser = prepareUserForSave(user, role);
+    UserEntity savedUser = userRepository.save(mappedUser);
+    return userMapper.toDto(savedUser);
+  }
+
+  @Transactional
+  public UserEntity createUserInternal(SignUpDto user, UserRole role) throws Exception {
+    UserEntity mappedUser = prepareUserForSave(user, role);
+    return userRepository.save(mappedUser);
+  }
+
+  private UserEntity prepareUserForSave(SignUpDto user, UserRole role) throws Exception {
     UserEntity mappedUser = userMapper.toEntity(user);
     if (user.avatarUrl() != null) {
       var avatarUrl =
@@ -58,7 +70,7 @@ public class UserService {
     }
     mappedUser.setPassword(passwordEncoder.encode(user.password()));
     mappedUser.setRole(role);
-    return userRepository.save(mappedUser);
+    return mappedUser;
   }
 
   public UserEntity createUserForOAuth2(OAuth2User oAuth2User, UserRole userRole) {
@@ -76,19 +88,19 @@ public class UserService {
     return userRepository.save(user);
   }
 
-  public Page<UserEntity> getUsers(Pageable pageable) {
-    return userRepository.findAll(pageable);
+  public Page<UserDto> getUsers(Pageable pageable) {
+    return userMapper.toDto(userRepository.findAll(pageable));
   }
 
-  public UserEntity getCurrentUser() {
+  public UserDto getCurrentUser() {
     String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-    return self.getUserByEmail(userEmail);
+    return userMapper.toDto(self.getUserByEmail(userEmail));
   }
 
   @Cacheable(value = "users:id", key = "#id")
   @Transactional(readOnly = true)
-  public UserEntity getUserById(Long id) {
-    return userRepository.findById(id).orElseThrow();
+  public UserDto getUserById(Long id) {
+    return userMapper.toDto(userRepository.findById(id).orElseThrow());
   }
 
   @Transactional
@@ -126,13 +138,19 @@ public class UserService {
     self.deleteUserById(user.getId());
   }
 
-  public UserEntity updateCurrentUser(UpdateUserDto userDto) throws Exception {
+  public UserDto updateCurrentUser(UpdateUserDto userDto) throws Exception {
     String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-    return self.updateUserByEmail(userEmail, userDto);
+    return userMapper.toDto(self.updateUserByEmail(userEmail, userDto));
   }
 
+  @Transactional
+  @Caching(
+      evict = {
+        @CacheEvict(value = "users:id", key = "#id"),
+        @CacheEvict(value = "users:email", allEntries = true)
+      })
   public UserEntity updateUserById(Long id, @Valid UpdateUserDto updateUserDto) throws Exception {
-    UserEntity existingUser = self.getUserById(id);
+    UserEntity existingUser = userRepository.findById(id).orElseThrow();
     return self.updateUserByEmail(existingUser.getEmail(), updateUserDto);
   }
 }

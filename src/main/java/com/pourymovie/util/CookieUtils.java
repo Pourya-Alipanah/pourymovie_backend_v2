@@ -57,9 +57,7 @@ public class CookieUtils {
           cookie.setHttpOnly(true);
           cookie.setSecure(secureCookies);
           cookie.setPath(
-              cookie.getName().equals(TokenNames.ACCESS_TOKEN.getTokenName())
-                  ? "/"
-                  : "/v2/auth/refresh-tokens");
+              cookie.getName().equals(TokenNames.ACCESS_TOKEN.getTokenName()) ? "/" : "/v2/auth/");
           cookiesToRemove.add(cookie);
         }
       }
@@ -79,10 +77,7 @@ public class CookieUtils {
 
     Cookie refreshTokenCookie =
         generateTokenCookie(
-            TokenNames.REFRESH_TOKEN,
-            refreshToken.getToken(),
-            refreshTokenExpiry,
-            "/v2/auth/refresh-tokens");
+            TokenNames.REFRESH_TOKEN, refreshToken.getToken(), refreshTokenExpiry, "/v2/auth/");
 
     return List.of(accessTokenCookie, refreshTokenCookie);
   }

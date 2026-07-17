@@ -1,6 +1,7 @@
 package com.pourymovie.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pourymovie.enums.UserRole;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -39,7 +40,6 @@ public class UserEntity {
   @Column(length = 500)
   private String avatarUrl;
 
-  @JsonIgnore
   @Column(length = 96)
   private String password;
 
@@ -55,9 +55,9 @@ public class UserEntity {
 
   @Column private LocalDateTime deletedAt;
 
-  @JsonIgnore @Column private String resetPasswordToken;
+  @Column private String resetPasswordToken;
 
-  @JsonIgnore @Column private LocalDateTime resetPasswordTokenExpires;
+  @Column private LocalDateTime resetPasswordTokenExpires;
 
   @Column(nullable = false)
   private boolean hasSubscription = false;

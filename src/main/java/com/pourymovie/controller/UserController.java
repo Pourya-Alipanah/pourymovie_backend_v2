@@ -2,6 +2,7 @@ package com.pourymovie.controller;
 
 import com.pourymovie.dto.request.SignUpDto;
 import com.pourymovie.dto.request.UpdateUserDto;
+import com.pourymovie.dto.response.UserDto;
 import com.pourymovie.entity.UserEntity;
 import com.pourymovie.enums.UserRole;
 import com.pourymovie.service.UserService;
@@ -30,34 +31,33 @@ public class UserController {
   @PreAuthorize("hasRole('SUPER_ADMIN')")
   @Operation(summary = "Required Role = Super Admin")
   @PostMapping("/admin")
-  public ResponseEntity<UserEntity> addUser(@Valid @RequestBody SignUpDto signUpDto)
-      throws Exception {
-    return new ResponseEntity<>(
-        userService.createUser(signUpDto, UserRole.ADMIN), HttpStatus.CREATED);
+  @ResponseStatus(HttpStatus.CREATED)
+  public UserDto addUser(@Valid @RequestBody SignUpDto signUpDto) throws Exception {
+    return userService.createUser(signUpDto, UserRole.ADMIN);
   }
 
   @PreAuthorize("hasRole('ADMIN')")
   @GetMapping
   @Operation(summary = "Required Role = Admin")
   @PageableAsQueryParam
-  public Page<UserEntity> getUsers(@Parameter(hidden = true) Pageable pageable) {
+  public Page<UserDto> getUsers(@Parameter(hidden = true) Pageable pageable) {
     return userService.getUsers(pageable);
   }
 
   @GetMapping("/current")
-  public UserEntity getCurrentUser() {
+  public UserDto getCurrentUser() {
     return userService.getCurrentUser();
   }
 
   @PreAuthorize("hasRole('ADMIN')")
   @GetMapping("/{id}")
   @Operation(summary = "Required Role = Admin")
-  public UserEntity getUserById(@PathVariable Long id) {
+  public UserDto getUserById(@PathVariable Long id) {
     return userService.getUserById(id);
   }
 
   @PatchMapping("/current")
-  public UserEntity updateCurrentUser(@Valid @RequestBody UpdateUserDto userDto) throws Exception {
+  public UserDto updateCurrentUser(@Valid @RequestBody UpdateUserDto userDto) throws Exception {
     return userService.updateCurrentUser(userDto);
   }
 
